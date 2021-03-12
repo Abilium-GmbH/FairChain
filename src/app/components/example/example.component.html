@@ -1,5 +1,14 @@
+<mat-card class="editor">
+    <button mat-button class="editor-option" (click)="addNode()" 
+        [ngStyle]="{'background-color': addingNodes ? '#00ccff' : '#ffffff' }">Add Nodes</button>
+    <button mat-button class="editor-option">Add Edges</button>
+    <button mat-button class="editor-option">Remove Nodes</button>
+    <button mat-button class="editor-option">Remove Edges</button>
+</mat-card>
 
-<div #graph class="graph"></div>
+<mat-card class="canvas">
+    <div #graph class="graph"></div>
+</mat-card>
 
 <div #nodeOptions class="node-options-container">
     <div *ngIf="showNodeOptions" class="node-options">
