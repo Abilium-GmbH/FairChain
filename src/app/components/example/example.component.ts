@@ -137,6 +137,10 @@ export class ExampleComponent implements OnInit {
     }
   }
 
+  moveEdge() {
+    this.network.editEdgeMode();
+  }
+
   private get graph(): HTMLElement {
     return this.graphRef.nativeElement;
   }
