@@ -10,6 +10,9 @@ import * as vis from 'vis-network'
 export class ExampleComponent implements OnInit {
 
   addingNodes: boolean = false;
+  addingEdges: boolean = false;
+  deletingNodesOrEdges: boolean = false;
+
   // create an array with nodes
   private nodes: vis.Node[] = [];
 
@@ -35,6 +38,18 @@ export class ExampleComponent implements OnInit {
         if (this.addingNodes) {
           this.network.addNodeMode();
         }
+      },
+      addEdge: (data, callback) => {
+        callback(data);
+        if (this.addingEdges) {
+          this.network.addEdgeMode();
+        }
+      },
+      deleteNodeOrEdge: (data, callback) => {
+        callback(data);
+        if (this.deletingNodesOrEdges) {
+          this.network.deleteSelected();
+        }
       }
     }
   };
@@ -51,7 +66,7 @@ export class ExampleComponent implements OnInit {
 
   ngOnInit(): void {
     this.network = new vis.Network(this.graph, this.data, this.options);
-    
+
 
     this.subscriptions.add(
       fromEvent(this.network, 'click').subscribe(params => {
@@ -59,7 +74,7 @@ export class ExampleComponent implements OnInit {
       })
     );
   }
-
+/*
   deleteSelectedNodes() {
     this.network.deleteSelected();
     this.showNodeOptions = false;
@@ -69,6 +84,12 @@ export class ExampleComponent implements OnInit {
     this.network.unselectAll();
     this.showNodeOptions = false;
   }
+
+  deleteNodeOrEdge() {
+    this.network.deleteSelected();
+    this.showNodeOptions = false;
+  }
+*/
 
   private onClick(params) {
     if (params.nodes && params.nodes.length >= 1) {
@@ -93,6 +114,26 @@ export class ExampleComponent implements OnInit {
     } else {
       this.addingNodes = true;
       this.network.addNodeMode();
+    }
+  }
+
+  addEdge() {
+    if (this.addingEdges) {
+      this.addingEdges = false;
+      this.network.disableEditMode();
+    } else {
+      this.addingEdges = true;
+      this.network.addEdgeMode();
+    }
+  }
+
+  deleteNodeOrEdge() {
+    if (this.deletingNodesOrEdges) {
+      this.deletingNodesOrEdges = false;
+      this.network.disableEditMode();
+    } else {
+      this.deletingNodesOrEdges = true;
+      this.network.deleteSelected();
     }
   }
 
