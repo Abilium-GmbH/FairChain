@@ -5,11 +5,15 @@
             [ngStyle]="{'background-color': addingEdges ? '#00ccff' : '#ffffff' }">Add Edge</button>
     <button mat-button class="editor-option" (click)="deleteNodeOrEdge()"
             [ngStyle]="{'background-color': deletingNodesOrEdges ? '#00ccff' : '#ffffff' }">Delete Selection</button>
+    <button mat-button class="editor-option" (click)="changeVisibilityOfOptions()"
+    [ngStyle]="{'background-color': showOptions ? '#00ccff' : '#ffffff' }">Show Options</button>
 </mat-card>
 
 <mat-card class="canvas">
     <div #graph class="graph"></div>
 </mat-card>
+<div id="config"></div>
+<p id="selection"></p>
 
 <!--
 <div #nodeOptions class="node-options-container">

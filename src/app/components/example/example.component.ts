@@ -1,5 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { enableDebugTools } from '@angular/platform-browser';
 import { fromEvent, Subscription } from 'rxjs';
+import { callbackify } from 'util';
 import * as vis from 'vis-network'
 
 @Component({
@@ -8,9 +10,10 @@ import * as vis from 'vis-network'
   styleUrls: ['./example.component.scss']
 })
 export class ExampleComponent implements OnInit {
-
+  showOptions: boolean = false;
   addingNodes: boolean = false;
   addingEdges: boolean = false;
+  physicsOn: boolean = true;
   deletingNodesOrEdges: boolean = false;
 
   // create an array with nodes
@@ -51,6 +54,12 @@ export class ExampleComponent implements OnInit {
           this.network.deleteSelected();
         }
       }
+    },
+    configure:{
+      enabled: true,
+    filter: 'nodes,edges',
+    container: undefined,
+    showButton: true
     }
   };
   private network: vis.Network;
@@ -137,8 +146,15 @@ export class ExampleComponent implements OnInit {
     }
   }
 
+  turnOffOrOn(){
+    this.physicsOn=!this.physicsOn;
+    this.options.physics.enabled=!this.options.physics.enabled;
+  }
   moveEdge() {
     this.network.editEdgeMode();
+  }
+  changeVisibilityOfOptions(){
+    this.showOptions=!this.showOptions
   }
 
   private get graph(): HTMLElement {
