@@ -121,6 +121,7 @@ export class ExampleComponent implements OnInit {
       this.addingNodes = false;
       this.network.disableEditMode();
     } else {
+      this.addingEdges = false;
       this.addingNodes = true;
       this.network.addNodeMode();
     }
@@ -131,6 +132,7 @@ export class ExampleComponent implements OnInit {
       this.addingEdges = false;
       this.network.disableEditMode();
     } else {
+      this.addingNodes = false;
       this.addingEdges = true;
       this.network.addEdgeMode();
     }
@@ -141,7 +143,7 @@ export class ExampleComponent implements OnInit {
       this.deletingNodesOrEdges = false;
       this.network.disableEditMode();
     } else {
-      this.deletingNodesOrEdges = true;
+      this.deletingNodesOrEdges = false;
       this.network.deleteSelected();
     }
   }
