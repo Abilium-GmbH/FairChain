@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 
 import { ExampleComponent } from './example/example.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -12,10 +13,12 @@ import { ExampleComponent } from './example/example.component';
   imports: [
     BrowserModule,
     MatButtonModule,
-    MatCardModule
-  ],
+    MatCardModule,
+    MatDialogModule
+],
   exports: [
-    ExampleComponent
+    ExampleComponent,
+    MatDialogModule
   ]
 })
 export class ComponentsModule { }

@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { enableDebugTools } from '@angular/platform-browser';
 import { fromEvent, Subscription } from 'rxjs';
 import { callbackify } from 'util';
+import {MatDialog,MatDialogConfig} from '@angular/material/dialog';
 import * as vis from 'vis-network'
 
 @Component({
@@ -71,7 +72,7 @@ export class ExampleComponent implements OnInit {
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
   @ViewChild('nodeOptions', {static: true}) nodeOptionsRef: ElementRef;
 
-  constructor() { }
+  constructor(private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.network = new vis.Network(this.graph, this.data, this.options);
@@ -83,17 +84,19 @@ export class ExampleComponent implements OnInit {
       })
     );
   }
-/*
-  deleteSelectedNodes() {
-    this.network.deleteSelected();
-    this.showNodeOptions = false;
-  }
+
 
   unselectSelectedNodes() {
     this.network.unselectAll();
     this.showNodeOptions = false;
   }
 
+  //Component needs to be exchanged
+  editSelectedNode() {
+    this.dialog.open(ExampleComponent);
+
+  }
+/*
   deleteNodeOrEdge() {
     this.network.deleteSelected();
     this.showNodeOptions = false;
@@ -158,6 +161,14 @@ export class ExampleComponent implements OnInit {
   changeVisibilityOfOptions(){
     this.showOptions=!this.showOptions
   }
+
+  //Neue Component ersetzen
+
+  editNode() {
+    this.dialog.open(ExampleComponent);
+  }
+
+
 
   private get graph(): HTMLElement {
     return this.graphRef.nativeElement;
