@@ -4,6 +4,18 @@
     <button mat-button class="editor-option">Add Edges</button>
     <button mat-button class="editor-option">Remove Nodes</button>
     <button mat-button class="editor-option">Remove Edges</button>
+
+    <!-- TODO: Finish this dirty implementation -->
+    <mat-form-field>
+      <mat-label>Node Label</mat-label>
+      <input matInput type="text" [(ngModel)]="nodeLabel">
+      <button mat-button *ngIf="nodeLabel" matSuffix mat-icon-button aria-label="Clear" (click)="nodeLabel=''">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <button mat-button class="editor-option" (click)="changeName()"
+      [ngStyle]="{'background-color': changeNodeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
 </mat-card>
 
 <mat-card class="canvas">

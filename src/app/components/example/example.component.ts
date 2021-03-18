@@ -30,14 +30,32 @@ export class ExampleComponent implements OnInit {
       physics: false
     },
     manipulation: {
-      addNode: (data, callback) => {
-        callback(data);
-        if (this.addingNodes) {
-          this.network.addNodeMode();
-        }
-      }
+      enabled: false,
+      initiallyActive: false,
+      addNode: (data, callback) => {this.addingNode(data, callback);},
+      editNode: (data, callback) => {this.edditingNode(data, callback);}
     }
   };
+
+  addingNode(data, callback) {
+    this.nodes.push(data)
+    callback(data);
+    if (this.addingNodes) {
+      this.network.addNodeMode();
+    }
+  }
+
+  edditingNode(data, callback) {
+    data.label = this.nodeLabel;
+    callback(data);
+  }
+
+  nodeLabel = "";
+  changeNodeLabel = false;
+  changeName() {
+    this.changeNodeLabel = !this.changeNodeLabel;
+  }
+
   private network: vis.Network;
 
   public showNodeOptions: boolean = false;
@@ -72,6 +90,7 @@ export class ExampleComponent implements OnInit {
 
   private onClick(params) {
     if (params.nodes && params.nodes.length >= 1) {
+      if (this.changeNodeLabel) this.network.editNode();
       const node = this.nodes.find(node => node.id == params.nodes[0]);
       const position = this.network.getPosition(node.id);
 
