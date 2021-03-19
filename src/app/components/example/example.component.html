@@ -7,7 +7,7 @@
     <button mat-button class="editor-option" (click)="deleteNodeOrEdge()"
             [ngStyle]="{'background-color': deletingNodesOrEdges ? '#00ccff' : '#ffffff' }">Delete Selection</button>
     <button mat-button class="editor-option" (click)="changeVisibilityOfOptions()"
-    [ngStyle]="{'background-color': showOptions ? '#00ccff' : '#ffffff' }">Show Options</button>
+            [ngStyle]="{'background-color': showOptions ? '#00ccff' : '#ffffff' }">Show Options</button>
     <button mat-button class="editor-option" (click)="editSelectedNode()">Edit Node</button>
 
     <!-- TODO: Finish this dirty implementation -->
@@ -15,13 +15,11 @@
     <mat-form-field>
       <mat-label>Node Label</mat-label>
       <input matInput type="text" [(ngModel)]="nodeLabel">
-      <button mat-button *ngIf="nodeLabel" matSuffix mat-icon-button aria-label="Clear" (click)="nodeLabel=''">
-        <mat-icon>clear</mat-icon>
-      </button>
+      <button mat-button class="editor-option" *ngIf="nodeLabel" matSuffix mat-button aria-label="clear" (click)="nodeLabel=''">
+        <mat-button>clear</mat-button></button>
     </mat-form-field>
-
-    <button mat-button class="editor-option" (click)="changeName()"
-      [ngStyle]="{'background-color': changeNodeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
+  <button mat-button class="editor-option" *ngIf="nodeLabel" (click)="changeName()"
+          [ngStyle]="{'background-color': changeNodeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
 </mat-card>
 
 <mat-card class="canvas">
@@ -62,6 +60,7 @@
 
 -->
 
+<!--
 <div id="edge-popUp">
     <span id="edge-operation">edge</span>
     <table style="margin: auto">
@@ -80,6 +79,6 @@
     <button mat-button class="option" (click)="moveEdge()">Color</button>
     <button mat-button class="option" (click)="moveEdge()">Direction</button>
   </div>
-
+-->
 
 

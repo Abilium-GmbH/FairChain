@@ -77,7 +77,6 @@ export class ExampleComponent implements OnInit {
     data.label = this.nodeLabel;
     callback(data);
   }
-
   nodeLabel = "";
   changeNodeLabel = false;
   changeName() {
