@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
-import * as vis from 'vis-network'
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import * as vis from 'vis-network';
 
 @Component({
   selector: 'app-example',
@@ -8,8 +9,12 @@ import * as vis from 'vis-network'
   styleUrls: ['./example.component.scss']
 })
 export class ExampleComponent implements OnInit {
+  showOptions = false;
+  addingNodes = false;
+  addingEdges = false;
+  physicsOn = true;
+  deletingNodesOrEdges = false;
 
-  addingNodes: boolean = false;
   // create an array with nodes
   private nodes: vis.Node[] = [];
 
@@ -30,10 +35,33 @@ export class ExampleComponent implements OnInit {
       physics: false
     },
     manipulation: {
+      addNode: (data, callback) => {
+        callback(data);
+        if (this.addingNodes) {
+          this.network.addNodeMode();
+        }
+      },
+      addEdge: (data, callback) => {
+        callback(data);
+        if (this.addingEdges) {
+          this.network.addEdgeMode();
+        }
+      },
+      deleteNodeOrEdge: (data, callback) => {
+        callback(data);
+        if (this.deletingNodesOrEdges) {
+          this.network.deleteSelected();
+        }
+      }
+    },
+    configure: {
+      filter: 'nodes,edges',
+      container: undefined,
+      showButton: true,
       enabled: false,
       initiallyActive: false,
       addNode: (data, callback) => {this.addingNode(data, callback);},
-      editNode: (data, callback) => {this.edditingNode(data, callback);}
+      editNode: (data, callback) => {this.editingNode(data, callback);}
     }
   };
 
@@ -45,11 +73,10 @@ export class ExampleComponent implements OnInit {
     }
   }
 
-  edditingNode(data, callback) {
+  editingNode(data, callback) {
     data.label = this.nodeLabel;
     callback(data);
   }
-
   nodeLabel = "";
   changeNodeLabel = false;
   changeName() {
@@ -58,18 +85,18 @@ export class ExampleComponent implements OnInit {
 
   private network: vis.Network;
 
-  public showNodeOptions: boolean = false;
+  public showNodeOptions = false;
 
   private subscriptions: Subscription = new Subscription();
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
   @ViewChild('nodeOptions', {static: true}) nodeOptionsRef: ElementRef;
 
-  constructor() { }
+  constructor(private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.network = new vis.Network(this.graph, this.data, this.options);
-    
+
 
     this.subscriptions.add(
       fromEvent(this.network, 'click').subscribe(params => {
@@ -78,20 +105,28 @@ export class ExampleComponent implements OnInit {
     );
   }
 
-  deleteSelectedNodes() {
-    this.network.deleteSelected();
-    this.showNodeOptions = false;
-  }
 
   unselectSelectedNodes() {
     this.network.unselectAll();
     this.showNodeOptions = false;
   }
 
+  // Component needs to be exchanged
+  editSelectedNode() {
+    this.dialog.open(ExampleComponent);
+
+  }
+/*
+  deleteNodeOrEdge() {
+    this.network.deleteSelected();
+    this.showNodeOptions = false;
+  }
+*/
+
   private onClick(params) {
     if (params.nodes && params.nodes.length >= 1) {
+      const node = this.nodes.find(node => node.id === params.nodes[0]);
       if (this.changeNodeLabel) this.network.editNode();
-      const node = this.nodes.find(node => node.id == params.nodes[0]);
       const position = this.network.getPosition(node.id);
 
       const x = params.pointer.DOM.x - (params.pointer.canvas.x - position.x);
@@ -110,10 +145,51 @@ export class ExampleComponent implements OnInit {
       this.addingNodes = false;
       this.network.disableEditMode();
     } else {
+      this.addingEdges = false;
       this.addingNodes = true;
       this.network.addNodeMode();
     }
   }
+
+  addEdge() {
+    if (this.addingEdges) {
+      this.addingEdges = false;
+      this.network.disableEditMode();
+    } else {
+      this.addingNodes = false;
+      this.addingEdges = true;
+      this.network.addEdgeMode();
+    }
+  }
+
+  deleteNodeOrEdge() {
+    if (this.deletingNodesOrEdges) {
+      this.deletingNodesOrEdges = false;
+      this.network.disableEditMode();
+    } else {
+      this.deletingNodesOrEdges = false;
+      this.network.deleteSelected();
+    }
+  }
+
+  turnOffOrOn(){
+    this.physicsOn = ! this.physicsOn;
+    this.options.physics.enabled = ! this.options.physics.enabled;
+  }
+  moveEdge() {
+    this.network.editEdgeMode();
+  }
+  changeVisibilityOfOptions(){
+    this.showOptions = ! this.showOptions;
+  }
+
+  // Neue Component ersetzen
+
+  editNode() {
+    this.dialog.open(ExampleComponent);
+  }
+
+
 
   private get graph(): HTMLElement {
     return this.graphRef.nativeElement;

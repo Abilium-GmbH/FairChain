@@ -5,7 +5,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 
 import { ExampleComponent } from './example/example.component';
+import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
+
 
 @NgModule({
   declarations: [
@@ -15,11 +17,13 @@ import { FormsModule } from '@angular/forms';
     BrowserModule,
     MatButtonModule,
     MatCardModule,
+    MatDialogModule,
     MatInputModule,
     FormsModule
   ],
   exports: [
-    ExampleComponent
+    ExampleComponent,
+    MatDialogModule
   ]
 })
 export class ComponentsModule { }
