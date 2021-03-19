@@ -1,13 +1,27 @@
 <mat-card class="editor">
+
     <button mat-button class="editor-option" (click)="addNode()"
-            [ngStyle]="{'background-color': addingNodes ? '#00cuff' : '#ffffff' }">Add Nodes</button>
+            [ngStyle]="{'background-color': addingNodes ? '#00ccff' : '#ffffff' }">Add Nodes</button>
     <button mat-button class="editor-option" (click)="addEdge()"
-            [ngStyle]="{'background-color': addingEdges ? '#00cuff' : '#ffffff' }">Add Edge</button>
+            [ngStyle]="{'background-color': addingEdges ? '#00ccff' : '#ffffff' }">Add Edge</button>
     <button mat-button class="editor-option" (click)="deleteNodeOrEdge()"
-            [ngStyle]="{'background-color': deletingNodesOrEdges ? '#00cuff' : '#ffffff' }">Delete Selection</button>
+            [ngStyle]="{'background-color': deletingNodesOrEdges ? '#00ccff' : '#ffffff' }">Delete Selection</button>
     <button mat-button class="editor-option" (click)="changeVisibilityOfOptions()"
-    [ngStyle]="{'background-color': showOptions ? '#00cuff' : '#ffffff' }">Show Options</button>
+    [ngStyle]="{'background-color': showOptions ? '#00ccff' : '#ffffff' }">Show Options</button>
     <button mat-button class="editor-option" (click)="editSelectedNode()">Edit Node</button>
+
+    <!-- TODO: Finish this dirty implementation -->
+
+    <mat-form-field>
+      <mat-label>Node Label</mat-label>
+      <input matInput type="text" [(ngModel)]="nodeLabel">
+      <button mat-button *ngIf="nodeLabel" matSuffix mat-icon-button aria-label="Clear" (click)="nodeLabel=''">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <button mat-button class="editor-option" (click)="changeName()"
+      [ngStyle]="{'background-color': changeNodeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
 </mat-card>
 
 <mat-card class="canvas">
@@ -16,7 +30,8 @@
 <div id="config"></div>
 <p id="selection"></p>
 
-<!--
+<!-- Responsible for the drop down menu when click on edge/node
+
 <div #nodeOptions class="node-options-container">
   <div *ngIf="showNodeOptions" class="node-options">
     <button mat-button class="option" (click)="editSelectedNode()">Edit</button>
@@ -24,6 +39,8 @@
   </div>
 </div>
 -->
+
+<!-- Node Pop-up, needs work
 
 <div id="node-popUp">
   <span id="node-operation">Node</span>
@@ -42,6 +59,8 @@
   <button mat-button class="option" (click)="editNode()">Height</button>
   <button mat-button class="option" (click)="editNode()">Color</button>
 </div>
+
+-->
 
 <div id="edge-popUp">
     <span id="edge-operation">edge</span>

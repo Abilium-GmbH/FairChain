@@ -55,12 +55,35 @@ export class ExampleComponent implements OnInit {
       }
     },
     configure: {
-      enabled: true,
-    filter: 'nodes,edges',
-    container: undefined,
-    showButton: true
+      filter: 'nodes,edges',
+      container: undefined,
+      showButton: true,
+      enabled: false,
+      initiallyActive: false,
+      addNode: (data, callback) => {this.addingNode(data, callback);},
+      editNode: (data, callback) => {this.editingNode(data, callback);}
     }
   };
+
+  addingNode(data, callback) {
+    this.nodes.push(data)
+    callback(data);
+    if (this.addingNodes) {
+      this.network.addNodeMode();
+    }
+  }
+
+  editingNode(data, callback) {
+    data.label = this.nodeLabel;
+    callback(data);
+  }
+
+  nodeLabel = "";
+  changeNodeLabel = false;
+  changeName() {
+    this.changeNodeLabel = !this.changeNodeLabel;
+  }
+
   private network: vis.Network;
 
   public showNodeOptions = false;
@@ -104,6 +127,7 @@ export class ExampleComponent implements OnInit {
   private onClick(params) {
     if (params.nodes && params.nodes.length >= 1) {
       const node = this.nodes.find(node => node.id === params.nodes[0]);
+      if (this.changeNodeLabel) this.network.editNode();
       const position = this.network.getPosition(node.id);
 
       const x = params.pointer.DOM.x - (params.pointer.canvas.x - position.x);
