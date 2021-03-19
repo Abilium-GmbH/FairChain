@@ -1,9 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { enableDebugTools } from '@angular/platform-browser';
 import { fromEvent, Subscription } from 'rxjs';
-import { callbackify } from 'util';
-import {MatDialog,MatDialogConfig} from '@angular/material/dialog';
-import * as vis from 'vis-network'
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import * as vis from 'vis-network';
 
 @Component({
   selector: 'app-example',
@@ -11,11 +9,11 @@ import * as vis from 'vis-network'
   styleUrls: ['./example.component.scss']
 })
 export class ExampleComponent implements OnInit {
-  showOptions: boolean = false;
-  addingNodes: boolean = false;
-  addingEdges: boolean = false;
-  physicsOn: boolean = true;
-  deletingNodesOrEdges: boolean = false;
+  showOptions = false;
+  addingNodes = false;
+  addingEdges = false;
+  physicsOn = true;
+  deletingNodesOrEdges = false;
 
   // create an array with nodes
   private nodes: vis.Node[] = [];
@@ -56,7 +54,7 @@ export class ExampleComponent implements OnInit {
         }
       }
     },
-    configure:{
+    configure: {
       enabled: true,
     filter: 'nodes,edges',
     container: undefined,
@@ -65,7 +63,7 @@ export class ExampleComponent implements OnInit {
   };
   private network: vis.Network;
 
-  public showNodeOptions: boolean = false;
+  public showNodeOptions = false;
 
   private subscriptions: Subscription = new Subscription();
 
@@ -91,7 +89,7 @@ export class ExampleComponent implements OnInit {
     this.showNodeOptions = false;
   }
 
-  //Component needs to be exchanged
+  // Component needs to be exchanged
   editSelectedNode() {
     this.dialog.open(ExampleComponent);
 
@@ -105,7 +103,7 @@ export class ExampleComponent implements OnInit {
 
   private onClick(params) {
     if (params.nodes && params.nodes.length >= 1) {
-      const node = this.nodes.find(node => node.id == params.nodes[0]);
+      const node = this.nodes.find(node => node.id === params.nodes[0]);
       const position = this.network.getPosition(node.id);
 
       const x = params.pointer.DOM.x - (params.pointer.canvas.x - position.x);
@@ -152,17 +150,17 @@ export class ExampleComponent implements OnInit {
   }
 
   turnOffOrOn(){
-    this.physicsOn=!this.physicsOn;
-    this.options.physics.enabled=!this.options.physics.enabled;
+    this.physicsOn = ! this.physicsOn;
+    this.options.physics.enabled = ! this.options.physics.enabled;
   }
   moveEdge() {
     this.network.editEdgeMode();
   }
   changeVisibilityOfOptions(){
-    this.showOptions=!this.showOptions
+    this.showOptions = ! this.showOptions;
   }
 
-  //Neue Component ersetzen
+  // Neue Component ersetzen
 
   editNode() {
     this.dialog.open(ExampleComponent);

@@ -1,12 +1,12 @@
 <mat-card class="editor">
     <button mat-button class="editor-option" (click)="addNode()"
-            [ngStyle]="{'background-color': addingNodes ? '#00ccff' : '#ffffff' }">Add Nodes</button>
+            [ngStyle]="{'background-color': addingNodes ? '#00cuff' : '#ffffff' }">Add Nodes</button>
     <button mat-button class="editor-option" (click)="addEdge()"
-            [ngStyle]="{'background-color': addingEdges ? '#00ccff' : '#ffffff' }">Add Edge</button>
+            [ngStyle]="{'background-color': addingEdges ? '#00cuff' : '#ffffff' }">Add Edge</button>
     <button mat-button class="editor-option" (click)="deleteNodeOrEdge()"
-            [ngStyle]="{'background-color': deletingNodesOrEdges ? '#00ccff' : '#ffffff' }">Delete Selection</button>
+            [ngStyle]="{'background-color': deletingNodesOrEdges ? '#00cuff' : '#ffffff' }">Delete Selection</button>
     <button mat-button class="editor-option" (click)="changeVisibilityOfOptions()"
-    [ngStyle]="{'background-color': showOptions ? '#00ccff' : '#ffffff' }">Show Options</button>
+    [ngStyle]="{'background-color': showOptions ? '#00cuff' : '#ffffff' }">Show Options</button>
     <button mat-button class="editor-option" (click)="editSelectedNode()">Edit Node</button>
 </mat-card>
 
@@ -31,7 +31,7 @@
     <tbody>
     <tr>
       <td>label</td>
-      <td><input id="node-label" value="new value" /></td>
+      <td><label for="node-label"></label><input id="node-label" value="new value" /></td>
     </tr>
     </tbody>
   </table>
@@ -49,7 +49,7 @@
       <tbody>
         <tr>
           <td>label</td>
-          <td><input id="edge-label" value="new value" /></td>
+          <td><label for="edge-label"></label><input id="edge-label" value="new value" /></td>
         </tr>
       </tbody>
     </table>
