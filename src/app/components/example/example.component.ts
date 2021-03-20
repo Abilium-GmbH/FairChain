@@ -84,9 +84,10 @@ export class ExampleComponent implements OnInit {
       const x = params.pointer.DOM.x - (params.pointer.canvas.x - position.x);
       const y = params.pointer.DOM.y - (params.pointer.canvas.y - position.y);
 
-      this.showNodeOptions = true;
       this.nodeOptions.style.left = x + 'px';
       this.nodeOptions.style.top = y + 'px';
+      this.showNodeOptions = true;
+
     } else {
       this.showNodeOptions = false;
     }
@@ -100,6 +101,7 @@ export class ExampleComponent implements OnInit {
       this.addingEdges = false;
       this.addingNodes = true;
       this.network.addNodeMode();
+      this.showNodeOptions = false;
     }
   }
 
@@ -111,6 +113,7 @@ export class ExampleComponent implements OnInit {
       this.addingNodes = false;
       this.addingEdges = true;
       this.network.addEdgeMode();
+      this.showNodeOptions = false;
     }
   }
 
@@ -121,6 +124,7 @@ export class ExampleComponent implements OnInit {
     } else {
       this.deletingNodesOrEdges = true;
       this.network.deleteSelected();
+      this.showNodeOptions = false;
     }
   }
 
