@@ -44,12 +44,8 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
-.idea/workspace.xml
-*.xml
-.idea/workspace.xml
 node_modules/@angular/animations/animations.d.ts
 *.ts
-.idea/workspace.xml
 node_modules/@angular/animations/animations.d.ts
 node_modules/@angular/animations/browser/browser.d.ts
 node_modules/@angular/animations/browser/package.json
@@ -111,5 +107,4 @@ node_modules/@angular/platform-browser/package.json
 node_modules/@angular/platform-browser/platform-browser.d.ts
 node_modules/@angular/router/package.json
 node_modules/@angular/router/router.d.ts
-.idea/workspace.xml
-.idea/workspace.xml
+/.idea/workspace.xml
