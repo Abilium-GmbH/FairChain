@@ -26,7 +26,8 @@ export class ExampleComponent implements OnInit {
   };
   private options: vis.Options = {
     nodes: {
-      shape: 'box'
+      shape: 'box',
+      physics: false
     },
     edges: {
       smooth: true,
@@ -74,22 +75,6 @@ export class ExampleComponent implements OnInit {
       })
     );
   }
-/*
-  deleteSelectedNodes() {
-    this.network.deleteSelected();
-    this.showNodeOptions = false;
-  }
-
-  unselectSelectedNodes() {
-    this.network.unselectAll();
-    this.showNodeOptions = false;
-  }
-
-  deleteNodeOrEdge() {
-    this.network.deleteSelected();
-    this.showNodeOptions = false;
-  }
-*/
 
   private onClick(params) {
     if (params.nodes && params.nodes.length >= 1) {
@@ -99,9 +84,9 @@ export class ExampleComponent implements OnInit {
       const x = params.pointer.DOM.x - (params.pointer.canvas.x - position.x);
       const y = params.pointer.DOM.y - (params.pointer.canvas.y - position.y);
 
+      this.showNodeOptions = true;
       this.nodeOptions.style.left = x + 'px';
       this.nodeOptions.style.top = y + 'px';
-      this.showNodeOptions = true;
     } else {
       this.showNodeOptions = false;
     }
@@ -112,6 +97,7 @@ export class ExampleComponent implements OnInit {
       this.addingNodes = false;
       this.network.disableEditMode();
     } else {
+      this.addingEdges = false;
       this.addingNodes = true;
       this.network.addNodeMode();
     }
@@ -122,6 +108,7 @@ export class ExampleComponent implements OnInit {
       this.addingEdges = false;
       this.network.disableEditMode();
     } else {
+      this.addingNodes = false;
       this.addingEdges = true;
       this.network.addEdgeMode();
     }
@@ -135,10 +122,6 @@ export class ExampleComponent implements OnInit {
       this.deletingNodesOrEdges = true;
       this.network.deleteSelected();
     }
-  }
-
-  moveEdge() {
-    this.network.editEdgeMode();
   }
 
   private get graph(): HTMLElement {

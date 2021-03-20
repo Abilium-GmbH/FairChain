@@ -3,40 +3,20 @@
             [ngStyle]="{'background-color': addingNodes ? '#00ccff' : '#ffffff' }">Add Nodes</button>
     <button mat-button class="editor-option" (click)="addEdge()"
             [ngStyle]="{'background-color': addingEdges ? '#00ccff' : '#ffffff' }">Add Edge</button>
-    <button mat-button class="editor-option" (click)="deleteNodeOrEdge()"
-            [ngStyle]="{'background-color': deletingNodesOrEdges ? '#00ccff' : '#ffffff' }">Delete Selection</button>
+    <button mat-button class="editor-option" (click)="deleteNodeOrEdge()">Delete Selection</button>
 </mat-card>
 
 <mat-card class="canvas">
     <div #graph class="graph"></div>
 </mat-card>
 
-<!--
+
 <div #nodeOptions class="node-options-container">
     <div *ngIf="showNodeOptions" class="node-options">
-        <button mat-button class="option" (click)="deleteSelectedNodes()">Delete</button>
-        <button mat-button class="option" (click)="unselectSelectedNodes()">Unselect</button>
+        <button mat-button class="option" (click)="deleteNodeOrEdge()">Delete</button>
     </div>
 </div>
--->
 
-<div id="edge-popUp">
-    <span id="edge-operation">edge</span>
-    <table style="margin: auto">
-      <tbody>
-        <tr>
-          <td>label</td>
-          <td><input id="edge-label" value="new value" /></td>
-        </tr>
-      </tbody>
-    </table>
-    <input type="button" value="save" id="edge-saveButton" />
-    <input type="button" value="cancel" id="edge-cancelButton" />
-    <br>
-    <button mat-button class="option" (click)="moveEdge()">Move</button>
-    <button mat-button class="option" (click)="moveEdge()">Width</button>
-    <button mat-button class="option" (click)="moveEdge()">Color</button>
-    <button mat-button class="option" (click)="moveEdge()">Direction</button>
-  </div>
+
 
 
