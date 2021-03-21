@@ -9,23 +9,15 @@ import * as vis from 'vis-network'
 })
 export class ExampleComponent implements OnInit {
 
+  addingNodes: boolean = false;
+  addingEdges: boolean = false;
+  deletingNodesOrEdges: boolean = false;
+
   // create an array with nodes
-  private nodes: vis.Node[] = [
-    { id: 1, label: "Node 1" },
-    { id: 2, label: "Node 2" },
-    { id: 3, label: "Node 3" },
-    { id: 4, label: "Node 4" },
-    { id: 5, label: "Node 5" },
-  ];
+  private nodes: vis.Node[] = [];
 
   // create an array with edges
-  private edges: vis.Edge[] = [
-    { id: 1, from: 1, to: 3 },
-    { id: 2, from: 1, to: 2 },
-    { id: 3, from: 2, to: 4 },
-    { id: 4, from: 2, to: 5 },
-    { id: 5, from: 3, to: 3 },
-  ];
+  private edges: vis.Edge[] = [];
 
   // create a network
   private data: vis.Data = {
@@ -34,11 +26,32 @@ export class ExampleComponent implements OnInit {
   };
   private options: vis.Options = {
     nodes: {
-      shape: 'box'
+      shape: 'box',
+      physics: false
     },
     edges: {
       smooth: true,
       physics: false
+    },
+    manipulation: {
+      addNode: (data, callback) => {
+        callback(data);
+        if (this.addingNodes) {
+          this.network.addNodeMode();
+        }
+      },
+      addEdge: (data, callback) => {
+        callback(data);
+        if (this.addingEdges) {
+          this.network.addEdgeMode();
+        }
+      },
+      deleteNodeOrEdge: (data, callback) => {
+        callback(data);
+        if (this.deletingNodesOrEdges) {
+          this.network.deleteSelected();
+        }
+      }
     }
   };
   private network: vis.Network;
@@ -54,23 +67,13 @@ export class ExampleComponent implements OnInit {
 
   ngOnInit(): void {
     this.network = new vis.Network(this.graph, this.data, this.options);
-    
+
 
     this.subscriptions.add(
       fromEvent(this.network, 'click').subscribe(params => {
         this.onClick(params);
       })
     );
-  }
-
-  deleteSelectedNodes() {
-    this.network.deleteSelected();
-    this.showNodeOptions = false;
-  }
-
-  unselectSelectedNodes() {
-    this.network.unselectAll();
-    this.showNodeOptions = false;
   }
 
   private onClick(params) {
@@ -84,7 +87,43 @@ export class ExampleComponent implements OnInit {
       this.nodeOptions.style.left = x + 'px';
       this.nodeOptions.style.top = y + 'px';
       this.showNodeOptions = true;
+
     } else {
+      this.showNodeOptions = false;
+    }
+  }
+
+  addNode() {
+    if (this.addingNodes) {
+      this.addingNodes = false;
+      this.network.disableEditMode();
+    } else {
+      this.addingEdges = false;
+      this.addingNodes = true;
+      this.network.addNodeMode();
+      this.showNodeOptions = false;
+    }
+  }
+
+  addEdge() {
+    if (this.addingEdges) {
+      this.addingEdges = false;
+      this.network.disableEditMode();
+    } else {
+      this.addingNodes = false;
+      this.addingEdges = true;
+      this.network.addEdgeMode();
+      this.showNodeOptions = false;
+    }
+  }
+
+  deleteNodeOrEdge() {
+    if (this.deletingNodesOrEdges) {
+      this.deletingNodesOrEdges = false;
+      this.network.disableEditMode();
+    } else {
+      this.deletingNodesOrEdges = true;
+      this.network.deleteSelected();
       this.showNodeOptions = false;
     }
   }
