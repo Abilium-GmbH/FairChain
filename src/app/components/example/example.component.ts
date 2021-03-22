@@ -125,8 +125,10 @@ export class ExampleComponent implements OnInit {
   private onClick(params) {
     console.log(params);
     if (params.nodes && params.nodes.length >= 1) {
+      if (this.changeNodeLabel) this.network.editNode();
+      /*
       const node = this.nodes.find(node => node.id === params.nodes[0]);
-      if (this.changeNodeLabel) {console.log("gray"); this.network.editNode()};
+      
       const position = this.network.getPosition(node.id);
 
       const x = params.pointer.DOM.x - (params.pointer.canvas.x - position.x);
@@ -138,7 +140,9 @@ export class ExampleComponent implements OnInit {
     } else {
       this.showNodeOptions = false;
     }
+    */
   }
+}
 
   addNode() {
     if (this.addingNodes) {
@@ -193,9 +197,5 @@ export class ExampleComponent implements OnInit {
 
   private get graph(): HTMLElement {
     return this.graphRef.nativeElement;
-  }
-
-  private get nodeOptions(): HTMLElement {
-    return this.nodeOptionsRef.nativeElement;
   }
 }
