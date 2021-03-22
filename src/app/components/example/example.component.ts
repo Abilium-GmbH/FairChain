@@ -36,32 +36,31 @@ export class ExampleComponent implements OnInit {
     },
     manipulation: {
       addNode: (data, callback) => {
+        this.nodes.push(data);
         callback(data);
         if (this.addingNodes) {
           this.network.addNodeMode();
         }
+      },
+      editNode: (data, callback) => {
+        data.label = this.nodeLabel;
+        callback(data);
+        console.log("yay");
       },
       addEdge: (data, callback) => {
         callback(data);
         if (this.addingEdges) {
           this.network.addEdgeMode();
         }
-      },
+      }
+      /*
       deleteNodeOrEdge: (data, callback) => {
         callback(data);
         if (this.deletingNodesOrEdges) {
           this.network.deleteSelected();
         }
       }
-    },
-    configure: {
-      filter: 'nodes,edges',
-      container: undefined,
-      showButton: true,
-      enabled: false,
-      initiallyActive: false,
-      addNode: (data, callback) => {this.addingNode(data, callback);},
-      editNode: (data, callback) => {this.editingNode(data, callback);}
+      */
     }
   };
 
@@ -124,9 +123,10 @@ export class ExampleComponent implements OnInit {
 */
 
   private onClick(params) {
+    console.log(params);
     if (params.nodes && params.nodes.length >= 1) {
       const node = this.nodes.find(node => node.id === params.nodes[0]);
-      if (this.changeNodeLabel) this.network.editNode();
+      if (this.changeNodeLabel) {console.log("gray"); this.network.editNode()};
       const position = this.network.getPosition(node.id);
 
       const x = params.pointer.DOM.x - (params.pointer.canvas.x - position.x);
