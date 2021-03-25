@@ -4,18 +4,24 @@
     <button mat-button class="editor-option" (click)="addEdge()"
             [ngStyle]="{'background-color': addingEdges ? '#00ccff' : '#ffffff' }">Add Edge</button>
     <button mat-button class="editor-option" (click)="deleteNodeOrEdge()">Delete Selection</button>
+
+
+    <mat-form-field>
+      <mat-label>Node Label</mat-label>
+      <input matInput type="text" [(ngModel)]="nodeLabel">
+      <button mat-button class="editor-option" *ngIf="nodeLabel" matSuffix mat-button aria-label="clear" (click)="nodeLabel=''">
+        <mat-button>clear</mat-button></button>
+    </mat-form-field>
+  <button mat-button class="editor-option" *ngIf="nodeLabel" (click)="changeName()"
+          [ngStyle]="{'background-color': changeNodeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
 </mat-card>
 
 <mat-card class="canvas">
     <div #graph class="graph"></div>
 </mat-card>
+<div id="config"></div>
+<p id="selection"></p>
 
-
-<div #nodeOptions class="node-options-container">
-    <div *ngIf="showNodeOptions" class="node-options">
-        <button mat-button class="option" (click)="deleteNodeOrEdge()">Delete</button>
-    </div>
-</div>
 
 
 

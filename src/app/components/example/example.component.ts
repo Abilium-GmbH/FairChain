@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
-import * as vis from 'vis-network'
+import * as vis from 'vis-network';
 
 @Component({
   selector: 'app-example',
@@ -8,10 +8,16 @@ import * as vis from 'vis-network'
   styleUrls: ['./example.component.scss']
 })
 export class ExampleComponent implements OnInit {
+  public showOptions = false;
+  public addingNodes = false;
+  public addingEdges = false;
+  public deletingNodesOrEdges = false;
+  public nodeLabel = "";
+  public changeNodeLabel = false;
+  public showNodeOptions = false;
 
-  addingNodes: boolean = false;
-  addingEdges: boolean = false;
-  deletingNodesOrEdges: boolean = false;
+  private network: vis.Network;
+  private subscriptions: Subscription = new Subscription();
 
   // create an array with nodes
   private nodes: vis.Node[] = [];
@@ -35,6 +41,7 @@ export class ExampleComponent implements OnInit {
     },
     manipulation: {
       addNode: (data, callback) => {
+        this.nodes.push(data);
         callback(data);
         if (this.addingNodes) {
           this.network.addNodeMode();
@@ -46,19 +53,29 @@ export class ExampleComponent implements OnInit {
           this.network.addEdgeMode();
         }
       },
-      deleteNodeOrEdge: (data, callback) => {
+      editNode: (data, callback) => {
+        data.label = this.nodeLabel;
         callback(data);
-        if (this.deletingNodesOrEdges) {
-          this.network.deleteSelected();
-        }
-      }
+      },
     }
   };
-  private network: vis.Network;
 
-  public showNodeOptions: boolean = false;
+  addingNode(data, callback) {
+    this.nodes.push(data)
+    callback(data);
+    if (this.addingNodes) {
+      this.network.addNodeMode();
+    }
+  }
 
-  private subscriptions: Subscription = new Subscription();
+  editingNode(data, callback) {
+    data.label = this.nodeLabel;
+    callback(data);
+  }
+
+  changeName() {
+    this.changeNodeLabel = !this.changeNodeLabel;
+  }
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
   @ViewChild('nodeOptions', {static: true}) nodeOptionsRef: ElementRef;
@@ -67,7 +84,6 @@ export class ExampleComponent implements OnInit {
 
   ngOnInit(): void {
     this.network = new vis.Network(this.graph, this.data, this.options);
-
 
     this.subscriptions.add(
       fromEvent(this.network, 'click').subscribe(params => {
@@ -78,18 +94,7 @@ export class ExampleComponent implements OnInit {
 
   private onClick(params) {
     if (params.nodes && params.nodes.length >= 1) {
-      const node = this.nodes.find(node => node.id == params.nodes[0]);
-      const position = this.network.getPosition(node.id);
-
-      const x = params.pointer.DOM.x - (params.pointer.canvas.x - position.x);
-      const y = params.pointer.DOM.y - (params.pointer.canvas.y - position.y);
-
-      this.nodeOptions.style.left = x + 'px';
-      this.nodeOptions.style.top = y + 'px';
-      this.showNodeOptions = true;
-
-    } else {
-      this.showNodeOptions = false;
+      if (this.changeNodeLabel) this.network.editNode();
     }
   }
 
@@ -119,20 +124,21 @@ export class ExampleComponent implements OnInit {
 
   deleteNodeOrEdge() {
     if (this.deletingNodesOrEdges) {
-      this.deletingNodesOrEdges = false;
       this.network.disableEditMode();
     } else {
-      this.deletingNodesOrEdges = true;
       this.network.deleteSelected();
       this.showNodeOptions = false;
     }
   }
 
+  changeVisibilityOfOptions(){
+    this.showOptions = ! this.showOptions;
+  }
+
   private get graph(): HTMLElement {
     return this.graphRef.nativeElement;
   }
-
-  private get nodeOptions(): HTMLElement {
-    return this.nodeOptionsRef.nativeElement;
-  }
 }
+
+
+
