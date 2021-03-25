@@ -1,6 +1,6 @@
 
 .editor {
-    height: 5vh;
+    height: 3vh;
 
     .editor-option {
         font-size: 20px;
@@ -60,3 +60,34 @@
   padding: 10px;
   text-align: center;
 }
+
+#mynetwork {
+    float: left;
+    width: 600px;
+    height: 600px;
+    margin: 5px;
+    border: 1px solid lightgray;
+  }
+  #config {
+    float: left;
+    width: 400px;
+    height: 600px;
+  }
+
+/*  Format for pop-up, work in progress
+
+#node-popUp {
+  position: absolute;
+  top: 350px;
+  left: 171px;
+  z-index: 299;
+  background-color: #f9f9f9;
+  border-style: solid;
+  border-width: 3px;
+  border-color: #5394ed;
+  padding: 10px;
+  text-align: center;
+}
+
+ */
+
