@@ -1,4 +1,4 @@
-
+// Initializes the toolbar above format
 .editor {
     height: 3vh;
 
@@ -7,12 +7,12 @@
         padding: 10px;
     }
 }
+
 .canvas {
     height:88vh;
 }
 
-
-
+// Initializes the interaction area properties
 .graph {
     position: absolute;
     left: 0;
@@ -21,33 +21,7 @@
     height: 100%;
 }
 
-.node-options-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-
-    .node-options {
-        padding: 0.4em;
-
-        display: flex;
-        display: -webkit-flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-
-        background-color: #d0d0d0;
-        border-radius: 0.4em;
-
-        .option {
-            width: 100%;
-
-            &:first-child {
-                margin-bottom: 0.4em;
-            }
-        }
-    }
-}
-
+// Specifies the Network area properties
 #mynetwork {
     float: left;
     width: 600px;

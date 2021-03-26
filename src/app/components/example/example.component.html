@@ -1,3 +1,5 @@
+
+<!-- holds the basic functionalities taskbar above -->
 <mat-card class="editor">
     <button mat-button class="editor-option" (click)="addNode()"
             [ngStyle]="{'background-color': addingNodes ? '#00ccff' : '#ffffff' }">Add Nodes</button>
@@ -5,7 +7,7 @@
             [ngStyle]="{'background-color': addingEdges ? '#00ccff' : '#ffffff' }">Add Edge</button>
     <button mat-button class="editor-option" (click)="deleteNodeOrEdge()">Delete Selection</button>
 
-
+<!-- Defines the edit nodeLabel functionality -->
     <mat-form-field>
       <mat-label>Node Label</mat-label>
       <input matInput type="text" [(ngModel)]="nodeLabel">
@@ -16,6 +18,7 @@
           [ngStyle]="{'background-color': changeNodeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
 </mat-card>
 
+<!-- Initializes the network and interaction area -->
 <mat-card class="canvas">
     <div #graph class="graph"></div>
 </mat-card>
