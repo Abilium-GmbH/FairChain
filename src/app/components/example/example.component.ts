@@ -7,8 +7,17 @@ import * as vis from 'vis-network';
   templateUrl: './example.component.html',
   styleUrls: ['./example.component.scss']
 })
+
+/**
+ * This Component has many responsibilities, which makes him a god class, has to be split in multiple objects.
+ * So far, it holds the basic Implementations of the Project, such like addNode, addEdge, deleteSelection and
+ * Edit NodeLabel.
+ *
+  */
+
+
 export class ExampleComponent implements OnInit {
-  public showOptions = false;
+
   public addingNodes = false;
   public addingEdges = false;
   public deletingNodesOrEdges = false;
@@ -30,6 +39,7 @@ export class ExampleComponent implements OnInit {
     nodes: this.nodes,
     edges: this.edges,
   };
+  // Initializes Node and Edge Properties
   private options: vis.Options = {
     nodes: {
       shape: 'box',
@@ -40,19 +50,21 @@ export class ExampleComponent implements OnInit {
       physics: false
     },
     manipulation: {
+      // Responsible for Add edge button logic
       addNode: (data, callback) => {
-        this.nodes.push(data);
         callback(data);
         if (this.addingNodes) {
           this.network.addNodeMode();
         }
       },
+      // Responsible for Add edge button logic
       addEdge: (data, callback) => {
         callback(data);
         if (this.addingEdges) {
           this.network.addEdgeMode();
         }
       },
+      // Responsible for the Edit Node Label
       editNode: (data, callback) => {
         data.label = this.nodeLabel;
         callback(data);
@@ -60,19 +72,22 @@ export class ExampleComponent implements OnInit {
     }
   };
 
+  // Responsible for the add Node functionality, calls addNode method
   addingNode(data, callback) {
-    this.nodes.push(data)
+    this.nodes.push(data); // Pushes Node data in array when added
     callback(data);
     if (this.addingNodes) {
       this.network.addNodeMode();
     }
   }
 
+  // Defines the nodeLabel properties when called
   editingNode(data, callback) {
     data.label = this.nodeLabel;
     callback(data);
   }
 
+  // Boolean switch value if someone wants to change the nodeLabel name for button color
   changeName() {
     this.changeNodeLabel = !this.changeNodeLabel;
   }
@@ -92,12 +107,15 @@ export class ExampleComponent implements OnInit {
     );
   }
 
+  // Defines actions when user clicks on Nodes or Edges
   private onClick(params) {
     if (params.nodes && params.nodes.length >= 1) {
       if (this.changeNodeLabel) this.network.editNode();
     }
   }
 
+  // Responsible to switch the button addNode color and addNode functionality on or off
+  // if the button is pressed
   addNode() {
     if (this.addingNodes) {
       this.addingNodes = false;
@@ -110,6 +128,8 @@ export class ExampleComponent implements OnInit {
     }
   }
 
+  // Responsible to switch the button addEdge color and addEdge functionality on or off
+  // if the button is pressed
   addEdge() {
     if (this.addingEdges) {
       this.addingEdges = false;
@@ -122,6 +142,7 @@ export class ExampleComponent implements OnInit {
     }
   }
 
+  // Responsible to delete the selected element if pressed while the object is highlighted
   deleteNodeOrEdge() {
     if (this.deletingNodesOrEdges) {
       this.network.disableEditMode();
@@ -131,10 +152,7 @@ export class ExampleComponent implements OnInit {
     }
   }
 
-  changeVisibilityOfOptions(){
-    this.showOptions = ! this.showOptions;
-  }
-
+  // initialize network properties
   private get graph(): HTMLElement {
     return this.graphRef.nativeElement;
   }
