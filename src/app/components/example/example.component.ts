@@ -50,7 +50,7 @@ export class ExampleComponent implements OnInit {
       physics: false
     },
     manipulation: {
-      // Responsible for Add edge button logic
+      // Responsible for Add node button logic
       addNode: (data, callback) => {
         callback(data);
         if (this.addingNodes) {
