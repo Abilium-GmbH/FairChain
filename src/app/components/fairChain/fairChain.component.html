@@ -18,9 +18,9 @@
 
   <!-- Detailed options for a tool -->
   <mat-card #toolbar_options class="toolbar-options">
-    <textarea>Sorny</textarea>
+    <textarea [(ngModel)]="nodeLabel"></textarea>
     <br>
-    <button mat-button class="editor-option"
+    <button mat-button (click)="changeNodeName()"
         [ngStyle]="{'background-color': isChangeNodeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
   </mat-card>
 </mat-card>
