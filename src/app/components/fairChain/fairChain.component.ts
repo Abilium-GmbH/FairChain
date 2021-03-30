@@ -135,7 +135,6 @@ export class FairChainComponent implements OnInit {
 
   // Boolean switch value if someone wants to change the nodeLabel name for button color
   public changeNodeName() {
-    console.log(this.nodeLabel);
     this.isChangeNodeLabel = !this.isChangeNodeLabel;
   }
 
