@@ -1,28 +1,29 @@
-
-<!-- holds the basic functionalities taskbar above -->
-<mat-card class="editor">
+<mat-card class="application-head">Undo/Redo/Import/Export go here</mat-card>
+<mat-card class="application-body">
+  <!-- Hold primary tools of the application -->
+  <mat-card #toolbar class="toolbar">
     <button mat-button class="editor-option" (click)="addNodeInNetwork()"
             [ngStyle]="{'background-color': isAddingNodes ? '#00ccff' : '#ffffff' }">Add Nodes</button>
+    <br>
     <button mat-button class="editor-option" (click)="addEdgeInNetwork()"
             [ngStyle]="{'background-color': isAddingEdges ? '#00ccff' : '#ffffff' }">Add Edge</button>
+    <br>
     <button mat-button class="editor-option" (click)="deleteNodeOrEdgeInNetwork()">Delete Selection</button>
+  </mat-card>
 
-<!-- Defines the edit nodeLabel functionality -->
-    <mat-form-field>
-      <mat-label>Node Label</mat-label>
-      <input matInput type="text" [(ngModel)]="nodeLabel">
-      <button mat-button class="editor-option" *ngIf="nodeLabel" matSuffix aria-label="Clear" (click)="nodeLabel=''">
-        <mat-button>Clear</mat-button></button>
-    </mat-form-field>
-  <button mat-button class="editor-option" *ngIf="nodeLabel" (click)="changeNodeName()"
-          [ngStyle]="{'background-color': isChangeNodeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
+  <!-- Container of Network canvas -->
+  <mat-card class="canvas">
+      <div #graph class="graph"></div>
+  </mat-card>
+
+  <!-- Detailed options for a tool -->
+  <mat-card #toolbar_options class="toolbar-options">
+    <textarea>Sorny</textarea>
+    <br>
+    <button mat-button class="editor-option"
+        [ngStyle]="{'background-color': isChangeNodeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
+  </mat-card>
 </mat-card>
-
-<!-- Initializes the network and interaction area -->
-<mat-card class="canvas">
-    <div #graph class="graph"></div>
-</mat-card>
-
 
 
 
