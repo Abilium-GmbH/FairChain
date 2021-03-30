@@ -4,14 +4,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 
-import { FairChainComponent } from './fairChain/fairChain.component';
+import { ExampleComponent } from './example/example.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
   declarations: [
-    FairChainComponent
+    ExampleComponent
   ],
   imports: [
     BrowserModule,
@@ -22,7 +22,7 @@ import { FormsModule } from '@angular/forms';
     FormsModule
   ],
   exports: [
-    FairChainComponent,
+    ExampleComponent,
     MatDialogModule
   ]
 })
