@@ -16,7 +16,7 @@ import * as vis from 'vis-network';
   */
 
 
-export class ExampleComponent implements OnInit {
+export class FairChainComponent implements OnInit {
 
   public isAddingNodes = false;
   public isAddingEdges = false;
