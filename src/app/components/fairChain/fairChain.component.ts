@@ -45,11 +45,11 @@ export class FairChainComponent implements OnInit {
   private options: vis.Options = {
     nodes: {
       shape: 'box',
-      physics: false
+      physics: true
     },
     edges: {
       smooth: true,
-      physics: false
+      physics: true
     },
     manipulation: {
       // defines logic for Add Node functionality
