@@ -3,9 +3,9 @@ import { fromEvent, Subscription } from 'rxjs';
 import * as vis from 'vis-network';
 
 @Component({
-  selector: 'app-example',
-  templateUrl: './example.component.html',
-  styleUrls: ['./example.component.scss']
+  selector: 'app-fairChain',
+  templateUrl: './fairChain.component.html',
+  styleUrls: ['./fairChain.component.scss']
 })
 
 /**
@@ -16,7 +16,7 @@ import * as vis from 'vis-network';
   */
 
 
-export class ExampleComponent implements OnInit {
+export class FairChainComponent implements OnInit {
 
   public isAddingNodes = false;
   public isAddingEdges = false;
@@ -134,7 +134,7 @@ export class ExampleComponent implements OnInit {
   }
 
   // Boolean switch value if someone wants to change the nodeLabel name for button color
-  private changeNodeName() {
+  public changeNodeName() {
     this.isChangeNodeLabel = !this.isChangeNodeLabel;
   }
 
