@@ -30,6 +30,7 @@ export class FairChainComponent implements OnInit {
   private subscriptions: Subscription = new Subscription();
 
   // create an array with nodes
+  // TODO: Position of node are not correct, maybe not important
   private nodes: vis.Node[] = [];
 
   // create an array with edges
@@ -55,6 +56,7 @@ export class FairChainComponent implements OnInit {
       // defines logic for Add Node functionality
       addNode: (data, callback) => {
         callback(data);
+        this.nodes.push(data);
         if (this.isAddingNodes) {
           this.network.addNodeMode();
         }
@@ -62,6 +64,7 @@ export class FairChainComponent implements OnInit {
       // Defines logic for Add Edge functionality
       addEdge: (data, callback) => {
         callback(data);
+        this.edges.push(data);
         if (this.isAddingEdges) {
           this.network.addEdgeMode();
         }
@@ -121,9 +124,31 @@ export class FairChainComponent implements OnInit {
     } else {
       this.isAddingNodes = false;
       this.isAddingEdges = false;
-      this.network.deleteSelected();
+      this.networkDeleteSelected();
       this.isShowNodeOptions = false;
     }
+  }
+
+  //Delete Nodes and Edges in selection
+  private networkDeleteSelected() {
+    let nodesToDelete: vis.IdType[] = this.network.getSelectedNodes();
+    let edgesToDelete: vis.IdType[] = this.network.getSelectedEdges();
+    this.deleteIdFromArray(this.nodes, nodesToDelete);
+    this.deleteIdFromArray(this.edges, edgesToDelete);
+    this.network.deleteSelected();
+  }
+
+  //Delete Elements that have specific id
+  private deleteIdFromArray(arrayToTrim: vis.Node[]|vis.Edge[], ids: vis.IdType[]) {
+    ids.forEach(id => {
+      let index = this.IdToIndex(arrayToTrim, id)
+      arrayToTrim.splice(index, 1);
+    });
+  }
+
+  //TODO: Change datastructure if performance is bad
+  private IdToIndex(array: vis.Node[]|vis.Edge[], id: vis.IdType) {
+    return array.findIndex(element => element.id === id);
   }
 
   // Defines actions when user clicks on Nodes or Edges
@@ -131,6 +156,12 @@ export class FairChainComponent implements OnInit {
     if (params.nodes && params.nodes.length >= 1) {
       if (this.isChangeNodeLabel) this.network.editNode();
     }
+  }
+
+  public debugPrint() {
+    console.clear();
+    console.log(JSON.stringify(this.nodes));
+    console.log(JSON.stringify(this.edges));
   }
 
   // Boolean switch value if someone wants to change the nodeLabel name for button color
