@@ -18,8 +18,10 @@
 
   <!-- Detailed options for a tool -->
   <mat-card #toolbar_options class="toolbar-options">
+    <!-- Text Area for Node Label -->
     <textarea [(ngModel)]="nodeLabel"></textarea>
     <br>
+    <!-- Alternate change Node name mode -->
     <button mat-button (click)="changeNodeName()"
         [ngStyle]="{'background-color': isChangeNodeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
   </mat-card>

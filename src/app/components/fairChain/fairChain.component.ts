@@ -21,7 +21,7 @@ export class FairChainComponent implements OnInit {
   public isAddingNodes = false;
   public isAddingEdges = false;
   public isDeletingNodesOrEdges = false;
-  public nodeLabel = "Sorny";
+  public nodeLabel = "";
   public isChangeNodeLabel = false;
   public isShowNodeOptions = false;
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
