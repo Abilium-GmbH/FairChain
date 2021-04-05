@@ -1,11 +1,13 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
+import { ImportExportService } from '../../importExport.service'
 import * as vis from 'vis-network';
 
 @Component({
   selector: 'app-fairChain',
   templateUrl: './fairChain.component.html',
-  styleUrls: ['./fairChain.component.scss']
+  styleUrls: ['./fairChain.component.scss'],
+  providers: [ ImportExportService ]
 })
 
 /**
@@ -78,7 +80,7 @@ export class FairChainComponent implements OnInit {
 
   };
 
-  constructor() { }
+  constructor(private importExportService:ImportExportService) { }
 
   public ngOnInit(): void {
     this.network = new vis.Network(this.graph, this.data, this.options);
@@ -172,6 +174,38 @@ export class FairChainComponent implements OnInit {
   // initialize network properties
   private get graph(): HTMLElement {
     return this.graphRef.nativeElement;
+  }
+
+  // Start file download.
+  exportGraph(){
+    // Generate download of hello.json file with some content
+    var text = "{\"nodes\":" + JSON.stringify(this.nodes) +",\"edges\":" + JSON.stringify(this.edges)+"}";
+    var filename = "hello.json";
+      
+    this.importExportService.download(filename, text);
+  }
+
+  fileToUpload: File = null;
+
+  importGraph(files: FileList){
+    this.fileToUpload = files.item(0);
+    const reader = new FileReader();
+
+    reader.readAsBinaryString(this.fileToUpload);
+
+    reader.onloadend = function(){
+    console.log(reader.result);
+    }
+
+    var importedJson = "\'" + reader.readAsText(this.fileToUpload) + "\'";
+
+    console.log(importedJson);
+    const parsedImportedJson = JSON.parse(importedJson);
+
+    console.log(parsedImportedJson);
+
+    console.log(parsedImportedJson.nodes);
+    console.log(parsedImportedJson.edges);
   }
 }
 
