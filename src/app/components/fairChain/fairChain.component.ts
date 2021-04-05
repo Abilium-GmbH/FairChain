@@ -1,11 +1,13 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
+import { ImportExportService } from '../../importExport.service'
 import * as vis from 'vis-network';
 
 @Component({
   selector: 'app-fairChain',
   templateUrl: './fairChain.component.html',
-  styleUrls: ['./fairChain.component.scss']
+  styleUrls: ['./fairChain.component.scss'],
+  providers: [ ImportExportService ]
 })
 
 /**
@@ -75,7 +77,7 @@ export class FairChainComponent implements OnInit {
 
   };
 
-  constructor() { }
+  constructor(private importExportService:ImportExportService) { }
 
   public ngOnInit(): void {
     this.network = new vis.Network(this.graph, this.data, this.options);
@@ -142,6 +144,15 @@ export class FairChainComponent implements OnInit {
   private get graph(): HTMLElement {
     return this.graphRef.nativeElement;
   }
+
+  // Start file download.
+  exportGraph(){
+    // Generate download of hello.txt file with some content
+    var text = JSON.stringify(this.nodes) + JSON.stringify(this.edges)
+    var filename = "hello.txt";
+    
+    this.importExportService.download(filename, text);
+}
 }
 
 

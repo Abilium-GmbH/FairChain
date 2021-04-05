@@ -6,6 +6,7 @@
     <button mat-button class="editor-option" (click)="addEdgeInNetwork()"
             [ngStyle]="{'background-color': isAddingEdges ? '#00ccff' : '#ffffff' }">Add Edge</button>
     <button mat-button class="editor-option" (click)="deleteNodeOrEdgeInNetwork()">Delete Selection</button>
+    <button mat-button class="editor-option" (click)="exportGraph()">Export</button>
 
 <!-- Defines the edit nodeLabel functionality -->
     <mat-form-field>

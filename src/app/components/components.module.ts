@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FairChainComponent } from './fairChain/fairChain.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
+import { ImportExportService } from '../importExport.service';
 
 
 @NgModule({
@@ -24,6 +25,9 @@ import { FormsModule } from '@angular/forms';
   exports: [
     FairChainComponent,
     MatDialogModule
+  ],
+  providers: [
+    ImportExportService
   ]
 })
 export class ComponentsModule { }
