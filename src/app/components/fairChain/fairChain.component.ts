@@ -209,7 +209,7 @@ export class FairChainComponent implements OnInit {
     setTimeout(() => {
       this.network.setData(data);
       this.network.redraw();
-    }, 2000);
+    }, 100);
   }
 }
 
