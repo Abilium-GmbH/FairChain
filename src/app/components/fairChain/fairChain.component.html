@@ -1,4 +1,7 @@
-<mat-card class="application-head">Undo/Redo/Import/Export go here</mat-card>
+<mat-card class="application-head">Undo/Redo go here
+  <button mat-button class="editor-option" (click)="exportGraph()">Export</button>
+  <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" >
+</mat-card>
 <mat-card class="application-body">
   <!-- Hold primary tools of the application -->
   <mat-card #toolbar class="toolbar">
@@ -10,8 +13,7 @@
     <br>
     <button mat-button class="editor-option" (click)="deleteNodeOrEdgeInNetwork()">Delete Selection</button>
     <button mat-button class="editor-option" (click)="debugPrint()">Debug</button>
-    <button mat-button class="editor-option" (click)="exportGraph()">Export</button>
-    <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" >
+
     
   </mat-card>
 
