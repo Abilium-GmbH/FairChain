@@ -75,6 +75,8 @@ export class FairChainComponent implements OnInit {
       editNode: (data, callback) => {
         data.label = this.nodeLabel;
         callback(data);
+        this.nodes=this.nodes.filter(node=> node.id!=data.id)
+        this.nodes.push(data)
       },
     },
 
