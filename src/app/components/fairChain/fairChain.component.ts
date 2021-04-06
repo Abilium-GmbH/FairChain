@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { ImportExportService } from '../../importExport.service'
 import * as vis from 'vis-network';
+import { setClassMetadata } from '@angular/core/src/r3_symbols';
 
 @Component({
   selector: 'app-fairChain',
@@ -192,22 +193,23 @@ export class FairChainComponent implements OnInit {
   importGraph(files: FileList){
     this.fileToUpload = files.item(0);
     const reader = new FileReader();
-
+    var importedJson;
+    var importService = this.importExportService;
+    var data;
     reader.readAsBinaryString(this.fileToUpload);
 
-    reader.onloadend = function(){
-    console.log(reader.result);
+
+    reader.onload = function(e) {
+      importedJson = e.target.result;
+      const parsedImportedJson = JSON.parse(importedJson);
+      importService.overwriteData(parsedImportedJson.nodes);
+      data = importService.getData();
     }
 
-    var importedJson = "\'" + reader.readAsText(this.fileToUpload) + "\'";
-
-    console.log(importedJson);
-    const parsedImportedJson = JSON.parse(importedJson);
-
-    console.log(parsedImportedJson);
-
-    console.log(parsedImportedJson.nodes);
-    console.log(parsedImportedJson.edges);
+    setTimeout(() => {
+      this.network.setData(data);
+      this.network.redraw();
+    }, 2000);
   }
 }
 
