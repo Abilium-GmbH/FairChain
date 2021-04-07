@@ -208,19 +208,15 @@ export class FairChainComponent implements OnInit {
     }
 
     setTimeout(() => {
-      console.log(data.nodes)
-      console.log(data.edges)
 
       this.nodes = data.nodes;
       this.edges = data.edges;
 
-      console.log(this.data)
 
       this.data = data;
 
       this.network.destroy();
 
-      console.log(this.data)
       this.network = new Network( document.getElementById('networkContainer'), data, this.options)
 
       

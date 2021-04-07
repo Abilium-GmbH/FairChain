@@ -29,7 +29,6 @@ export class ImportExportService{
     }
 
     public overwriteData(parsedImportedJson){
-      console.log(parsedImportedJson)
       this.data = {
         nodes: getNodeData(parsedImportedJson.nodes),
         edges: getEdgeData(parsedImportedJson.edges)
@@ -52,7 +51,8 @@ export class ImportExportService{
           });
         });
       
-        return new visData.DataSet(networkNodes);
+        console.log(networkNodes)
+        return networkNodes;
       }
 
       function getEdgeData(data) {
@@ -61,8 +61,8 @@ export class ImportExportService{
         data.forEach(function (elem) {
             networkEdges.push({ from: elem.from, to: elem.to, id: elem.id  });
         });
-      
-        return new visData.DataSet(networkEdges);
+        console.log(networkEdges)
+        return networkEdges;
       }
     }
     
