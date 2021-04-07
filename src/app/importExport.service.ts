@@ -33,44 +33,66 @@ export class ImportExportService{
     document.body.removeChild(element);
   }
 
+  /**
+   * Overwrites the data variable with the data from parsedImportedJson
+   * @param parsedImportedJson is the object that you get after deserializing the imported JSON file
+   */
+
   public overwriteData(parsedImportedJson){
     this.data = {
-      nodes: getNodeData(parsedImportedJson.nodes),
-      edges: getEdgeData(parsedImportedJson.edges)
+      nodes: this.extractNodeData(parsedImportedJson.nodes),
+      edges: this.extractEdgeData(parsedImportedJson.edges)
     };
-    function getNodeData(data) {
-      var networkNodes = [];
-      
-      data.forEach(function (elem, index, array) {
-        networkNodes.push({
-          id: elem.id,
-          label: elem.label,
-          x: elem.x,
-          y: elem.y,
-          color: elem.color,
-          fixed: elem.fixed,
-          font: elem.font,
-          icon: elem.icon,
-          imagePadding: elem.imagePadding,
-          shadow: elem.shadow
-        });
-      });
+  }
+  
+  /**
+   * Extracts the data from the parameter into an array of nodes
+   * @param data is the node data that has to be extracted
+   * @returns the array of nodes
+   */
 
-      return networkNodes;
-    }
-
-    function getEdgeData(data) {
-      var networkEdges = [];
+  private extractNodeData(data) {
+    var networkNodes = [];
       
-      data.forEach(function (elem) {
-          networkEdges.push({ from: elem.from, to: elem.to, id: elem.id  });
+    data.forEach(function (elem, index, array) {
+      networkNodes.push({
+        id: elem.id,
+        label: elem.label,
+        x: elem.x,
+        y: elem.y,
+        color: elem.color,
+        fixed: elem.fixed,
+        font: elem.font,
+        icon: elem.icon,
+        imagePadding: elem.imagePadding,
+        shadow: elem.shadow
       });
-      return networkEdges;
-      }
-    }
-    
-    public getData(){
-      return this.data;
-    }
+    });
+    return networkNodes;
+  }
+
+
+  /**
+   * Extracts the data from the parameter into an array of edges
+   * @param data is the edge data that has to be extracted
+   * @returns the array of edges
+   */
+
+  private extractEdgeData(data) {
+    var networkEdges = [];
+      
+    data.forEach(function (elem) {
+      networkEdges.push({ 
+        id: elem.id,      
+        from: elem.from, 
+        to: elem.to, 
+      });
+    });
+    return networkEdges;
+  }
+
+  public getData(){
+    return this.data;
+  }
     
 }
