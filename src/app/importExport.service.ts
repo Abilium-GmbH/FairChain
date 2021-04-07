@@ -28,10 +28,11 @@ export class ImportExportService{
       document.body.removeChild(element);
     }
 
-    public overwriteData(parsedImportedJson:JSON){
+    public overwriteData(parsedImportedJson){
+      console.log(parsedImportedJson)
       this.data = {
-        nodes: getNodeData(parsedImportedJson),
-        edges: getEdgeData(parsedImportedJson)
+        nodes: getNodeData(parsedImportedJson.nodes),
+        edges: getEdgeData(parsedImportedJson.edges)
       };
       function getNodeData(data) {
         var networkNodes = [];
@@ -42,6 +43,12 @@ export class ImportExportService{
             label: elem.label,
             x: elem.x,
             y: elem.y,
+            color: elem.color,
+            fixed: elem.fixed,
+            font: elem.font,
+            icon: elem.icon,
+            imagePadding: elem.imagePadding,
+            shadow: elem.shadow
           });
         });
       

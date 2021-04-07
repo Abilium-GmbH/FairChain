@@ -3,6 +3,7 @@ import { fromEvent, Subscription } from 'rxjs';
 import { ImportExportService } from '../../importExport.service'
 import * as vis from 'vis-network';
 import { setClassMetadata } from '@angular/core/src/r3_symbols';
+import { Network } from 'vis-network';
 
 @Component({
   selector: 'app-fairChain',
@@ -202,14 +203,29 @@ export class FairChainComponent implements OnInit {
     reader.onload = function(e) {
       importedJson = e.target.result;
       const parsedImportedJson = JSON.parse(importedJson);
-      importService.overwriteData(parsedImportedJson.nodes);
+      importService.overwriteData(parsedImportedJson);
       data = importService.getData();
     }
 
     setTimeout(() => {
-      this.network.setData(data);
+      console.log(data.nodes)
+      console.log(data.edges)
+
+      this.nodes = data.nodes;
+      this.edges = data.edges;
+
+      console.log(this.data)
+
+      this.data = data;
+
+      this.network.destroy();
+
+      console.log(this.data)
+      this.network = new Network( document.getElementById('networkContainer'), data, this.options)
+
+      
       this.network.redraw();
-    }, 100);
+    }, 1000);
   }
 }
 
