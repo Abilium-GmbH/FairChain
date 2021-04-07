@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { ImportExportService } from '../../importExport.service'
 import * as vis from 'vis-network';
+import { setClassMetadata } from '@angular/core/src/r3_symbols';
 import { Network } from 'vis-network';
 
 @Component({
@@ -183,28 +184,12 @@ export class FairChainComponent implements OnInit {
   exportGraph(){
     // Generate download of hello.json file with some content
     var text = "{\"nodes\":" + JSON.stringify(this.nodes) +",\"edges\":" + JSON.stringify(this.edges)+"}";
-    var filename = "hello.json";
+    var filename = "Graph.json";
       
     this.importExportService.download(filename, text);
   }
 
   fileToUpload: File = null;
-
-  yeboi(){
-    var element = document.createElement('input');
-    element.setAttribute('type', "file")
-
-    element.setAttribute('class', "file-upload");
-    element.setAttribute('id', "fileToImport");
-    element.setAttribute('(change)',"importGraph($event.target.files)" )
-   
-    element.style.display = 'none';
-    document.body.appendChild(element);
-    
-    element.click();
-    
-    document.body.removeChild(element);
-  }
 
   importGraph(files: FileList){
     this.fileToUpload = files.item(0);
