@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import * as vis from 'vis-network';
-import * as visData from 'vis-data';
-import { network } from 'vis-network';
 
 @Injectable({
     providedIn: 'root'
@@ -14,55 +12,60 @@ export class ImportExportService{
     nodes: this.nodes,
     edges: this.edges,
   };
+  
+  /**
+   * Creates a temporary, non-visable HTML element with a download function, clicks on it and removes it from the document
+   * Gets called when the export button is pressed
+   * @param filename is the name of the file that will be created
+   * @param text is the json that goes into the file
+   */
+
+  public download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:json/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+   
+    element.style.display = 'none';
+    document.body.appendChild(element);
     
-    public download(filename, text) {
-      var element = document.createElement('a');
-      element.setAttribute('href', 'data:json/plain;charset=utf-8,' + encodeURIComponent(text));
-      element.setAttribute('download', filename);
+    element.click();
     
-      element.style.display = 'none';
-      document.body.appendChild(element);
-    
-      element.click();
-    
-      document.body.removeChild(element);
+    document.body.removeChild(element);
+  }
+
+  public overwriteData(parsedImportedJson){
+    this.data = {
+      nodes: getNodeData(parsedImportedJson.nodes),
+      edges: getEdgeData(parsedImportedJson.edges)
+    };
+    function getNodeData(data) {
+      var networkNodes = [];
+      
+      data.forEach(function (elem, index, array) {
+        networkNodes.push({
+          id: elem.id,
+          label: elem.label,
+          x: elem.x,
+          y: elem.y,
+          color: elem.color,
+          fixed: elem.fixed,
+          font: elem.font,
+          icon: elem.icon,
+          imagePadding: elem.imagePadding,
+          shadow: elem.shadow
+        });
+      });
+
+      return networkNodes;
     }
 
-    public overwriteData(parsedImportedJson){
-      this.data = {
-        nodes: getNodeData(parsedImportedJson.nodes),
-        edges: getEdgeData(parsedImportedJson.edges)
-      };
-      function getNodeData(data) {
-        var networkNodes = [];
+    function getEdgeData(data) {
+      var networkEdges = [];
       
-        data.forEach(function (elem, index, array) {
-          networkNodes.push({
-            id: elem.id,
-            label: elem.label,
-            x: elem.x,
-            y: elem.y,
-            color: elem.color,
-            fixed: elem.fixed,
-            font: elem.font,
-            icon: elem.icon,
-            imagePadding: elem.imagePadding,
-            shadow: elem.shadow
-          });
-        });
-      
-        console.log(networkNodes)
-        return networkNodes;
-      }
-
-      function getEdgeData(data) {
-        var networkEdges = [];
-      
-        data.forEach(function (elem) {
-            networkEdges.push({ from: elem.from, to: elem.to, id: elem.id  });
-        });
-        console.log(networkEdges)
-        return networkEdges;
+      data.forEach(function (elem) {
+          networkEdges.push({ from: elem.from, to: elem.to, id: elem.id  });
+      });
+      return networkEdges;
       }
     }
     

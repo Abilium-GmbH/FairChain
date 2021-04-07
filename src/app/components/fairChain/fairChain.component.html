@@ -1,6 +1,7 @@
 <mat-card class="application-head">Undo/Redo go here
   <button mat-button class="editor-option" (click)="exportGraph()">Export</button>
-  <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" >
+  <button mat-button class="editor-option" (click)= "hiddenfileinput.click()"> Import </button>
+  <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" #hiddenfileinput>
 </mat-card>
 <mat-card class="application-body">
   <!-- Hold primary tools of the application -->

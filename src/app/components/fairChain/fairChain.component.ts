@@ -2,7 +2,6 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { ImportExportService } from '../../importExport.service'
 import * as vis from 'vis-network';
-import { setClassMetadata } from '@angular/core/src/r3_symbols';
 import { Network } from 'vis-network';
 
 @Component({
@@ -191,6 +190,22 @@ export class FairChainComponent implements OnInit {
 
   fileToUpload: File = null;
 
+  yeboi(){
+    var element = document.createElement('input');
+    element.setAttribute('type', "file")
+
+    element.setAttribute('class', "file-upload");
+    element.setAttribute('id', "fileToImport");
+    element.setAttribute('(change)',"importGraph($event.target.files)" )
+   
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    
+    element.click();
+    
+    document.body.removeChild(element);
+  }
+
   importGraph(files: FileList){
     this.fileToUpload = files.item(0);
     const reader = new FileReader();
@@ -198,7 +213,6 @@ export class FairChainComponent implements OnInit {
     var importService = this.importExportService;
     var data;
     reader.readAsBinaryString(this.fileToUpload);
-
 
     reader.onload = function(e) {
       importedJson = e.target.result;
@@ -208,20 +222,13 @@ export class FairChainComponent implements OnInit {
     }
 
     setTimeout(() => {
-
       this.nodes = data.nodes;
       this.edges = data.edges;
-
-
       this.data = data;
-
       this.network.destroy();
-
       this.network = new Network( document.getElementById('networkContainer'), data, this.options)
-
-      
       this.network.redraw();
-    }, 1000);
+    }, 100);
   }
 }
 
