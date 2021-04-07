@@ -32,6 +32,7 @@ export class FairChainComponent implements OnInit {
   @ViewChild('nodeOptions', {static: true}) nodeOptionsRef: ElementRef;
   private network: vis.Network;
   private subscriptions: Subscription = new Subscription();
+  private fileToUpload: File = null;
 
   // create an array with nodes
   // TODO: Position of node are not correct, maybe not important
@@ -175,23 +176,26 @@ export class FairChainComponent implements OnInit {
     this.isChangeNodeLabel = !this.isChangeNodeLabel;
   }
 
-  // initialize network properties
+  // Initialize network properties
   private get graph(): HTMLElement {
     return this.graphRef.nativeElement;
   }
 
-  // Start file download.
+  // Puts current nodes and edges variables into json syntax and stores it in a string.
+  // Downloads the file as Graph.json with the method in importExport.service.
   exportGraph(){
-    // Generate download of hello.json file with some content
     var text = "{\"nodes\":" + JSON.stringify(this.nodes) +",\"edges\":" + JSON.stringify(this.edges)+"}";
     var filename = "Graph.json";
-      
     this.importExportService.download(filename, text);
   }
 
-  fileToUpload: File = null;
-
-  importGraph(files: FileList){
+  /**
+  * Reads the text from an imported json file and parses it, so that it can overwrite current variables.
+  * Needs delay because of the asynchronous nature of the onload function.
+  * Creates a new network with the imported data.
+  * @param files is the file selected to import.
+  */
+   importGraph(files: FileList){
     this.fileToUpload = files.item(0);
     const reader = new FileReader();
     var importedJson;
