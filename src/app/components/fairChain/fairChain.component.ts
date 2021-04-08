@@ -22,7 +22,10 @@ export class FairChainComponent implements OnInit {
   public isAddingEdges = false;
   public isDeletingNodesOrEdges = false;
   public nodeLabel = "";
+  public edgeLabel = "";
+
   public isChangeNodeLabel = false;
+  public isChangeEdgeLabel = false;
   public isShowNodeOptions = false;
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
   @ViewChild('nodeOptions', {static: true}) nodeOptionsRef: ElementRef;
@@ -71,6 +74,10 @@ export class FairChainComponent implements OnInit {
         data.label = this.nodeLabel;
         callback(data);
       },
+      editEdge: (data, callback) => {
+        data.label = this.nodeLabel;
+        callback(data);
+      }
     },
 
   };
@@ -129,14 +136,23 @@ export class FairChainComponent implements OnInit {
   // Defines actions when user clicks on Nodes or Edges
   private onClick(params) {
     if (params.nodes && params.nodes.length >= 1) {
-      if (this.isChangeNodeLabel) this.network.editNode();
+      if (this.isChangeNodeLabel) {
+        this.network.editNode();
+      }
+    }
+    if (params.edges && params.edges.length >= 1 && params.nodes.length == 0) {
+      if (this.isChangeEdgeLabel) {
+        this.network.editEdgeMode();
+      }
     }
   }
 
   // Boolean switch value if someone wants to change the nodeLabel name for button color
   public changeNodeName() {
     this.isChangeNodeLabel = !this.isChangeNodeLabel;
+    this.isChangeEdgeLabel = !this.isChangeEdgeLabel;
   }
+
 
   // initialize network properties
   private get graph(): HTMLElement {
