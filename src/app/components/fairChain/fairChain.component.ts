@@ -21,6 +21,7 @@ enum Changing {NodeLabel, NodeColor}
 
 export class FairChainComponent implements OnInit {
 
+  public isChangeNodeColor=false;
   public isAddingNodes = false;
   public isAddingEdges = false;
   public isDeletingNodesOrEdges = false;
@@ -61,30 +62,36 @@ export class FairChainComponent implements OnInit {
         callback(data);
         if (this.isAddingNodes) {
           this.network.addNodeMode();
-          this.nodes.push(data)
         }
+        this.nodes.push(data)
       },
       // Defines logic for Add Edge functionality
       addEdge: (data, callback) => {
         callback(data);
         if (this.isAddingEdges) {
           this.network.addEdgeMode();
+          this.nodes.push(data)
         }
       },
       // Responsible for the Edit Node Label
       editNode: (data, callback) => {
+
         switch(+this.changes){
           case Changing.NodeLabel:{
-            data.label = this.nodeLabel; break
+            data.label = this.nodeLabel;
+            this.nodes=this.nodes.filter(node=> node.id!=data.id);
+            this.nodes.push(data)
+            break
           }
           case Changing.NodeColor:{
             data.color=this.nodeColor; break
           }
         }
-        callback(data);
+        
         this.nodes.forEach(node => {
           if (node.id==data.id) node=data
         })
+        callback(data)
       }
     },
     groups: {
@@ -147,7 +154,8 @@ export class FairChainComponent implements OnInit {
   // Defines actions when user clicks on Nodes or Edges
   private onClick(params) {
     if (params.nodes && params.nodes.length >= 1) {
-      if (this.isChangeNodeLabel) this.network.editNode();
+      if (this.changes==Changing.NodeLabel) this.network.editNode();
+      if (this.changes==Changing.NodeColor) this.network.editNode();
     }
   }
 
@@ -163,24 +171,12 @@ export class FairChainComponent implements OnInit {
   }
 
   public changeColor(){
+    this.isChangeNodeColor=!this.isChangeNodeColor;
 
-    this.network.editNode()
-    var selectedNodesIds= this.network.getSelectedNodes
-    for(var idNode in selectedNodesIds){
-      this.nodes.map(node=>
-        {
-          if(node.id==idNode){
-          node.color=this.nodeColor
-          }
-        }
-        )
-    }
     this.changes=Changing.NodeColor;
     console.clear();
     console.log(JSON.stringify(this.nodes));
     console.log(JSON.stringify(this.edges));
-
-    this.network.disableEditMode();
   }
 }
 
