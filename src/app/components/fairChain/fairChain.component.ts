@@ -3,7 +3,10 @@ import { MatLabel } from '@angular/material/form-field';
 import { fromEvent, Subscription } from 'rxjs';
 import * as vis from 'vis-network';
 
-enum Changing {NodeLabel, NodeColor}
+enum Changing {
+  NodeLabel, NodeColor,
+  None
+}
 
 @Component({
   selector: 'app-fairChain',
@@ -163,6 +166,7 @@ export class FairChainComponent implements OnInit {
   public changeNodeName() {
     this.isChangeNodeLabel = !this.isChangeNodeLabel;
     this.changes=Changing.NodeLabel
+    if(!this.isChangeNodeLabel) this.changes=Changing.None
   }
 
   // initialize network properties
@@ -172,11 +176,8 @@ export class FairChainComponent implements OnInit {
 
   public changeColor(){
     this.isChangeNodeColor=!this.isChangeNodeColor;
-
     this.changes=Changing.NodeColor;
-    console.clear();
-    console.log(JSON.stringify(this.nodes));
-    console.log(JSON.stringify(this.edges));
+    if(!this.isChangeNodeColor) this.changes=Changing.None
   }
 }
 
