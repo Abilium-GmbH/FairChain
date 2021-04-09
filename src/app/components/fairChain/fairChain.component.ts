@@ -1,6 +1,12 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatLabel } from '@angular/material/form-field';
 import { fromEvent, Subscription } from 'rxjs';
 import * as vis from 'vis-network';
+
+enum Changing {
+  NodeLabel, NodeColor,
+  None
+}
 
 @Component({
   selector: 'app-fairChain',
@@ -18,12 +24,13 @@ import * as vis from 'vis-network';
 
 export class FairChainComponent implements OnInit {
 
+  public isChangeNodeColor=false;
   public isAddingNodes = false;
   public isAddingEdges = false;
   public isDeletingNodesOrEdges = false;
   public nodeLabel = "";
   public edgeLabel = "";
-
+  public nodeColor ="#002AFF";
   public isChangeNodeLabel = false;
   public isChangeEdgeLabel = false;
   public isShowNodeOptions = false;
@@ -31,7 +38,7 @@ export class FairChainComponent implements OnInit {
   @ViewChild('nodeOptions', {static: true}) nodeOptionsRef: ElementRef;
   private network: vis.Network;
   private subscriptions: Subscription = new Subscription();
-
+  private changes: Changing;
   // create an array with nodes
   private nodes: vis.Node[] = [];
 
@@ -48,11 +55,11 @@ export class FairChainComponent implements OnInit {
   private options: vis.Options = {
     nodes: {
       shape: 'box',
-      physics: false
+      physics: true
     },
     edges: {
       smooth: true,
-      physics: false
+      physics: true
     },
     manipulation: {
       // defines logic for Add Node functionality
@@ -61,12 +68,14 @@ export class FairChainComponent implements OnInit {
         if (this.isAddingNodes) {
           this.network.addNodeMode();
         }
+        this.nodes.push(data)
       },
       // Defines logic for Add Edge functionality
       addEdge: (data, callback) => {
         callback(data);
         if (this.isAddingEdges) {
           this.network.addEdgeMode();
+          this.nodes.push(data)
         }
       },
       // Responsible for the Edit Node Label
@@ -77,8 +86,28 @@ export class FairChainComponent implements OnInit {
       editEdge: (data, callback) => {
         data.label = this.nodeLabel;
         callback(data);
+
+        switch(+this.changes){
+          case Changing.NodeLabel:{
+            data.label = this.nodeLabel;
+            this.nodes=this.nodes.filter(node=> node.id!=data.id);
+            this.nodes.push(data)
+            break
+          }
+          case Changing.NodeColor:{
+            data.color=this.nodeColor; break
+          }
+        }
+
+        this.nodes.forEach(node => {
+          if (node.id==data.id) node=data
+        })
+        callback(data)
       }
     },
+    groups: {
+      myGroup: {color:{background:'red'}, borderWidth:3}
+    }
 
   };
 
@@ -144,6 +173,8 @@ export class FairChainComponent implements OnInit {
       if (this.isChangeEdgeLabel) {
         this.network.editEdgeMode();
       }
+      if (this.changes==Changing.NodeLabel) this.network.editNode();
+      if (this.changes==Changing.NodeColor) this.network.editNode();
     }
   }
 
@@ -151,12 +182,20 @@ export class FairChainComponent implements OnInit {
   public changeNodeName() {
     this.isChangeNodeLabel = !this.isChangeNodeLabel;
     this.isChangeEdgeLabel = !this.isChangeEdgeLabel;
-  }
+    this.changes=Changing.NodeLabel
+    if(!this.isChangeNodeLabel) this.changes=Changing.None
+  };
 
 
   // initialize network properties
   private get graph(): HTMLElement {
     return this.graphRef.nativeElement;
+  }
+
+  public changeColor(){
+    this.isChangeNodeColor=!this.isChangeNodeColor;
+    this.changes=Changing.NodeColor;
+    if(!this.isChangeNodeColor) this.changes=Changing.None
   }
 }
 
