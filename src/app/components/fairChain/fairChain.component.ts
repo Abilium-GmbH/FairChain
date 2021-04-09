@@ -1,6 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatLabel } from '@angular/material/form-field';
 import { fromEvent, Subscription } from 'rxjs';
 import * as vis from 'vis-network';
+
+enum Changing {NodeLabel, NodeColor}
 
 @Component({
   selector: 'app-fairChain',
@@ -22,13 +25,14 @@ export class FairChainComponent implements OnInit {
   public isAddingEdges = false;
   public isDeletingNodesOrEdges = false;
   public nodeLabel = "";
+  public nodeColor:string="#002AFF";
   public isChangeNodeLabel = false;
   public isShowNodeOptions = false;
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
   @ViewChild('nodeOptions', {static: true}) nodeOptionsRef: ElementRef;
   private network: vis.Network;
   private subscriptions: Subscription = new Subscription();
-
+  private changes: Changing;
   // create an array with nodes
   private nodes: vis.Node[] = [];
 
@@ -57,6 +61,7 @@ export class FairChainComponent implements OnInit {
         callback(data);
         if (this.isAddingNodes) {
           this.network.addNodeMode();
+          this.nodes.push(data)
         }
       },
       // Defines logic for Add Edge functionality
@@ -68,10 +73,23 @@ export class FairChainComponent implements OnInit {
       },
       // Responsible for the Edit Node Label
       editNode: (data, callback) => {
-        data.label = this.nodeLabel;
+        switch(+this.changes){
+          case Changing.NodeLabel:{
+            data.label = this.nodeLabel; break
+          }
+          case Changing.NodeColor:{
+            data.color=this.nodeColor; break
+          }
+        }
         callback(data);
-      },
+        this.nodes.forEach(node => {
+          if (node.id==data.id) node=data
+        })
+      }
     },
+    groups: {
+      myGroup: {color:{background:'red'}, borderWidth:3}
+    }
 
   };
 
@@ -136,11 +154,33 @@ export class FairChainComponent implements OnInit {
   // Boolean switch value if someone wants to change the nodeLabel name for button color
   public changeNodeName() {
     this.isChangeNodeLabel = !this.isChangeNodeLabel;
+    this.changes=Changing.NodeLabel
   }
 
   // initialize network properties
   private get graph(): HTMLElement {
     return this.graphRef.nativeElement;
+  }
+
+  public changeColor(){
+
+    this.network.editNode()
+    var selectedNodesIds= this.network.getSelectedNodes
+    for(var idNode in selectedNodesIds){
+      this.nodes.map(node=>
+        {
+          if(node.id==idNode){
+          node.color=this.nodeColor
+          }
+        }
+        )
+    }
+    this.changes=Changing.NodeColor;
+    console.clear();
+    console.log(JSON.stringify(this.nodes));
+    console.log(JSON.stringify(this.edges));
+
+    this.network.disableEditMode();
   }
 }
 
