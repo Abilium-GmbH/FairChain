@@ -214,9 +214,9 @@ export class FairChainComponent implements OnInit {
       this.nodes = data.nodes;
       this.edges = data.edges;
       this.data = data;
-      this.network.destroy();
-      this.network = new Network( document.getElementById('networkContainer'), data, this.options)
-      this.network.redraw();
+      //this.network.destroy();
+      //this.network = new Network( document.getElementById('networkContainer'), data, this.options)
+      this.network.setData(data);
     }, 100);
   }
 }
