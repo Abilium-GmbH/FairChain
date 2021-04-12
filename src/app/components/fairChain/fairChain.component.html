@@ -6,14 +6,24 @@
 <mat-card class="application-body">
   <!-- Hold primary tools of the application -->
   <mat-card #toolbar class="toolbar">
-    <button mat-button class="editor-option" (click)="addNodeInNetwork()"
-            [ngStyle]="{'background-color': isAddingNodes ? '#00ccff' : '#ffffff' }">Add Nodes</button>
-    <br>
-    <button mat-button class="editor-option" (click)="addEdgeInNetwork()"
-            [ngStyle]="{'background-color': isAddingEdges ? '#00ccff' : '#ffffff' }">Add Edge</button>
-    <br>
-    <button mat-button class="editor-option" (click)="deleteNodeOrEdgeInNetwork()">Delete Selection</button>
+    <div>
+      <a class="icon" (click)="addNodeInNetwork()" [ngStyle]="{'background-color': isAddingNodes ? '#00ccff' : '#ffffff'}"><img class="icon-link" src="assets/icons/addnodeicon.png"></a>
+    </div>
+
+    <hr>
+    <div>
+      <a class="icon" (click)="addEdgeInNetwork()" [ngStyle]="{'background-color': isAddingEdges ? '#00ccff' : '#ffffff'}"><img class="icon-link" src="assets/icons/addedgeicon.png"></a>
+    </div>
+
+    <hr>
+    <div>
+      <a class="icon" (click)="deleteNodeOrEdgeInNetwork()" ><img class="icon-link" src="assets/icons/deleteselectionicon.png"></a>
+    </div>
+
     <button mat-button class="editor-option" (click)="debugPrint()">Debug</button>
+
+
+
 
     
   </mat-card>
