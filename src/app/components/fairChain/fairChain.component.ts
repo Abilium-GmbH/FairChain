@@ -55,50 +55,6 @@ export class FairChainComponent implements OnInit {
   // create an array with edges
   private edges: vis.Edge[] = [];
 
-/*
-  private edgeSamples = new vis.DataSet([
-    {
-    id: 1,
-    label: 'Green',
-    color: {
-      border: 'green',
-      background: 'green'
-    }
-  }, {
-    id: 2,
-    label: 'Red',
-    color: {
-      border: 'red',
-      background: 'red'
-    }
-  }]);
- */
-
-  /*
-  private edgeOptions: {
-    edges: {
-      hoverWidth: function(width) {
-      return width+1;
-      }
-    }
-  };
-
-   */
-
-/*
-  //
-  private edgeEditColor: vis.Color[] = [
-    { border: 'green', background: 'green' },
-    { border: 'light red', background: 'red' },
-    { border: 'black', background: 'black' }
-  ];
-
-
- */
-
-
-
-
   // create a network
   private data: vis.Data = {
     nodes: this.nodes,
@@ -116,7 +72,7 @@ export class FairChainComponent implements OnInit {
         inherit: false
       },
       smooth: true,
-      physics: true,
+      physics: false,
       arrows: {
         to: {
          enabled: false,
@@ -157,9 +113,6 @@ export class FairChainComponent implements OnInit {
         this.nodes.push(nodeData)
       },
       editEdge: (data, callback) => {
-      /*
-        data.color = 'red';
-      */
         data.label = this.nodeLabel;
         callback(data);
       },
@@ -257,13 +210,6 @@ export class FairChainComponent implements OnInit {
 
 
   }
-    /*
-    if (this.onClick.length = 2) {
-      this.network.deleteSelected();
-    }
-
-     */
-
 
   public debugPrint() {
     console.clear();
@@ -281,22 +227,6 @@ export class FairChainComponent implements OnInit {
     this.changes=Changing.NodeLabel
     if(!this.isChangeNodeLabel) this.changes=Changing.None
   };
-
-/*
-  public nodeID = params.nodes['nodes']['0'];
-  if (nodeID) {
-    var clickedNode = this.nodes.find(nodeID);
-    clickedNode.color = {
-      border: '#000000',
-      background: '#000000',
-      highlight: {
-        border: '#2B7CE9',
-        background: '#D2E5FF'
-      }
-    }
-    this.nodes.push(clickedNode);
-  }
-*/
 
   // Initialize network properties
   private get graph(): HTMLElement {
