@@ -114,8 +114,7 @@ export class FairChainComponent implements OnInit {
         to: {
          enabled: false,
         }
-      },
-      dashes: true
+      }
     },
     manipulation: {
       // defines logic for Add Node functionality
