@@ -12,9 +12,9 @@ export class ImportExportService{
     nodes: this.nodes,
     edges: this.edges,
   };
-  
+
   /**
-   * Creates a temporary, non-visable HTML element with a download function, clicks on it and removes it from the document
+   * Creates a temporary, non-visible HTML element with a download function, clicks on it and removes it from the document
    * Gets called when the export button is pressed
    * @param filename is the name of the file that will be created
    * @param text is the json that goes into the file
@@ -24,12 +24,12 @@ export class ImportExportService{
     var element = document.createElement('a');
     element.setAttribute('href', 'data:json/plain;charset=utf-8,' + encodeURIComponent(text));
     element.setAttribute('download', filename);
-   
+
     element.style.display = 'none';
     document.body.appendChild(element);
-    
+
     element.click();
-    
+
     document.body.removeChild(element);
   }
 
@@ -44,7 +44,7 @@ export class ImportExportService{
       edges: this.extractEdgeData(parsedImportedJson.edges)
     };
   }
-  
+
   /**
    * Extracts the data from the parameter into an array of nodes
    * @param data is the node data that has to be extracted
@@ -53,7 +53,7 @@ export class ImportExportService{
 
   private extractNodeData(data) {
     var networkNodes = [];
-      
+
     data.forEach(function (elem, index, array) {
       networkNodes.push({
         id: elem.id,
@@ -80,12 +80,12 @@ export class ImportExportService{
 
   private extractEdgeData(data) {
     var networkEdges = [];
-      
+
     data.forEach(function (elem) {
-      networkEdges.push({ 
-        id: elem.id,      
-        from: elem.from, 
-        to: elem.to, 
+      networkEdges.push({
+        id: elem.id,
+        from: elem.from,
+        to: elem.to,
       });
     });
     return networkEdges;
@@ -94,5 +94,5 @@ export class ImportExportService{
   public getData(){
     return this.data;
   }
-    
+
 }

@@ -127,19 +127,17 @@ export class FairChainComponent implements OnInit {
       // defines logic for Add Node functionality
       addNode: (data, callback) => {
         callback(data);
-        this.nodes.push(data);
         if (this.isAddingNodes) {
           this.network.addNodeMode();
+          this.nodes.push(data);
         }
-        this.nodes.push(data)
       },
       // Defines logic for Add Edge functionality
       addEdge: (data, callback) => {
         callback(data);
-        this.edges.push(data);
         if (this.isAddingEdges) {
           this.network.addEdgeMode();
-          this.nodes.push(data)
+          this.edges.push(data);
         }
       },
       // Responsible for the Edit Node Label
@@ -155,9 +153,8 @@ export class FairChainComponent implements OnInit {
           }
         }
         callback(nodeData);
-        this.nodes.forEach(node => {
-          if (node.id==nodeData.id) node=nodeData
-        })
+        this.nodes=this.nodes.filter(node=> node.id!=nodeData.id)
+        this.nodes.push(nodeData)
       },
       editEdge: (data, callback) => {
       /*
@@ -165,8 +162,6 @@ export class FairChainComponent implements OnInit {
       */
         data.label = this.nodeLabel;
         callback(data);
-        this.nodes=this.nodes.filter(node=> node.id!=data.id)
-        this.nodes.push(data)
       },
     },
     groups: {
