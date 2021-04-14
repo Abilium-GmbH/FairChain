@@ -75,7 +75,7 @@ export class FairChainComponent implements OnInit {
       physics: false,
       arrows: {
         to: {
-         enabled: false,
+         enabled: true,
         }
       }
     },
