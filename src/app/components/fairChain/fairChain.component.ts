@@ -262,6 +262,3 @@ export class FairChainComponent implements OnInit {
     if(!this.isChangeNodeColor) this.changes = Changing.None;
   }
 }
-
-
-

@@ -4,6 +4,7 @@ import * as vis from 'vis-network';
 @Injectable({
     providedIn: 'root'
   })
+  
 export class ImportExportService{
 
   private nodes: vis.Node[] = [];
@@ -65,7 +66,6 @@ export class ImportExportService{
     return networkNodes;
   }
 
-
   /**
    * Extracts the data from the parameter into an array of edges
    * @param data is the edge data that has to be extracted
@@ -88,5 +88,4 @@ export class ImportExportService{
   public getData(){
     return this.data;
   }
-
 }
