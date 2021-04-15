@@ -1,4 +1,4 @@
-<mat-card class="application-head">Undo/Redo go here
+<mat-card class="application-head">
   <button mat-button class="editor-option" (click)="exportGraph()">Export</button>
   <button mat-button class="editor-option" (click)= "hiddenfileinput.click()"> Import </button>
   <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" #hiddenfileinput>
@@ -32,16 +32,21 @@
   <!-- Detailed options for a tool -->
   <mat-card #toolbar_options class="toolbar-options">
     <!-- Text Area for Node Label -->
+    <!-- TODO: fix css, move values to designated file -->
+    <p style="font-size:16px; color: black;">Node Label</p>
     <textarea [(ngModel)]="nodeLabel"></textarea>
     <br>
     <!-- Alternate change Node name mode -->
     <button mat-button (click)="changeNodeName()"
         [ngStyle]="{'background-color': isChangeNodeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
+    <br><br>
     <div>
       <mat-form-field>
-        <mat-label>Node color</mat-label>
+        <!-- TODO: fix css, move values to designated file -->
+        <mat-label style="font-size:25px; color: black;">Node color</mat-label>
         <input matInput type="color" [(ngModel)]="nodeColor">
       </mat-form-field>
+      <br>
       <button mat-button class="editor-option" (click)="changeColor()"
               [ngStyle]="{'background-color': isChangeNodeColor ? '#00ccff' : '#ffffff' }">Change node's color</button>
     </div>
