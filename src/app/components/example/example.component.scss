@@ -1,15 +1,45 @@
-// Initializes the toolbar above format
-.editor {
-    height: 3vh;
+.application-head {
+    height: 5%;
+    width: 100%;
+    margin: 0px;
+    padding:0px;
+}
+
+.application-body {
+    height: 95%;
+    width: 100%;
+    margin: 0px;
+    padding:0px;
+}
+
+.toolbar {
+    height: 100%;
+    width: 5%;
+    margin: 0px;
+    padding:0px;
+    float: left;
 
     .editor-option {
-        font-size: 20px;
-        padding: 10px;
+        font-size: 10px;
+        padding: 5px;
     }
 }
 
 .canvas {
-    height:88vh;
+    background-color: #f0fcfc;
+    height: 100%;
+    width: 83%;
+    float:left;
+    margin: 0px;
+    padding:0px;
+}
+
+.toolbar-options {
+    height: 100%;
+    width: 12%;
+    float: left;
+    margin: 0px;
+    padding: 0px;
 }
 
 // Initializes the interaction area properties
@@ -21,4 +51,21 @@
     height: 100%;
 }
 
+.icon-link{
+    margin-top: 1rem;
+    height: 3rem;
+}
 
+.icon{
+    margin-left: 1.5rem;
+}
+
+.label{
+    font-size:16px; 
+    color: black;
+    padding-left: 7px;
+}
+
+#fileToImport{
+    display: none;
+}

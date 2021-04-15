@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { ExampleComponent } from './example/example.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
-
+import { ImportExportService } from '../importExport.service';
 
 @NgModule({
   declarations: [
@@ -24,6 +24,9 @@ import { FormsModule } from '@angular/forms';
   exports: [
     ExampleComponent,
     MatDialogModule
+  ],
+  providers: [
+    ImportExportService
   ]
 })
 export class ComponentsModule { }
