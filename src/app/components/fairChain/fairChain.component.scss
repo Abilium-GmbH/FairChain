@@ -39,7 +39,7 @@
     width: 12%;
     float: left;
     margin: 0px;
-    padding:0px;
+    padding: 0px;
 }
 // Initializes the interaction area properties
 .graph {
@@ -57,6 +57,12 @@
 
 .icon{
     margin-left: 1.5rem;
+}
+
+.label{
+    font-size:16px; 
+    color: black;
+    padding-left: 7px;
 }
 
 #fileToImport{
