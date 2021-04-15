@@ -1,17 +1,10 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { MatLabel } from '@angular/material/form-field';
 import { fromEvent, Subscription } from 'rxjs';
 import { ImportExportService } from '../../importExport.service'
 import * as vis from 'vis-network';
-import { setClassMetadata } from '@angular/core/src/r3_symbols';
-import { Network } from 'vis-network';
-import {colors} from '@angular/cli/utilities/color';
-import set = Reflect.set;
-import {parseColor} from 'vis-util';
 
 enum Changing {
-  NodeLabel, EdgeLabel, NodeColor,
-  None
+  NodeLabel, EdgeLabel, NodeColor, None
 }
 
 @Component({
@@ -23,39 +16,37 @@ enum Changing {
 
 /**
  * This Component has many responsibilities, which makes him a god class, has to be split in multiple objects.
- * So far, it holds the basic Implementations of the Project, such like addNode, addEdge, deleteSelection and
- * Edit NodeLabel.
- *
-  */
-
-
+ * So far, it holds the basic Implementations of the Project, such like addNode, addEdge, deleteSelection and edit NodeLabel.
+ */
 export class FairChainComponent implements OnInit {
 
   public isChangeNodeColor = false;
   public isAddingNodes = false;
   public isAddingEdges = false;
   public isDeletingNodesOrEdges = false;
-  public nodeLabel = "";
-  public edgeLabel = "";
-  public nodeColor = "#002AFF";
   public isChangeNodeLabel = false;
   public isChangeEdgeLabel = false;
   public isShowNodeOptions = false;
+
+  public nodeLabel = "";
+  public edgeLabel = "";
+  public nodeColor = "#002AFF";
+
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
   @ViewChild('nodeOptions', {static: true}) nodeOptionsRef: ElementRef;
+
   private network: vis.Network;
   private subscriptions: Subscription = new Subscription();
   private fileToUpload: File = null;
   private changes: Changing;
 
-  // create an array with nodes
-  // TODO: Position of node are not correct, maybe not important
+  // Create an array with nodes
   private nodes: vis.Node[] = [];
 
-  // create an array with edges
+  // Create an array with edges
   private edges: vis.Edge[] = [];
 
-  // create a network
+  // Create a network
   private data: vis.Data = {
     nodes: this.nodes,
     edges: this.edges,
@@ -80,7 +71,7 @@ export class FairChainComponent implements OnInit {
       }
     },
     manipulation: {
-      // defines logic for Add Node functionality
+      // Defines logic for Add Node functionality
       addNode: (data, callback) => {
         callback(data);
         if (this.isAddingNodes) {
@@ -90,7 +81,7 @@ export class FairChainComponent implements OnInit {
       },
       // Defines logic for Add Edge functionality
       addEdge: (data, callback) => {
-        //Default color is aqua
+        // Default color is aqua
         data.color = 'rgb(0,255,255)';
         callback(data);
         if (this.isAddingEdges) {
@@ -135,8 +126,7 @@ export class FairChainComponent implements OnInit {
     );
   }
 
-  // Responsible to switch the button addNode color and addNode functionality on or off
-  // if the button is pressed
+  // Responsible to switch the addNode button color and addNode functionality on or off if the button is pressed
   public addNodeInNetwork() {
     if (this.isAddingNodes) {
       this.isAddingNodes = false;
@@ -149,8 +139,7 @@ export class FairChainComponent implements OnInit {
     }
   }
 
-  // Responsible to switch the button addEdge color and addEdge functionality on or off
-  // if the button is pressed
+  // Responsible to switch the addEdge button color and addEdge functionality on or off if the button is pressed
   public addEdgeInNetwork() {
     if (this.isAddingEdges) {
       this.isAddingEdges = false;
@@ -175,7 +164,7 @@ export class FairChainComponent implements OnInit {
     }
   }
 
-  //Delete Nodes and Edges in selection
+  // Delete Nodes and Edges in selection
   private networkDeleteSelected() {
     let nodesToDelete: vis.IdType[] = this.network.getSelectedNodes();
     let edgesToDelete: vis.IdType[] = this.network.getSelectedEdges();
@@ -184,7 +173,7 @@ export class FairChainComponent implements OnInit {
     this.network.deleteSelected();
   }
 
-  //Delete Elements that have specific id
+  // Delete Elements that have specific id
   private deleteIdFromArray(arrayToTrim: vis.Node[]|vis.Edge[], ids: vis.IdType[]) {
     ids.forEach(id => {
       let index = this.IdToIndex(arrayToTrim, id)
@@ -192,7 +181,6 @@ export class FairChainComponent implements OnInit {
     });
   }
 
-  //TODO: Change datastructure if performance is bad
   private IdToIndex(array: vis.Node[]|vis.Edge[], id: vis.IdType) {
     return array.findIndex(element => element.id === id);
   }
@@ -208,15 +196,6 @@ export class FairChainComponent implements OnInit {
         this.network.editEdgeMode();
       }
     }
-
-
-
-  }
-
-  public debugPrint() {
-    console.clear();
-    console.log(JSON.stringify(this.nodes));
-    console.log(JSON.stringify(this.edges));
   }
 
   // Boolean switch value if someone wants to change the nodeLabel name for button color
@@ -235,21 +214,23 @@ export class FairChainComponent implements OnInit {
     return this.graphRef.nativeElement;
   }
 
-  // Puts current nodes and edges variables into json syntax and stores it in a string.
-  // Downloads the file as Graph.json with the method in importExport.service.
-  exportGraph(){
+  /**
+   * Puts current nodes and edges variables into json syntax and stores it in a string.
+   * Downloads the file as Graph.json with the method in importExport.service.
+   */
+  public exportGraph(){
     var text = "{\"nodes\":" + JSON.stringify(this.nodes) +",\"edges\":" + JSON.stringify(this.edges)+"}";
     var filename = "Graph.json";
     this.importExportService.download(filename, text);
   }
 
   /**
-  * Reads the text from an imported json file and parses it, so that it can overwrite current variables.
-  * Needs delay because of the asynchronous nature of the onload function.
-  * Creates a new network with the imported data.
-  * @param files is the file selected to import.
-  */
-   importGraph(files: FileList) {
+   * Reads the text from an imported json file and parses it, so that it can overwrite current variables.
+   * Needs delay because of the asynchronous nature of the onload function.
+   * Creates a new network with the imported data.
+   * @param files is the file selected to import.
+   */
+  public importGraph(files: FileList) {
     this.fileToUpload = files.item(0);
     const reader = new FileReader();
     var importedJson;
@@ -268,11 +249,10 @@ export class FairChainComponent implements OnInit {
       this.nodes = data.nodes;
       this.edges = data.edges;
       this.data = data;
-      //this.network.destroy();
-      //this.network = new Network( document.getElementById('networkContainer'), data, this.options)
       this.network.setData(data);
     }, 100);
   }
+
   public changeColor(){
     if (this.changes == Changing.NodeLabel) {
       this.isChangeNodeLabel = false;

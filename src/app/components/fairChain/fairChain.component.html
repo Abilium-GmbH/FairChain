@@ -5,20 +5,26 @@
 </mat-card>
 
 <mat-card class="application-body">
-  <!-- Hold primary tools of the application -->
+  <!-- Holds primary tools of the application -->
   <mat-card #toolbar class="toolbar">
     <div>
-      <a class="icon" (click)="addNodeInNetwork()" [ngStyle]="{'background-color': isAddingNodes ? '#00ccff' : '#ffffff'}"><img class="icon-link" src="assets/icons/addnodeicon.png"></a>
+      <a class="icon" (click)="addNodeInNetwork()" [ngStyle]="{'background-color': isAddingNodes ? '#00ccff' : '#ffffff'}">
+        <img class="icon-link" src="assets/icons/addnodeicon.png">
+      </a>
     </div>
 
     <hr>
     <div>
-      <a class="icon" (click)="addEdgeInNetwork()" [ngStyle]="{'background-color': isAddingEdges ? '#00ccff' : '#ffffff'}"><img class="icon-link" src="assets/icons/addedgeicon.png"></a>
+      <a class="icon" (click)="addEdgeInNetwork()" [ngStyle]="{'background-color': isAddingEdges ? '#00ccff' : '#ffffff'}">
+        <img class="icon-link" src="assets/icons/addedgeicon.png">
+      </a>
     </div>
 
     <hr>
     <div>
-      <a class="icon" (click)="deleteNodeOrEdgeInNetwork()" ><img class="icon-link" src="assets/icons/deleteselectionicon.png"></a>
+      <a class="icon" (click)="deleteNodeOrEdgeInNetwork()" >
+        <img class="icon-link" src="assets/icons/deleteselectionicon.png">
+      </a>
     </div>
     <hr>
 
@@ -32,7 +38,6 @@
   <!-- Detailed options for a tool -->
   <mat-card #toolbar_options class="toolbar-options">
     <!-- Text Area for Node Label -->
-    <!-- TODO: fix css, move values to designated file -->
     <p class="label">Label</p>
     <textarea [(ngModel)]="nodeLabel"></textarea>
     <br>
@@ -43,7 +48,6 @@
     <div>
       <mat-form-field>
         <p class="label">Node color</p>
-        <!-- TODO: fix css, move values to designated file -->
         <input matInput type="color" [(ngModel)]="nodeColor">
       </mat-form-field>
       <br>

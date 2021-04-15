@@ -19,17 +19,13 @@ export class ImportExportService{
    * @param filename is the name of the file that will be created
    * @param text is the json that goes into the file
    */
-
   public download(filename, text) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:json/plain;charset=utf-8,' + encodeURIComponent(text));
     element.setAttribute('download', filename);
-
     element.style.display = 'none';
     document.body.appendChild(element);
-
     element.click();
-
     document.body.removeChild(element);
   }
 
@@ -37,7 +33,6 @@ export class ImportExportService{
    * Overwrites the data variable with the data from parsedImportedJson
    * @param parsedImportedJson is the object that you get after deserializing the imported JSON file
    */
-
   public overwriteData(parsedImportedJson){
     this.data = {
       nodes: this.extractNodeData(parsedImportedJson.nodes),
@@ -50,7 +45,6 @@ export class ImportExportService{
    * @param data is the node data that has to be extracted
    * @returns the array of nodes
    */
-
   private extractNodeData(data) {
     var networkNodes = [];
 
@@ -77,7 +71,6 @@ export class ImportExportService{
    * @param data is the edge data that has to be extracted
    * @returns the array of edges
    */
-
   private extractEdgeData(data) {
     var networkEdges = [];
 
@@ -86,6 +79,7 @@ export class ImportExportService{
         id: elem.id,
         from: elem.from,
         to: elem.to,
+        color: elem.color
       });
     });
     return networkEdges;
