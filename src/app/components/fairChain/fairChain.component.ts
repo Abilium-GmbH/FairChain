@@ -3,8 +3,12 @@ import { fromEvent, Subscription } from 'rxjs';
 import { ImportExportService } from '../../importExport.service'
 import * as vis from 'vis-network';
 
-enum Changing {
-  NodeLabel, EdgeLabel, NodeColor, None
+enum ChangingNode {
+  NodeLabel,  NodeColor, None
+}
+
+enum ChangingEdge {
+  EdgeLabel, EdgeColor, None
 }
 
 @Component({
@@ -15,12 +19,13 @@ enum Changing {
 })
 
 /**
- * This Component has many responsibilities, which makes him a god class, has to be split in multiple objects.
- * So far, it holds the basic Implementations of the Project, such like addNode, addEdge, deleteSelection and edit NodeLabel.
+ * This Component has many responsibilities. So far, it holds the basic Implementations of theProject,
+ * such like addNode, addEdge, deleteSelection, edit NodeLabel and edge Label
  */
 export class FairChainComponent implements OnInit {
 
   public isChangeNodeColor = false;
+  public isChangeEdgeColor = false;
   public isAddingNodes = false;
   public isAddingEdges = false;
   public isDeletingNodesOrEdges = false;
@@ -28,9 +33,8 @@ export class FairChainComponent implements OnInit {
   public isChangeEdgeLabel = false;
   public isShowNodeOptions = false;
 
-  public nodeLabel = "";
-  public edgeLabel = "";
-  public nodeColor = "#002AFF";
+  public nodeEdgeLabel = "";
+  public nodeEdgeColor = "#002AFF";
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
   @ViewChild('nodeOptions', {static: true}) nodeOptionsRef: ElementRef;
@@ -38,7 +42,9 @@ export class FairChainComponent implements OnInit {
   private network: vis.Network;
   private subscriptions: Subscription = new Subscription();
   private fileToUpload: File = null;
-  private changes: Changing;
+  private changesNode: ChangingNode;
+  private changesEdge: ChangingEdge;
+
 
   // Create an array with nodes
   private nodes: vis.Node[] = [];
@@ -52,7 +58,11 @@ export class FairChainComponent implements OnInit {
     edges: this.edges,
   };
 
-  // Initializes Node and Edge Properties
+  /**
+   * Initializes Node and Edge Properties
+   *
+   * @private
+   */
   private options: vis.Options = {
     nodes: {
       shape: 'box',
@@ -81,8 +91,6 @@ export class FairChainComponent implements OnInit {
       },
       // Defines logic for Add Edge functionality
       addEdge: (data, callback) => {
-        // Default color is aqua
-        data.color = 'rgb(0,255,255)';
         callback(data);
         if (this.isAddingEdges) {
           this.network.addEdgeMode();
@@ -91,23 +99,34 @@ export class FairChainComponent implements OnInit {
       },
       // Responsible for the Edit Node Label
       editNode: (nodeData, callback) => {
-        switch (+this.changes) {
-          case Changing.NodeLabel:{
-            nodeData.label = this.nodeLabel;
+        switch (+this.changesNode) {
+          case ChangingNode.NodeLabel:{
+            nodeData.label = this.nodeEdgeLabel;
             break;
           }
-          case Changing.NodeColor:{
-            nodeData.color=this.nodeColor;
+          case ChangingNode.NodeColor:{
+            nodeData.color = this.nodeEdgeColor;
             break;
           }
         }
         callback(nodeData);
-        this.nodes=this.nodes.filter(node=> node.id!=nodeData.id)
-        this.nodes.push(nodeData)
+        this.nodes=this.nodes.filter(node=> node.id!=nodeData.id);
+        this.nodes.push(nodeData);
       },
-      editEdge: (data, callback) => {
-        data.label = this.nodeLabel;
-        callback(data);
+      editEdge: (edgeData, callback) => {
+        switch (+this.changesEdge) {
+          case ChangingEdge.EdgeLabel:{
+            edgeData.label = this.nodeEdgeLabel;
+            break;
+          }
+          case ChangingEdge.EdgeColor:{
+            edgeData.color = this.nodeEdgeColor;
+            break;
+          }
+        }
+        callback(edgeData);
+        this.edges = this.edges.filter(edge=> edge.id!=edgeData.id);
+        this.edges.push(edgeData);
       },
     },
     groups: {
@@ -126,7 +145,10 @@ export class FairChainComponent implements OnInit {
     );
   }
 
-  // Responsible to switch the addNode button color and addNode functionality on or off if the button is pressed
+  /**
+   * Responsible to switch the addNode button color and addNode functionality
+   * on or off if the button is pressed
+   */
   public addNodeInNetwork() {
     if (this.isAddingNodes) {
       this.isAddingNodes = false;
@@ -139,7 +161,10 @@ export class FairChainComponent implements OnInit {
     }
   }
 
-  // Responsible to switch the addEdge button color and addEdge functionality on or off if the button is pressed
+  /**
+   * Responsible to switch the addEdge button color and addEdge functionality
+   * on or off if the button is pressed
+   */
   public addEdgeInNetwork() {
     if (this.isAddingEdges) {
       this.isAddingEdges = false;
@@ -152,7 +177,9 @@ export class FairChainComponent implements OnInit {
     }
   }
 
-  // Responsible to delete the selected element if pressed while the object is highlighted
+  /**
+   * Responsible to delete the selected element if pressed while the object is highlighted
+   */
   public deleteNodeOrEdgeInNetwork() {
     if (this.isDeletingNodesOrEdges) {
       this.network.disableEditMode();
@@ -164,7 +191,9 @@ export class FairChainComponent implements OnInit {
     }
   }
 
-  // Delete Nodes and Edges in selection
+  /**
+   * Delete Nodes and Edges in selection
+   */
   private networkDeleteSelected() {
     let nodesToDelete: vis.IdType[] = this.network.getSelectedNodes();
     let edgesToDelete: vis.IdType[] = this.network.getSelectedEdges();
@@ -173,7 +202,13 @@ export class FairChainComponent implements OnInit {
     this.network.deleteSelected();
   }
 
-  // Delete Elements that have specific id
+  /**
+   * Deletes the clicked element identified by its Id
+   *
+   * @param arrayToTrim
+   * @param ids Needed to identify what is our selection by its Ids
+   * @private
+   */
   private deleteIdFromArray(arrayToTrim: vis.Node[]|vis.Edge[], ids: vis.IdType[]) {
     ids.forEach(id => {
       let index = this.IdToIndex(arrayToTrim, id)
@@ -185,28 +220,42 @@ export class FairChainComponent implements OnInit {
     return array.findIndex(element => element.id === id);
   }
 
-  // Defines actions when user clicks on Nodes or Edges
+  /**
+   * Defines dynamic actions when clickig on certain objects in the network
+   *
+   * @param params needed to distinguish the different clicked elements from each other (node or edge)
+   * @private
+   */
   private onClick(params) {
+    // Defines node onClick actions
     if (params.nodes && params.nodes.length >= 1) {
-      if (this.changes==Changing.NodeLabel) this.network.editNode();
-      if (this.changes==Changing.NodeColor) this.network.editNode();
+      if (this.changesNode == ChangingNode.NodeLabel) this.network.editNode();
+      if (this.changesNode == ChangingNode.NodeColor) this.network.editNode();
     }
+    // Defines edge onClick actions
     if (params.edges && params.edges.length >= 1 && params.nodes.length == 0) {
-      if (this.isChangeEdgeLabel) {
-        this.network.editEdgeMode();
-      }
+      if (this.changesEdge == ChangingEdge.EdgeLabel) this.network.editEdgeMode();
+      if (this.changesEdge == ChangingEdge.EdgeColor) this.network.editEdgeMode();
     }
   }
 
   // Boolean switch value if someone wants to change the nodeLabel name for button color
   public changeNodeName() {
-    if (this.changes == Changing.NodeColor) {
+    if (this.changesNode == ChangingNode.NodeColor) {
       this.isChangeNodeColor = false;
     }
-    this.isChangeNodeLabel = !this.isChangeNodeLabel;
-    this.isChangeEdgeLabel = !this.isChangeEdgeLabel;
-    this.changes=Changing.NodeLabel
-    if(!this.isChangeNodeLabel) this.changes=Changing.None
+    this.isChangeNodeLabel =! this.isChangeNodeLabel;
+    this.changesNode = ChangingNode.NodeLabel;
+    if(!this.isChangeNodeLabel) this.changesNode = ChangingNode.None;
+  };
+
+  public changeEdgeName() {
+    if (this.changesEdge == ChangingEdge.EdgeColor) {
+      this.isChangeEdgeColor = false;
+    }
+    this.isChangeEdgeLabel =! this.isChangeEdgeLabel;
+    this.changesEdge = ChangingEdge.EdgeLabel;
+    if(!this.isChangeEdgeLabel) this.changesEdge = ChangingEdge.None;
   };
 
   // Initialize network properties
@@ -228,6 +277,7 @@ export class FairChainComponent implements OnInit {
    * Reads the text from an imported json file and parses it, so that it can overwrite current variables.
    * Needs delay because of the asynchronous nature of the onload function.
    * Creates a new network with the imported data.
+   *
    * @param files is the file selected to import.
    */
   public importGraph(files: FileList) {
@@ -253,12 +303,23 @@ export class FairChainComponent implements OnInit {
     }, 100);
   }
 
-  public changeColor(){
-    if (this.changes == Changing.NodeLabel) {
+  /**
+   * Declaration of the change Color method for nodes
+   */
+  public changeNodeColor(){
+    if (this.changesNode == ChangingNode.NodeLabel) {
       this.isChangeNodeLabel = false;
     }
     this.isChangeNodeColor =! this.isChangeNodeColor;
-    this.changes = Changing.NodeColor;
-    if(!this.isChangeNodeColor) this.changes = Changing.None;
+    this.changesNode = ChangingNode.NodeColor;
+    if(!this.isChangeNodeColor) this.changesNode = ChangingNode.None;
+  }
+  public changeEdgeColor(){
+    if (this.changesEdge == ChangingEdge.EdgeLabel) {
+      this.isChangeEdgeLabel = false;
+    }
+    this.isChangeEdgeColor =! this.isChangeEdgeColor;
+    this.changesEdge = ChangingEdge.EdgeColor;
+    if(!this.isChangeEdgeColor) this.changesEdge = ChangingEdge.None;
   }
 }
