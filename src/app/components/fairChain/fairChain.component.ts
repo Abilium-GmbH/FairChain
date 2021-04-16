@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { ImportExportService } from '../../importExport.service'
 import * as vis from 'vis-network';
+import { UndoRedoService } from 'src/app/undoRedo.service';
 
 enum ChangingNode {
   NodeLabel,  NodeColor, None
@@ -15,7 +16,7 @@ enum ChangingEdge {
   selector: 'app-fairChain',
   templateUrl: './fairChain.component.html',
   styleUrls: ['./fairChain.component.scss'],
-  providers: [ ImportExportService ]
+  providers: [ ImportExportService, UndoRedoService ]
 })
 
 /**
@@ -88,6 +89,7 @@ export class FairChainComponent implements OnInit {
           this.network.addNodeMode();
           this.nodes.push(data);
         }
+        this.undoRedoService.addSnapshot(this.nodes, this.edges);
       },
       // Defines logic for Add Edge functionality
       addEdge: (data, callback) => {
@@ -96,6 +98,7 @@ export class FairChainComponent implements OnInit {
           this.network.addEdgeMode();
           this.edges.push(data);
         }
+        this.undoRedoService.addSnapshot(this.nodes, this.edges);
       },
       // Responsible for the Edit Node Label
       editNode: (nodeData, callback) => {
@@ -112,6 +115,7 @@ export class FairChainComponent implements OnInit {
         callback(nodeData);
         this.nodes=this.nodes.filter(node=> node.id!=nodeData.id);
         this.nodes.push(nodeData);
+        this.undoRedoService.addSnapshot(this.nodes, this.edges);
       },
       editEdge: (edgeData, callback) => {
         switch (+this.changesEdge) {
@@ -127,6 +131,7 @@ export class FairChainComponent implements OnInit {
         callback(edgeData);
         this.edges = this.edges.filter(edge=> edge.id!=edgeData.id);
         this.edges.push(edgeData);
+        this.undoRedoService.addSnapshot(this.nodes, this.edges);
       },
     },
     groups: {
@@ -134,7 +139,9 @@ export class FairChainComponent implements OnInit {
     }
   };
 
-  constructor(private importExportService:ImportExportService) { }
+  constructor(private importExportService:ImportExportService, private undoRedoService:UndoRedoService) {
+    this.undoRedoService.addSnapshot(this.nodes, this.edges);
+  }
 
   public ngOnInit(): void {
     this.network = new vis.Network(this.graph, this.data, this.options);
@@ -188,6 +195,7 @@ export class FairChainComponent implements OnInit {
       this.isAddingEdges = false;
       this.networkDeleteSelected();
       this.isShowNodeOptions = false;
+      this.undoRedoService.addSnapshot(this.nodes, this.edges);
     }
   }
 
@@ -291,16 +299,20 @@ export class FairChainComponent implements OnInit {
     reader.onload = function(e) {
       importedJson = e.target.result;
       const parsedImportedJson = JSON.parse(importedJson);
-      importService.overwriteData(parsedImportedJson);
-      data = importService.getData();
+      data = importService.overwriteData(parsedImportedJson);
     }
 
     setTimeout(() => {
-      this.nodes = data.nodes;
-      this.edges = data.edges;
-      this.data = data;
-      this.network.setData(data);
+      this.updateData(data);
+      this.undoRedoService.addSnapshot(this.nodes, this.edges);
     }, 100);
+  }
+
+  public updateData(data){
+    this.nodes = data.nodes;
+    this.edges = data.edges;
+    this.data = data;
+    this.network.setData(data);
   }
 
   /**
@@ -314,6 +326,7 @@ export class FairChainComponent implements OnInit {
     this.changesNode = ChangingNode.NodeColor;
     if(!this.isChangeNodeColor) this.changesNode = ChangingNode.None;
   }
+
   public changeEdgeColor(){
     if (this.changesEdge == ChangingEdge.EdgeLabel) {
       this.isChangeEdgeLabel = false;
@@ -321,5 +334,13 @@ export class FairChainComponent implements OnInit {
     this.isChangeEdgeColor =! this.isChangeEdgeColor;
     this.changesEdge = ChangingEdge.EdgeColor;
     if(!this.isChangeEdgeColor) this.changesEdge = ChangingEdge.None;
+  }
+
+  public undo(){
+    this.updateData(this.undoRedoService.getPredecessorSnapshot())
+  }
+
+  public redo(){
+    this.updateData(this.undoRedoService.getSuccessorSnapshot())
   }
 }

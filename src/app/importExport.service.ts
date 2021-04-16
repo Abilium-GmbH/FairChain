@@ -4,7 +4,6 @@ import * as vis from 'vis-network';
 @Injectable({
     providedIn: 'root'
   })
-
 export class ImportExportService{
 
   private nodes: vis.Node[] = [];
@@ -20,13 +19,17 @@ export class ImportExportService{
    * @param filename is the name of the file that will be created
    * @param text is the json that goes into the file
    */
+
   public download(filename, text) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:json/plain;charset=utf-8,' + encodeURIComponent(text));
     element.setAttribute('download', filename);
+
     element.style.display = 'none';
     document.body.appendChild(element);
+
     element.click();
+
     document.body.removeChild(element);
   }
 
@@ -34,11 +37,13 @@ export class ImportExportService{
    * Overwrites the data variable with the data from parsedImportedJson
    * @param parsedImportedJson is the object that you get after deserializing the imported JSON file
    */
+
   public overwriteData(parsedImportedJson){
     this.data = {
       nodes: this.extractNodeData(parsedImportedJson.nodes),
       edges: this.extractEdgeData(parsedImportedJson.edges)
     };
+    return this.data;
   }
 
   /**
@@ -46,6 +51,7 @@ export class ImportExportService{
    * @param data is the node data that has to be extracted
    * @returns the array of nodes
    */
+
   private extractNodeData(data) {
     var networkNodes = [];
 
@@ -66,11 +72,13 @@ export class ImportExportService{
     return networkNodes;
   }
 
+
   /**
    * Extracts the data from the parameter into an array of edges
    * @param data is the edge data that has to be extracted
    * @returns the array of edges
    */
+
   private extractEdgeData(data) {
     var networkEdges = [];
 
@@ -81,13 +89,8 @@ export class ImportExportService{
         to: elem.to,
         label: elem.label,
         color: elem.color
-
       });
     });
     return networkEdges;
-  }
-
-  public getData(){
-    return this.data;
   }
 }
