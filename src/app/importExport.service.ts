@@ -4,7 +4,7 @@ import * as vis from 'vis-network';
 @Injectable({
     providedIn: 'root'
   })
-  
+
 export class ImportExportService{
 
   private nodes: vis.Node[] = [];
@@ -79,7 +79,9 @@ export class ImportExportService{
         id: elem.id,
         from: elem.from,
         to: elem.to,
-        label: elem.label
+        label: elem.label,
+        color: elem.color
+
       });
     });
     return networkEdges;
