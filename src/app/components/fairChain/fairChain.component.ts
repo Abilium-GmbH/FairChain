@@ -4,7 +4,7 @@ import { ImportExportService } from '../../importExport.service'
 import * as vis from 'vis-network';
 
 enum Changing {
-  NodeLabel, EdgeLabel, NodeColor, None
+  Label, NodeColor, None
 }
 
 @Component({
@@ -24,7 +24,7 @@ export class FairChainComponent implements OnInit {
   public isAddingNodes = false;
   public isAddingEdges = false;
   public isDeletingNodesOrEdges = false;
-  public isChangeNodeLabel = false;
+  public isChangeLabel = false;
   public isChangeEdgeLabel = false;
   public isShowNodeOptions = false;
 
@@ -90,7 +90,7 @@ export class FairChainComponent implements OnInit {
       // Responsible for the Edit Node Label
       editNode: (nodeData, callback) => {
         switch (+this.changes) {
-          case Changing.NodeLabel:{
+          case Changing.Label:{
             nodeData.label = this.nodeLabel;
             break;
           }
@@ -188,11 +188,11 @@ export class FairChainComponent implements OnInit {
   // Defines actions when user clicks on Nodes or Edges
   private onClick(params) {
     if (params.nodes && params.nodes.length >= 1) {
-      if (this.changes==Changing.NodeLabel) this.network.editNode();
+      if (this.changes==Changing.Label) this.network.editNode();
       if (this.changes==Changing.NodeColor) this.network.editNode();
     }
     if (params.edges && params.edges.length >= 1 && params.nodes.length == 0) {
-      if (this.isChangeEdgeLabel) {
+      if (this.changes==Changing.Label) {
         this.network.editEdgeMode();
       }
     }
@@ -203,10 +203,9 @@ export class FairChainComponent implements OnInit {
     if (this.changes == Changing.NodeColor) {
       this.isChangeNodeColor = false;
     }
-    this.isChangeNodeLabel = !this.isChangeNodeLabel;
-    this.isChangeEdgeLabel = !this.isChangeEdgeLabel;
-    this.changes=Changing.NodeLabel
-    if(!this.isChangeNodeLabel) this.changes=Changing.None
+    this.isChangeLabel = !this.isChangeLabel;
+    this.changes=Changing.Label;
+    if(!this.isChangeLabel) this.changes=Changing.None;
   };
 
   // Initialize network properties
@@ -254,8 +253,8 @@ export class FairChainComponent implements OnInit {
   }
 
   public changeColor(){
-    if (this.changes == Changing.NodeLabel) {
-      this.isChangeNodeLabel = false;
+    if (this.changes == Changing.Label) {
+      this.isChangeLabel = false;
     }
     this.isChangeNodeColor =! this.isChangeNodeColor;
     this.changes = Changing.NodeColor;
