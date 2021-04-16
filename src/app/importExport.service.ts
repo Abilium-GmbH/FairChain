@@ -79,7 +79,7 @@ export class ImportExportService{
         id: elem.id,
         from: elem.from,
         to: elem.to,
-        color: elem.color
+        label: elem.label
       });
     });
     return networkEdges;

@@ -81,8 +81,6 @@ export class FairChainComponent implements OnInit {
       },
       // Defines logic for Add Edge functionality
       addEdge: (data, callback) => {
-        // Default color is aqua
-        data.color = 'rgb(0,255,255)';
         callback(data);
         if (this.isAddingEdges) {
           this.network.addEdgeMode();
@@ -102,12 +100,14 @@ export class FairChainComponent implements OnInit {
           }
         }
         callback(nodeData);
-        this.nodes=this.nodes.filter(node=> node.id!=nodeData.id)
-        this.nodes.push(nodeData)
+        this.nodes=this.nodes.filter(node=> node.id!=nodeData.id);
+        this.nodes.push(nodeData);
       },
       editEdge: (data, callback) => {
         data.label = this.nodeLabel;
         callback(data);
+        this.edges=this.edges.filter(edge=> edge.id!=data.id);
+        this.edges.push(data);
       },
     },
     groups: {
