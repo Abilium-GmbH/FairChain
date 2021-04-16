@@ -39,20 +39,20 @@
   <mat-card #toolbar_options class="toolbar-options">
     <!-- Text Area for Node Label -->
     <p class="label">Label</p>
-    <textarea [(ngModel)]="nodeLabel"></textarea>
+    <textarea [(ngModel)]="nodeEdgeLabel"></textarea>
     <br>
     <!-- Alternate change Node name mode -->
-    <button mat-button (click)="changeNodeName()"
-        [ngStyle]="{'background-color': isChangeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
+    <button mat-button (click)="changeNodeName(); changeEdgeName()"
+        [ngStyle]="{'background-color': isChangeNodeLabel || isChangeEdgeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
     <hr>
     <div>
       <mat-form-field>
-        <p class="label">Node color</p>
-        <input matInput type="color" [(ngModel)]="nodeColor">
+        <p class="label">color</p>
+        <input matInput type="color" [(ngModel)]="nodeEdgeColor">
       </mat-form-field>
       <br>
-      <button mat-button class="editor-option" (click)="changeColor()"
-              [ngStyle]="{'background-color': isChangeNodeColor ? '#00ccff' : '#ffffff' }">Change node's color</button>
+      <button mat-button class="editor-option" (click)="changeNodeColor(); changeEdgeColor()"
+              [ngStyle]="{'background-color': isChangeNodeColor || isChangeEdgeColor ? '#00ccff' : '#ffffff' }">Change color</button>
     </div>
   </mat-card>
 </mat-card>
