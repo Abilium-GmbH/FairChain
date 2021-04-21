@@ -1,8 +1,10 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
+import { map, buffer, debounceTime, filter, bufferCount } from 'rxjs/operators';
 import { ImportExportService } from '../../importExport.service'
 import { UndoRedoService } from 'src/app/undoRedo.service';
 import { strict as assert } from 'assert';
+import { animation } from '@angular/animations';
 
 import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data"
@@ -76,8 +78,11 @@ export class FairChainComponent implements OnInit {
 
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
+  public nodeToRelableId = '';
+  public isShowingRelabelPopUp = false;
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
+  @ViewChild('nodeRelabelPopUp', {static: true}) nodeRelabelPopUpRef: ElementRef;
 
   private network: Network;
   private subscriptions: Subscription;
@@ -152,6 +157,7 @@ export class FairChainComponent implements OnInit {
       editNode: (nodeData: Node, callback) => {
         assert(this.isInNodeEditMode(), 'The edge should not be edited when no option is selected');
         this.editNodeBasedOnCurrentNodeOption(nodeData);
+        nodeData.label = this.nodeEdgeLabel;
         callback(nodeData);
         this.makeSnapshot();
       },
@@ -177,6 +183,11 @@ export class FairChainComponent implements OnInit {
     if (this.isChangingColor()) edgeData.color = this.nodeEdgeColor;
   }
 
+  private applyLabelInRelabelPopUpToSelectedNode() {
+    this.network.unselectAll();
+    this.network.selectNodes([this.nodeToRelableId]);
+    this.network.editNode();
+  }
   /**
    * Responsible to switch the addNode button color and addNode functionality
    * on or off if the button is pressed
@@ -256,6 +267,15 @@ export class FairChainComponent implements OnInit {
       this.makeSnapshot();
     }
   }
+  private onDoubleClick(params) {
+    if (params.nodes.length === 1) 
+    {
+      this.network.unselectAll();
+      this.nodeToRelableId = params.nodes[0];
+      this.network.selectNodes([this.nodeToRelableId]);
+      this.showRelabelPopUp(params.pointer);
+    }
+  }
 
   // Boolean switch value if someone wants to change the nodeLabel name for button color
   public changeNodeName() {
@@ -273,6 +293,11 @@ export class FairChainComponent implements OnInit {
   // Initialize network properties
   private get graph(): HTMLElement {
     return this.graphRef.nativeElement;
+  }
+
+  // Initialize popup properties
+  private get nodeRelabelPopUp(): HTMLElement {
+    return this.nodeRelabelPopUpRef.nativeElement;
   }
 
   /**
@@ -336,5 +361,34 @@ export class FairChainComponent implements OnInit {
 
   public redo(){
     this.updateData(this.undoRedoService.getSuccessorSnapshot())
+  }
+
+  private showRelabelPopUp(pointer) {
+    const boundingBox = this.network.getBoundingBox(this.nodeToRelableId);
+    const upperLeftCorner = this.network.canvasToDOM({x: boundingBox.left, y: boundingBox.top});
+    const bottomRightCorner = this.network.canvasToDOM({x: boundingBox.right, y: boundingBox.bottom});
+    const currentLabel = this.nodes.get(this.nodeToRelableId).label;
+    this.nodeEdgeLabel = currentLabel;
+
+    const offSet_x = this.graph.getBoundingClientRect().left;
+    const offSet_y = this.graph.getBoundingClientRect().top;
+    
+    const x = upperLeftCorner.x + offSet_x;
+    const y = upperLeftCorner.y + offSet_y;
+
+    this.nodeRelabelPopUp.style.left = x + 'px';
+    this.nodeRelabelPopUp.style.top  = y + 'px';
+
+    this.nodeRelabelPopUp.style.width  = (bottomRightCorner.x - upperLeftCorner.x) + 'px';
+    this.nodeRelabelPopUp.style.height  = (bottomRightCorner.y - upperLeftCorner.y) + 'px';
+    
+    this.isShowingRelabelPopUp  = true;
+  }
+
+  public changingNodeLabel(event) {
+    assert(this.isShowingRelabelPopUp);
+    assert(this.nodeToRelableId);
+    assert(this.nodes.get(this.nodeToRelableId))
+    this.nodeEdgeLabel = event.target.textContent;
   }
 }
