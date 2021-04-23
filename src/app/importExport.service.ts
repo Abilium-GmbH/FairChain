@@ -1,3 +1,4 @@
+import { identifierModuleUrl } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import * as vis from 'vis-network';
 
@@ -39,11 +40,17 @@ export class ImportExportService{
    */
 
   public overwriteData(parsedImportedJson){
-    this.data = {
-      nodes: this.extractNodeData(parsedImportedJson.nodes),
-      edges: this.extractEdgeData(parsedImportedJson.edges)
-    };
-    return this.data;
+    try{
+      this.data = {
+        nodes: this.extractNodeData(parsedImportedJson.nodes),
+        edges: this.extractEdgeData(parsedImportedJson.edges)
+      };
+      console.log(this.data);
+      return this.data;
+    }
+    catch{
+      return [];
+    }
   }
 
   /**
@@ -54,25 +61,15 @@ export class ImportExportService{
 
   private extractNodeData(data) {
     var networkNodes = [];
-
-    data.forEach(function (elem, index, array) {
-      networkNodes.push({
-        id: elem.id,
-        label: elem.label,
-        x: elem.x,
-        y: elem.y,
-        color: elem.color,
-        fixed: elem.fixed,
-        font: elem.font,
-        icon: elem.icon,
-        imagePadding: elem.imagePadding,
-        shadow: elem.shadow
-      });
+    data.forEach(function (elem) {
+      if (elem.x && elem.y && elem.id != undefined){
+        networkNodes.push(elem);
+      }
+      
     });
     return networkNodes;
   }
-
-
+  
   /**
    * Extracts the data from the parameter into an array of edges
    * @param data is the edge data that has to be extracted
@@ -81,15 +78,10 @@ export class ImportExportService{
 
   private extractEdgeData(data) {
     var networkEdges = [];
-
     data.forEach(function (elem) {
-      networkEdges.push({
-        id: elem.id,
-        from: elem.from,
-        to: elem.to,
-        label: elem.label,
-        color: elem.color
-      });
+      if (elem.from && elem.to && elem.id != undefined){
+        networkEdges.push(elem);
+      }
     });
     return networkEdges;
   }
