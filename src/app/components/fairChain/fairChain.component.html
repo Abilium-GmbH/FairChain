@@ -65,11 +65,6 @@
   </mat-card>
 </mat-card>
 
-<div #nodeRelabelPopUp class='dynamicPopUp-container' [class.inactive]="!isShowingRelabelPopUp">
-  <div *ngIf='isShowingRelabelPopUp' class='dynamicPopUp'>
-    <!-- TODO: Caret needs to be placed at end of relabel -->
-    <p #nodeRelabelTextarea class='option' contenteditable="true" (input)='changingNodeLabel($event)'>
-      {{this.nodeLabel}}
-    </p>
-  </div>
-</div>
+<relabel-pop-up *ngIf="isShowingRelabelPopUp" 
+  [info]='relabelPopUpInfo'
+  [(label)]="nodeLabel"></relabel-pop-up>

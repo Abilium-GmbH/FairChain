@@ -5,6 +5,7 @@ import { ImportExportService } from '../../importExport.service'
 import { UndoRedoService } from 'src/app/undoRedo.service';
 import { strict as assert } from 'assert';
 import { animation } from '@angular/animations';
+import { relabelPopUpInfo } from '../interfaces';
 
 import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data"
@@ -40,6 +41,11 @@ export class FairChainComponent implements OnInit {
     this.network = new Network(this.graph, this.data, this.options);
     this.makeSubscriptions();
   }
+  public relabelPopUpInfo: relabelPopUpInfo;
+  public popUpx = 100;
+  public popUpy = 200;
+  public popUpWidth = 100;
+  public popUpHeight = 100;
 
   constructor(private importExportService:ImportExportService, private undoRedoService:UndoRedoService) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges);
@@ -81,8 +87,11 @@ export class FairChainComponent implements OnInit {
   public nodeToRelableId = '';
   public isShowingRelabelPopUp = false;
 
+  
+
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
-  @ViewChild('nodeRelabelPopUp', {static: true}) nodeRelabelPopUpRef: ElementRef;
+  //@ViewChild('nodeRelabelPopUp', {static: true}) nodeRelabelPopUpRef: ElementRef;
+  //@ViewChild('nodeRelabelPopUpContainer', {static: true}) nodeRelabelPopUpContainerRef: ElementRef;
 
   private network: Network;
   private subscriptions: Subscription;
@@ -295,10 +304,17 @@ export class FairChainComponent implements OnInit {
     return this.graphRef.nativeElement;
   }
 
+  /*
   // Initialize popup properties
   private get nodeRelabelPopUp(): HTMLElement {
     return this.nodeRelabelPopUpRef.nativeElement;
   }
+
+  // Initialize popup properties
+  private get nodeRelabelPopUpContainer(): HTMLElement {
+    return this.nodeRelabelPopUpContainerRef.nativeElement;
+  }
+  */
 
   /**
    * Puts current nodes and edges variables into json syntax and stores it in a string.
@@ -376,12 +392,13 @@ export class FairChainComponent implements OnInit {
     const x = upperLeftCorner.x + offSet_x;
     const y = upperLeftCorner.y + offSet_y;
 
-    this.nodeRelabelPopUp.style.left = x + 'px';
-    this.nodeRelabelPopUp.style.top  = y + 'px';
+    this.relabelPopUpInfo = {
+      x: x,
+      y: y,
+      width: bottomRightCorner.x - upperLeftCorner.x,
+      height: bottomRightCorner.y - upperLeftCorner.y
+    }
 
-    this.nodeRelabelPopUp.style.width  = (bottomRightCorner.x - upperLeftCorner.x) + 'px';
-    this.nodeRelabelPopUp.style.height  = (bottomRightCorner.y - upperLeftCorner.y) + 'px';
-    
     this.isShowingRelabelPopUp  = true;
   }
 
