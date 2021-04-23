@@ -93,4 +93,12 @@ export class ImportExportService{
     });
     return networkEdges;
   }
+
+  public getNodes(){
+    return this.nodes;
+  }
+
+  public getEdges(){
+    return this.edges;
+  }
 }
