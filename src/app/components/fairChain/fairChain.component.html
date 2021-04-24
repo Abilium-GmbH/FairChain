@@ -11,7 +11,7 @@
     <div>
       <a (click)="addNodeInNetwork()" [class.active]="isAddingNode()" class="tool">
         <img class="icon-link" src="assets/icons/addnodeicon.png">
-      </a> 
+      </a>
     </div>
 
     <hr>
@@ -40,20 +40,19 @@
   <mat-card #toolbar_options class="toolbar-options">
     <!-- Text Area for Node Label -->
     <p class="label">Label</p>
-    <textarea [(ngModel)]="nodeEdgeLabel"></textarea>
+    <textarea class = "textArea" [(ngModel)]="nodeEdgeLabel"></textarea>
     <br>
     <!-- Alternate change Node name mode -->
-    <button mat-button (click)="changeNodeName(); changeEdgeName()"
+    <button mat-button class = "buttonToolbarRight" (click)="changeNodeName(); changeEdgeName()"
         [ngStyle]="{'background-color': isChangeNodeLabel || isChangeEdgeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
     <hr>
     <div>
-      <mat-form-field>
         <p class="label">color</p>
-        <input matInput type="color" [(ngModel)]="nodeEdgeColor">
-      </mat-form-field>
+        <input matInput class = "colorInput" type="color" [(ngModel)]="nodeEdgeColor">
       <br>
-      <button mat-button class="editor-option" (click)="changeNodeColor(); changeEdgeColor()"
+      <button mat-button class="buttonToolbarRight" (click)="changeNodeColor(); changeEdgeColor()"
               [ngStyle]="{'background-color': isChangeNodeColor || isChangeEdgeColor ? '#00ccff' : '#ffffff' }">Change color</button>
+      <hr>
     </div>
   </mat-card>
 </mat-card>
