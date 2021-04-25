@@ -1,7 +1,7 @@
 <mat-card class="application-head">
-  <button mat-button class="editor-option" (click)="exportGraph()">Export</button>
-  <button mat-button class="editor-option" (click)= "hiddenfileinput.click()"> Import </button>
-  <button mat-button class="editor-option" (click)="__debug__()" *ngIf="isDebugging"> Debug </button>
+  <button mat-button class="buttonsToolbarAbove" (click)="exportGraph()">Export</button>
+  <button mat-button class="buttonsToolbarAbove" (click)= "hiddenfileinput.click()"> Import </button>
+  <button mat-button class="buttonsToolbarAbove" (click)="__debug__()" *ngIf="isDebugging"> Debug </button>
   <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" #hiddenfileinput>
 </mat-card>
 
@@ -40,17 +40,18 @@
   <mat-card #toolbar_options class="toolbar-options">
     <!-- Text Area for Node Label -->
     <p class="label">Label</p>
-    <textarea class = "textArea" [(ngModel)]="nodeEdgeLabel"></textarea>
+    <textarea class = "textAreaLabel" [(ngModel)]="nodeEdgeLabel"></textarea>
     <br>
     <!-- Alternate change Node name mode -->
-    <button mat-button class = "buttonToolbarRight" (click)="changeNodeName(); changeEdgeName()"
+    <button mat-button class = "buttonsToolbarRight" (click)="changeNodeName(); changeEdgeName()"
         [ngStyle]="{'background-color': isChangeNodeLabel || isChangeEdgeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
     <hr>
     <div>
+      <!-- Implements te color toolbar and button to change node/edge colors -->
         <p class="label">color</p>
-        <input matInput class = "colorInput" type="color" [(ngModel)]="nodeEdgeColor">
+        <input matInput class = "colorInputBar" type="color" [(ngModel)]="nodeEdgeColor">
       <br>
-      <button mat-button class="buttonToolbarRight" (click)="changeNodeColor(); changeEdgeColor()"
+      <button mat-button class="buttonsToolbarRight" (click)="changeNodeColor(); changeEdgeColor()"
               [ngStyle]="{'background-color': isChangeNodeColor || isChangeEdgeColor ? '#00ccff' : '#ffffff' }">Change color</button>
       <hr>
     </div>

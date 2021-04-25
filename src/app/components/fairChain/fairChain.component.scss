@@ -42,7 +42,7 @@
 
 .toolbar-options {
     height: 100%;
-    width: 7%;
+    width: 6%;
     float: left;
     margin: 0px;
     padding: 0px;
@@ -71,20 +71,25 @@
     color: black;
     padding-left: 7px;
 }
-.textArea{
+.textAreaLabel{
   font-size:16px;
   height: 50px;
-  width: 106px;
-}
-.colorInput{
-  font-size:16px;
-  width: 112px;
-}
-.buttonToolbarRight{
-  width: 108px;
+  width: 95%;
 }
 
-#editor-option{
+// Gives the correct proportions of the edit color bar
+.colorInputBar{
+  font-size:16px;
+  width: 101%;
+}
+
+// Gives the correct proportions of the buttons located in the right toolbar
+.buttonsToolbarRight{
+  width: 100%;
+  padding-left: 5px;
+}
+
+#buttonsToolbarAbove{
   font-size:16px;
   color: black;
   padding-left: 7px;
