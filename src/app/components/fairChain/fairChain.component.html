@@ -1,6 +1,7 @@
 <mat-card class="application-head">
-  <button mat-button class="editor-option" (click)="exportGraph()">Export</button>
-  <button mat-button class="editor-option" (click)= "hiddenfileinput.click()"> Import </button>
+  <button mat-button class="buttonsToolbarAbove" (click)="exportGraph()">Export</button>
+  <button mat-button class="buttonsToolbarAbove" (click)= "hiddenfileinput.click()"> Import </button>
+  <button mat-button class="buttonsToolbarAbove" (click)="__debug__()" *ngIf="isDebugging"> Debug </button>
   <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" #hiddenfileinput>
 </mat-card>
 
@@ -8,21 +9,21 @@
   <!-- Holds primary tools of the application -->
   <mat-card #toolbar class="toolbar">
     <div>
-      <a class="icon" (click)="addNodeInNetwork()" [ngStyle]="{'background-color': isAddingNodes ? '#00ccff' : '#ffffff'}">
+      <a (click)="addNodeInNetwork()" [class.active]="isAddingNode()" class="tool">
         <img class="icon-link" src="assets/icons/addnodeicon.png">
       </a>
     </div>
 
     <hr>
     <div>
-      <a class="icon" (click)="addEdgeInNetwork()" [ngStyle]="{'background-color': isAddingEdges ? '#00ccff' : '#ffffff'}">
+      <a class="icon" (click)="addEdgeInNetwork()" [class.active]="isAddingEdge()" class="tool">
         <img class="icon-link" src="assets/icons/addedgeicon.png">
       </a>
     </div>
 
     <hr>
     <div>
-      <a class="icon" (click)="deleteNodeOrEdgeInNetwork()" >
+      <a class="icon" (click)="deleteNodeOrEdgeInNetwork()" class="tool">
         <img class="icon-link" src="assets/icons/deleteselectionicon.png">
       </a>
     </div>
@@ -39,20 +40,20 @@
   <mat-card #toolbar_options class="toolbar-options">
     <!-- Text Area for Node Label -->
     <p class="label">Label</p>
-    <textarea [(ngModel)]="nodeEdgeLabel"></textarea>
+    <textarea class = "textAreaLabel" [(ngModel)]="nodeEdgeLabel"></textarea>
     <br>
     <!-- Alternate change Node name mode -->
-    <button mat-button (click)="changeNodeName(); changeEdgeName()"
+    <button mat-button class = "buttonsToolbarRight" (click)="changeNodeName(); changeEdgeName()"
         [ngStyle]="{'background-color': isChangeNodeLabel || isChangeEdgeLabel ? '#00ccff' : '#ffffff' }">Change Name</button>
     <hr>
     <div>
-      <mat-form-field>
+      <!-- Implements te color toolbar and button to change node/edge colors -->
         <p class="label">color</p>
-        <input matInput type="color" [(ngModel)]="nodeEdgeColor">
-      </mat-form-field>
+        <input matInput class = "colorInputBar" type="color" [(ngModel)]="nodeEdgeColor">
       <br>
-      <button mat-button class="editor-option" (click)="changeNodeColor(); changeEdgeColor()"
+      <button mat-button class="buttonsToolbarRight" (click)="changeNodeColor(); changeEdgeColor()"
               [ngStyle]="{'background-color': isChangeNodeColor || isChangeEdgeColor ? '#00ccff' : '#ffffff' }">Change color</button>
+      <hr>
     </div>
   </mat-card>
 </mat-card>

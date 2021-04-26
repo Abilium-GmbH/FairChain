@@ -2,6 +2,11 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { ImportExportService } from '../../importExport.service'
 import * as vis from 'vis-network';
+import { strict as assert } from 'assert';
+
+enum activeTool {
+  AddingNode, AddingEdge, Idle
+}
 
 enum ChangingNode {
   NodeLabel,  NodeColor, None
@@ -23,27 +28,33 @@ enum ChangingEdge {
  * such like addNode, addEdge, deleteSelection, edit NodeLabel and edge Label
  */
 export class FairChainComponent implements OnInit {
+  public isAddingNode() : boolean {return this.currentTool === activeTool.AddingNode;}
+  public isAddingEdge() : boolean {return this.currentTool === activeTool.AddingEdge;}
 
   public isChangeNodeColor = false;
   public isChangeEdgeColor = false;
-  public isAddingNodes = false;
-  public isAddingEdges = false;
   public isDeletingNodesOrEdges = false;
   public isChangeNodeLabel = false;
   public isChangeEdgeLabel = false;
   public isShowNodeOptions = false;
 
+  public testClassCSS = false;
+ 
+  // A handy debug buttom for any 
+  public isDebugging = true;
+  public __debug__() {assert(this.isDebugging, 'Function should not be called unless in debug mode'), console.log(this.isAddingNode());}
+
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
-  @ViewChild('nodeOptions', {static: true}) nodeOptionsRef: ElementRef;
 
   private network: vis.Network;
   private subscriptions: Subscription = new Subscription();
   private fileToUpload: File = null;
-  private changesNode: ChangingNode;
-  private changesEdge: ChangingEdge;
+  private changesNode: ChangingNode = ChangingNode.None;
+  private changesEdge: ChangingEdge = ChangingEdge.None;
+  public currentTool: activeTool = activeTool.Idle;
 
 
   // Create an array with nodes
@@ -82,48 +93,30 @@ export class FairChainComponent implements OnInit {
     },
     manipulation: {
       // Defines logic for Add Node functionality
-      addNode: (data, callback) => {
+      addNode: (data: vis.Node, callback) => {
+        assert(this.currentTool === activeTool.AddingNode, 'The current tool should be adding a node');
         callback(data);
-        if (this.isAddingNodes) {
-          this.network.addNodeMode();
-          this.nodes.push(data);
-        }
+        this.network.addNodeMode();
+        this.nodes.push(data);
       },
       // Defines logic for Add Edge functionality
-      addEdge: (data, callback) => {
+      addEdge: (data: vis.Edge, callback) => {
+        assert(this.currentTool === activeTool.AddingEdge, 'The current tool should be adding an edge');
         callback(data);
-        if (this.isAddingEdges) {
-          this.network.addEdgeMode();
-          this.edges.push(data);
-        }
+        this.network.addEdgeMode();
+        this.edges.push(data);
       },
       // Responsible for the Edit Node Label
-      editNode: (nodeData, callback) => {
-        switch (+this.changesNode) {
-          case ChangingNode.NodeLabel:{
-            nodeData.label = this.nodeEdgeLabel;
-            break;
-          }
-          case ChangingNode.NodeColor:{
-            nodeData.color = this.nodeEdgeColor;
-            break;
-          }
-        }
+      editNode: (nodeData: vis.Node, callback) => {
+        assert(this.changesNode !== ChangingNode.None, 'The edge should not be edited when no option is selected');
+        this.editNodeBasedOnCurrentNodeOption(nodeData);
         callback(nodeData);
         this.nodes=this.nodes.filter(node=> node.id!=nodeData.id);
         this.nodes.push(nodeData);
       },
-      editEdge: (edgeData, callback) => {
-        switch (+this.changesEdge) {
-          case ChangingEdge.EdgeLabel:{
-            edgeData.label = this.nodeEdgeLabel;
-            break;
-          }
-          case ChangingEdge.EdgeColor:{
-            edgeData.color = this.nodeEdgeColor;
-            break;
-          }
-        }
+      editEdge: (edgeData: vis.Edge, callback) => {
+        assert(this.changesEdge !== ChangingEdge.None, 'The edge should not be edited when no option is selected');
+        this.editEdgeBasedOnCurrentEdgeOption(edgeData);
         callback(edgeData);
         this.edges = this.edges.filter(edge=> edge.id!=edgeData.id);
         this.edges.push(edgeData);
@@ -133,6 +126,32 @@ export class FairChainComponent implements OnInit {
       myGroup: {color:{background:'red'}, borderWidth:3}
     }
   };
+
+  private editNodeBasedOnCurrentNodeOption(nodeData) {
+    switch (+this.changesNode) {
+      case ChangingNode.NodeLabel:{
+        nodeData.label = this.nodeEdgeLabel;
+        break;
+      }
+      case ChangingNode.NodeColor:{
+        nodeData.color = this.nodeEdgeColor;
+        break;
+      }
+    }
+  }
+
+  private editEdgeBasedOnCurrentEdgeOption(edgeData) {
+    switch (+this.changesEdge) {
+      case ChangingEdge.EdgeLabel:{
+        edgeData.label = this.nodeEdgeLabel;
+        break;
+      }
+      case ChangingEdge.EdgeColor:{
+        edgeData.color = this.nodeEdgeColor;
+        break;
+      }
+    }
+  }
 
   constructor(private importExportService:ImportExportService) { }
 
@@ -150,14 +169,19 @@ export class FairChainComponent implements OnInit {
    * on or off if the button is pressed
    */
   public addNodeInNetwork() {
-    if (this.isAddingNodes) {
-      this.isAddingNodes = false;
-      this.network.disableEditMode();
-    } else {
-      this.isAddingEdges = false;
-      this.isAddingNodes = true;
-      this.network.addNodeMode();
-      this.isShowNodeOptions = false;
+    switch(+this.currentTool)
+    {
+      case activeTool.AddingNode : 
+      {
+        this.network.disableEditMode();
+        this.currentTool = activeTool.Idle;
+        break;
+      }
+      default : 
+      {
+        this.currentTool = activeTool.AddingNode;
+        this.network.addNodeMode();
+      }
     }
   }
 
@@ -166,14 +190,19 @@ export class FairChainComponent implements OnInit {
    * on or off if the button is pressed
    */
   public addEdgeInNetwork() {
-    if (this.isAddingEdges) {
-      this.isAddingEdges = false;
-      this.network.disableEditMode();
-    } else {
-      this.isAddingNodes = false;
-      this.isAddingEdges = true;
-      this.network.addEdgeMode();
-      this.isShowNodeOptions = false;
+    switch(+this.currentTool)
+    {
+      case activeTool.AddingEdge : 
+      {
+        this.network.disableEditMode();
+        this.currentTool = activeTool.Idle;
+        break;
+      }
+      default : 
+      {
+        this.currentTool = activeTool.AddingEdge;
+        this.network.addEdgeMode();
+      }
     }
   }
 
@@ -181,14 +210,8 @@ export class FairChainComponent implements OnInit {
    * Responsible to delete the selected element if pressed while the object is highlighted
    */
   public deleteNodeOrEdgeInNetwork() {
-    if (this.isDeletingNodesOrEdges) {
-      this.network.disableEditMode();
-    } else {
-      this.isAddingNodes = false;
-      this.isAddingEdges = false;
-      this.networkDeleteSelected();
-      this.isShowNodeOptions = false;
-    }
+    this.networkDeleteSelected();
+    this.network.deleteSelected();
   }
 
   /**
@@ -229,13 +252,11 @@ export class FairChainComponent implements OnInit {
   private onClick(params) {
     // Defines node onClick actions
     if (params.nodes && params.nodes.length >= 1) {
-      if (this.changesNode == ChangingNode.NodeLabel) this.network.editNode();
-      if (this.changesNode == ChangingNode.NodeColor) this.network.editNode();
+      if (this.changesNode !== ChangingNode.None) this.network.editNode();
     }
     // Defines edge onClick actions
     if (params.edges && params.edges.length >= 1 && params.nodes.length == 0) {
-      if (this.changesEdge == ChangingEdge.EdgeLabel) this.network.editEdgeMode();
-      if (this.changesEdge == ChangingEdge.EdgeColor) this.network.editEdgeMode();
+      if (this.changesEdge !== ChangingEdge.None) this.network.editEdgeMode();
     }
   }
 
@@ -268,9 +289,21 @@ export class FairChainComponent implements OnInit {
    * Downloads the file as Graph.json with the method in importExport.service.
    */
   public exportGraph(){
+    this.updateNodePositions();
     var text = "{\"nodes\":" + JSON.stringify(this.nodes) +",\"edges\":" + JSON.stringify(this.edges)+"}";
     var filename = "Graph.json";
     this.importExportService.download(filename, text);
+  }
+
+  /**
+   * Before exporting the graph, get the current location of all nodes in the graph
+   */
+  private updateNodePositions() {
+    this.nodes.forEach((node) => {
+      const pos = this.network.getPosition(node.id);
+      node.x = pos.x;
+      node.y = pos.y;
+    });
   }
 
   /**
@@ -281,6 +314,7 @@ export class FairChainComponent implements OnInit {
    * @param files is the file selected to import.
    */
   public importGraph(files: FileList) {
+    //TODO: Missing a check that the file is valid
     this.fileToUpload = files.item(0);
     const reader = new FileReader();
     var importedJson;
