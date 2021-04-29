@@ -93,6 +93,17 @@ export class FairChainComponent implements OnInit {
         }
       }
     },
+    physics: {
+      barnesHut: {
+        theta: 0.5,
+        gravitationalConstant: -200,
+        centralGravity: 0,
+        damping: 1,
+        avoidOverlap: 1
+      },
+      maxVelocity: 10,
+      minVelocity: 10,
+    },
     manipulation: {
       // Defines logic for Add Node functionality
       addNode: (data: vis.Node, callback) => {
@@ -100,7 +111,7 @@ export class FairChainComponent implements OnInit {
         callback(data);
         this.network.addNodeMode();
         this.nodes.push(data);
-        this.undoRedoService.addSnapshot(this.nodes, this.edges);
+        this.makeSnapshot();
       },
       // Defines logic for Add Edge functionality
       addEdge: (data: vis.Edge, callback) => {
@@ -108,7 +119,7 @@ export class FairChainComponent implements OnInit {
         callback(data);
         this.network.addEdgeMode();
         this.edges.push(data);
-        this.undoRedoService.addSnapshot(this.nodes, this.edges);
+        this.makeSnapshot();
       },
       // Responsible for the Edit Node Label
       editNode: (nodeData: vis.Node, callback) => {
@@ -117,7 +128,7 @@ export class FairChainComponent implements OnInit {
         callback(nodeData);
         this.nodes=this.nodes.filter(node=> node.id!=nodeData.id);
         this.nodes.push(nodeData);
-        this.undoRedoService.addSnapshot(this.nodes, this.edges);
+        this.makeSnapshot();
       },
       editEdge: (edgeData: vis.Edge, callback) => {
         assert(this.changesEdge !== ChangingEdge.None, 'The edge should not be edited when no option is selected');
@@ -125,7 +136,7 @@ export class FairChainComponent implements OnInit {
         callback(edgeData);
         this.edges = this.edges.filter(edge=> edge.id!=edgeData.id);
         this.edges.push(edgeData);
-        this.undoRedoService.addSnapshot(this.nodes, this.edges);
+        this.makeSnapshot();
       },
     },
     groups: {
@@ -168,6 +179,11 @@ export class FairChainComponent implements OnInit {
     this.subscriptions.add(
       fromEvent(this.network, 'click').subscribe(params => {
         this.onClick(params);
+      })
+    );
+    this.subscriptions.add(
+      fromEvent(this.network, 'dragEnd').subscribe(params => {
+        this.onDragEnd(params);
       })
     );
   }
@@ -220,7 +236,6 @@ export class FairChainComponent implements OnInit {
   public deleteNodeOrEdgeInNetwork() {
     this.networkDeleteSelected();
     this.network.deleteSelected();
-    this.undoRedoService.addSnapshot(this.nodes, this.edges);
   }
 
   /**
@@ -232,6 +247,7 @@ export class FairChainComponent implements OnInit {
     this.deleteIdFromArray(this.nodes, nodesToDelete);
     this.deleteIdFromArray(this.edges, edgesToDelete);
     this.network.deleteSelected();
+    this.makeSnapshot();
   }
 
   /**
@@ -266,6 +282,12 @@ export class FairChainComponent implements OnInit {
     // Defines edge onClick actions
     if (params.edges && params.edges.length >= 1 && params.nodes.length == 0) {
       if (this.changesEdge !== ChangingEdge.None) this.network.editEdgeMode();
+    }
+  }
+
+  private onDragEnd(params) {
+    if (params.nodes && params.nodes.length >= 1) {
+      this.makeSnapshot();
     }
   }
 
@@ -339,7 +361,7 @@ export class FairChainComponent implements OnInit {
 
     setTimeout(() => {
       this.updateData(data);
-      this.undoRedoService.addSnapshot(this.nodes, this.edges);
+      this.makeSnapshot();
     }, 100);
   }
 
@@ -369,6 +391,11 @@ export class FairChainComponent implements OnInit {
     this.isChangeEdgeColor =! this.isChangeEdgeColor;
     this.changesEdge = ChangingEdge.EdgeColor;
     if(!this.isChangeEdgeColor) this.changesEdge = ChangingEdge.None;
+  }
+
+  private makeSnapshot(){
+    this.updateNodePositions();
+    this.undoRedoService.addSnapshot(this.nodes, this.edges);
   }
 
   public undo(){
