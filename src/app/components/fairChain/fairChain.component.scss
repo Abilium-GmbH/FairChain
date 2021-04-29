@@ -14,14 +14,20 @@
 
 .toolbar {
     height: 100%;
-    width: 5%;
+    width: 10%;
     margin: 0px;
     padding:0px;
     float: left;
 
-    .editor-option {
-        font-size: 10px;
+    .tool {
         padding: 5px;
+        background-color: #ffffff;
+        margin-top: 1rem;
+        margin-left: 1.5rem;
+        height: 3rem;
+    }
+    .tool.active {
+        background-color: #00c3ff;
     }
 }
 
@@ -36,7 +42,7 @@
 
 .toolbar-options {
     height: 100%;
-    width: 12%;
+    width: 6%;
     float: left;
     margin: 0px;
     padding: 0px;
@@ -64,6 +70,29 @@
     font-size:16px;
     color: black;
     padding-left: 7px;
+}
+.textAreaLabel{
+  font-size:16px;
+  height: 50px;
+  width: 95%;
+}
+
+// Gives the correct proportions of the edit color bar
+.colorInputBar{
+  font-size:16px;
+  width: 101%;
+}
+
+// Gives the correct proportions of the buttons located in the right toolbar
+.buttonsToolbarRight{
+  width: 100%;
+  padding-left: 5px;
+}
+
+#buttonsToolbarAbove{
+  font-size:16px;
+  color: black;
+  padding-left: 7px;
 }
 
 #fileToImport{
