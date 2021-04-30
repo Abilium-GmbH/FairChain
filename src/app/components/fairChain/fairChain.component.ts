@@ -42,10 +42,6 @@ export class FairChainComponent implements OnInit {
     this.makeSubscriptions();
   }
   public relabelPopUpInfo: relabelPopUpInfo;
-  public popUpx = 100;
-  public popUpy = 200;
-  public popUpWidth = 100;
-  public popUpHeight = 100;
 
   constructor(private importExportService:ImportExportService, private undoRedoService:UndoRedoService) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges);

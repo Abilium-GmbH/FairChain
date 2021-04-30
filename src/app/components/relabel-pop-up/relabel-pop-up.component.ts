@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { relabelPopUpInfo } from '../interfaces';
 
 @Component({
@@ -15,12 +15,23 @@ export class RelabelPopUpComponent implements OnInit {
   @Input()  label: string;
   @Output() labelChange = new EventEmitter<string>();
 
+  //@ViewChild('relabelTextArea') relabelTextAreaRef: ElementRef;
+  @ViewChild('relabelTextArea') relabelTextAreaRef: ElementRef;
+
   ngOnInit(): void {
   }
 
-  public updateLabel($event) 
-  {
-    this.labelChange.emit($event.target.textContent);
+  ngAfterViewInit(): void {
+    this.relabelTextArea.innerText = this.label;
   }
 
+  public updateLabel() {
+    this.labelChange.emit(this.relabelTextArea.innerText);
+  }
+
+  
+  public get relabelTextArea() {
+    return this.relabelTextAreaRef.nativeElement;
+  } 
+  
 }

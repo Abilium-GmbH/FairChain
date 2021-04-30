@@ -3,7 +3,14 @@
     [style.top.px]='info.y' 
     [style.width.px]='info.width' 
     [style.height.px]='info.height'>
-    <div style="width: 100%; height: 100%;" contenteditable="true" (input)=updateLabel($event)>
+
+    <p #relabelTextArea style="width: 100%; height: 100%;" contenteditable="true" (input)=updateLabel()>
         {{label}}
-    </div>
+    </p>
+
+<!--
+    <textarea #relabelTextArea (keyup)="updateLabel();" name="newNodeLabel" 
+    class='boxsizingBorder'></textarea>
+-->
+
 </mat-card>
