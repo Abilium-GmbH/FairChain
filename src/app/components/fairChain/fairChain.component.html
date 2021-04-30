@@ -1,7 +1,10 @@
 <mat-card class="application-head">
   <button mat-button class="buttonsToolbarAbove" (click)="exportGraph()">Export</button>
   <button mat-button class="buttonsToolbarAbove" (click)= "hiddenfileinput.click()"> Import </button>
+  <button mat-button class="buttonsToolbarAbove" (click)= "undo()"> Undo </button>
+  <button mat-button class="buttonsToolbarAbove" (click)= "redo()"> Redo </button>
   <button mat-button class="buttonsToolbarAbove" (click)="__debug__()" *ngIf="isDebugging"> Debug </button>
+
   <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" #hiddenfileinput>
 </mat-card>
 

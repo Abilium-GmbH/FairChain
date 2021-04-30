@@ -1,10 +1,10 @@
+import { identifierModuleUrl } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import * as vis from 'vis-network';
 
 @Injectable({
     providedIn: 'root'
   })
-
 export class ImportExportService{
 
   private nodes: vis.Node[] = [];
@@ -20,13 +20,17 @@ export class ImportExportService{
    * @param filename is the name of the file that will be created
    * @param text is the json that goes into the file
    */
+
   public download(filename, text) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:json/plain;charset=utf-8,' + encodeURIComponent(text));
     element.setAttribute('download', filename);
+
     element.style.display = 'none';
     document.body.appendChild(element);
+
     element.click();
+
     document.body.removeChild(element);
   }
 
@@ -34,11 +38,18 @@ export class ImportExportService{
    * Overwrites the data variable with the data from parsedImportedJson
    * @param parsedImportedJson is the object that you get after deserializing the imported JSON file
    */
+
   public overwriteData(parsedImportedJson){
-    this.data = {
-      nodes: this.extractNodeData(parsedImportedJson.nodes),
-      edges: this.extractEdgeData(parsedImportedJson.edges)
-    };
+    try{
+      this.data = {
+        nodes: this.extractNodeData(parsedImportedJson.nodes),
+        edges: this.extractEdgeData(parsedImportedJson.edges)
+      };
+      return this.data;
+    }
+    catch{
+      return [];
+    }
   }
 
   /**
@@ -46,48 +57,56 @@ export class ImportExportService{
    * @param data is the node data that has to be extracted
    * @returns the array of nodes
    */
+
   private extractNodeData(data) {
     var networkNodes = [];
-
-    data.forEach(function (elem, index, array) {
-      networkNodes.push({
-        id: elem.id,
-        label: elem.label,
-        x: elem.x,
-        y: elem.y,
-        color: elem.color,
-        fixed: elem.fixed,
-        font: elem.font,
-        icon: elem.icon,
-        imagePadding: elem.imagePadding,
-        shadow: elem.shadow
-      });
+    data.forEach(function (elem) {
+      if (elem.x && elem.y && elem.id != undefined){
+        networkNodes.push(elem);
+      }
+      
     });
     return networkNodes;
   }
-
+  
   /**
    * Extracts the data from the parameter into an array of edges
    * @param data is the edge data that has to be extracted
    * @returns the array of edges
    */
+
   private extractEdgeData(data) {
     var networkEdges = [];
-
     data.forEach(function (elem) {
-      networkEdges.push({
-        id: elem.id,
-        from: elem.from,
-        to: elem.to,
-        label: elem.label,
-        color: elem.color
-
-      });
+      if (elem.from && elem.to && elem.id != undefined){
+        networkEdges.push(elem);
+      }
     });
     return networkEdges;
   }
 
-  public getData(){
-    return this.data;
+  public async upload(file: File){
+    return new Promise ((resolve, reject) => {
+      const reader = new FileReader();
+      var importedJson;
+      var data;
+      var service = new ImportExportService;
+      reader.readAsBinaryString(file);
+
+      reader.onload = function(e) {
+        importedJson = e.target.result;
+        const parsedImportedJson = JSON.parse(importedJson);
+        data = service.overwriteData(parsedImportedJson);
+        resolve(data);
+      }
+    })
+  }
+
+  public getNodes(){
+    return this.nodes;
+  }
+
+  public getEdges(){
+    return this.edges;
   }
 }

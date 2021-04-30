@@ -2,11 +2,13 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { ImportExportService } from '../../importExport.service'
 import * as vis from 'vis-network';
+import { UndoRedoService } from 'src/app/undoRedo.service';
 import { strict as assert } from 'assert';
 
 enum activeTool {
   AddingNode, AddingEdge, Idle
 }
+
 
 enum ChangingNode {
   NodeLabel,  NodeColor, None
@@ -20,7 +22,7 @@ enum ChangingEdge {
   selector: 'app-fairChain',
   templateUrl: './fairChain.component.html',
   styleUrls: ['./fairChain.component.scss'],
-  providers: [ ImportExportService ]
+  providers: [ ImportExportService, UndoRedoService ]
 })
 
 /**
@@ -51,7 +53,7 @@ export class FairChainComponent implements OnInit {
 
   private network: vis.Network;
   private subscriptions: Subscription = new Subscription();
-  private fileToUpload: File = null;
+
   private changesNode: ChangingNode = ChangingNode.None;
   private changesEdge: ChangingEdge = ChangingEdge.None;
   public currentTool: activeTool = activeTool.Idle;
@@ -91,6 +93,17 @@ export class FairChainComponent implements OnInit {
         }
       }
     },
+    physics: {
+      barnesHut: {
+        theta: 0.5,
+        gravitationalConstant: -200,
+        centralGravity: 0,
+        damping: 1,
+        avoidOverlap: 1
+      },
+      maxVelocity: 10,
+      minVelocity: 10,
+    },
     manipulation: {
       // Defines logic for Add Node functionality
       addNode: (data: vis.Node, callback) => {
@@ -98,6 +111,7 @@ export class FairChainComponent implements OnInit {
         callback(data);
         this.network.addNodeMode();
         this.nodes.push(data);
+        this.makeSnapshot();
       },
       // Defines logic for Add Edge functionality
       addEdge: (data: vis.Edge, callback) => {
@@ -105,6 +119,7 @@ export class FairChainComponent implements OnInit {
         callback(data);
         this.network.addEdgeMode();
         this.edges.push(data);
+        this.makeSnapshot();
       },
       // Responsible for the Edit Node Label
       editNode: (nodeData: vis.Node, callback) => {
@@ -113,6 +128,7 @@ export class FairChainComponent implements OnInit {
         callback(nodeData);
         this.nodes=this.nodes.filter(node=> node.id!=nodeData.id);
         this.nodes.push(nodeData);
+        this.makeSnapshot();
       },
       editEdge: (edgeData: vis.Edge, callback) => {
         assert(this.changesEdge !== ChangingEdge.None, 'The edge should not be edited when no option is selected');
@@ -120,6 +136,7 @@ export class FairChainComponent implements OnInit {
         callback(edgeData);
         this.edges = this.edges.filter(edge=> edge.id!=edgeData.id);
         this.edges.push(edgeData);
+        this.makeSnapshot();
       },
     },
     groups: {
@@ -153,13 +170,20 @@ export class FairChainComponent implements OnInit {
     }
   }
 
-  constructor(private importExportService:ImportExportService) { }
+  constructor(private importExportService:ImportExportService, private undoRedoService:UndoRedoService) {
+    this.undoRedoService.addSnapshot(this.nodes, this.edges);
+  }
 
   public ngOnInit(): void {
     this.network = new vis.Network(this.graph, this.data, this.options);
     this.subscriptions.add(
       fromEvent(this.network, 'click').subscribe(params => {
         this.onClick(params);
+      })
+    );
+    this.subscriptions.add(
+      fromEvent(this.network, 'dragEnd').subscribe(params => {
+        this.onDragEnd(params);
       })
     );
   }
@@ -223,6 +247,7 @@ export class FairChainComponent implements OnInit {
     this.deleteIdFromArray(this.nodes, nodesToDelete);
     this.deleteIdFromArray(this.edges, edgesToDelete);
     this.network.deleteSelected();
+    this.makeSnapshot();
   }
 
   /**
@@ -257,6 +282,12 @@ export class FairChainComponent implements OnInit {
     // Defines edge onClick actions
     if (params.edges && params.edges.length >= 1 && params.nodes.length == 0) {
       if (this.changesEdge !== ChangingEdge.None) this.network.editEdgeMode();
+    }
+  }
+
+  private onDragEnd(params) {
+    if (params.nodes && params.nodes.length >= 1) {
+      this.makeSnapshot();
     }
   }
 
@@ -313,28 +344,17 @@ export class FairChainComponent implements OnInit {
    *
    * @param files is the file selected to import.
    */
-  public importGraph(files: FileList) {
+  public async importGraph(files: FileList) {
     //TODO: Missing a check that the file is valid
-    this.fileToUpload = files.item(0);
-    const reader = new FileReader();
-    var importedJson;
-    var importService = this.importExportService;
-    var data;
-    reader.readAsBinaryString(this.fileToUpload);
+    this.updateData( await this.importExportService.upload(files.item(0)));
+    this.makeSnapshot();
+  }
 
-    reader.onload = function(e) {
-      importedJson = e.target.result;
-      const parsedImportedJson = JSON.parse(importedJson);
-      importService.overwriteData(parsedImportedJson);
-      data = importService.getData();
-    }
-
-    setTimeout(() => {
-      this.nodes = data.nodes;
-      this.edges = data.edges;
-      this.data = data;
-      this.network.setData(data);
-    }, 100);
+  public updateData(data){
+    this.nodes = data.nodes;
+    this.edges = data.edges;
+    this.data = data;
+    this.network.setData(data);
   }
 
   /**
@@ -348,6 +368,7 @@ export class FairChainComponent implements OnInit {
     this.changesNode = ChangingNode.NodeColor;
     if(!this.isChangeNodeColor) this.changesNode = ChangingNode.None;
   }
+
   public changeEdgeColor(){
     if (this.changesEdge == ChangingEdge.EdgeLabel) {
       this.isChangeEdgeLabel = false;
@@ -355,5 +376,18 @@ export class FairChainComponent implements OnInit {
     this.isChangeEdgeColor =! this.isChangeEdgeColor;
     this.changesEdge = ChangingEdge.EdgeColor;
     if(!this.isChangeEdgeColor) this.changesEdge = ChangingEdge.None;
+  }
+
+  private makeSnapshot(){
+    this.updateNodePositions();
+    this.undoRedoService.addSnapshot(this.nodes, this.edges);
+  }
+
+  public undo(){
+    this.updateData(this.undoRedoService.getPredecessorSnapshot())
+  }
+
+  public redo(){
+    this.updateData(this.undoRedoService.getSuccessorSnapshot())
   }
 }
