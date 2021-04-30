@@ -60,7 +60,8 @@ export class ImportExportService{
         font: elem.font,
         icon: elem.icon,
         imagePadding: elem.imagePadding,
-        shadow: elem.shadow
+        shadow: elem.shadow,
+        group: elem.group
       });
     });
     return networkNodes;

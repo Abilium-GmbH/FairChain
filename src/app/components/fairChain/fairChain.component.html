@@ -1,3 +1,5 @@
+{{selectedGroup}}
+
 <mat-card class="application-head">
   <button mat-button class="buttonsToolbarAbove" (click)="exportGraph()">Export</button>
   <button mat-button class="buttonsToolbarAbove" (click)= "hiddenfileinput.click()"> Import </button>
@@ -54,6 +56,16 @@
       <button mat-button class="buttonsToolbarRight" (click)="changeNodeColor(); changeEdgeColor()"
               [ngStyle]="{'background-color': isChangeNodeColor || isChangeEdgeColor ? '#00ccff' : '#ffffff' }">Change color</button>
       <hr>
+    </div>
+    <div>
+      <div>
+        <select (change)="change($event.target.value)">
+          <option>Select Group</option>
+          <option *ngFor="let name of enumKeys"
+                  [value]="name">{{groups[name]}}</option>
+        </select>
+      </div>
+      <button mat-button class="buttonToolbarRight" (click)="changeNodeGroup()">Change Group</button>
     </div>
   </mat-card>
 </mat-card>

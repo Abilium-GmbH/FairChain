@@ -8,6 +8,7 @@ import { FairChainComponent } from './fairChain/fairChain.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { ImportExportService } from '../importExport.service';
+import {MatOptionModule} from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { ImportExportService } from '../importExport.service';
     MatCardModule,
     MatDialogModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
+    MatOptionModule
   ],
   exports: [
     FairChainComponent,

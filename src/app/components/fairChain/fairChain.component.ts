@@ -9,11 +9,14 @@ enum activeTool {
 }
 
 enum ChangingNode {
-  NodeLabel,  NodeColor, None
+  NodeLabel,  NodeColor, NodeGroup, None
 }
 
 enum ChangingEdge {
   EdgeLabel, EdgeColor, None
+}
+enum NodeGroups {
+  Group1, Group2, Group3, None
 }
 
 @Component({
@@ -28,6 +31,14 @@ enum ChangingEdge {
  * such like addNode, addEdge, deleteSelection, edit NodeLabel and edge Label
  */
 export class FairChainComponent implements OnInit {
+
+  groups = NodeGroups;
+  enumKeys = [];
+
+  change(value: string) {
+    this.selectedGroup = this.groups[value];
+  }
+
   public isAddingNode() : boolean {return this.currentTool === activeTool.AddingNode;}
   public isAddingEdge() : boolean {return this.currentTool === activeTool.AddingEdge;}
 
@@ -37,15 +48,17 @@ export class FairChainComponent implements OnInit {
   public isChangeNodeLabel = false;
   public isChangeEdgeLabel = false;
   public isShowNodeOptions = false;
+  public isChangeNodeGroup = false;
 
   public testClassCSS = false;
- 
-  // A handy debug buttom for any 
+
+  // A handy debug buttom for any
   public isDebugging = true;
   public __debug__() {assert(this.isDebugging, 'Function should not be called unless in debug mode'), console.log(this.isAddingNode());}
 
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
+  public selectedGroup;
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
 
@@ -58,7 +71,12 @@ export class FairChainComponent implements OnInit {
 
 
   // Create an array with nodes
-  private nodes: vis.Node[] = [];
+  private nodes: vis.Node[] = [
+    {id: 1, group: "group1"},
+    {id: 2, group: "group1"},
+    {id: 3, group: "group2"},
+    {id: 4, group: "group2"},
+  ];
 
   // Create an array with edges
   private edges: vis.Edge[] = [];
@@ -89,6 +107,17 @@ export class FairChainComponent implements OnInit {
         to: {
          enabled: true,
         }
+      }
+    },
+    groups: {
+      group1: {
+        color: "red"
+      },
+      group2: {
+        color: "green"
+      },
+      group3: {
+        color: "yellow"
       }
     },
     manipulation: {
@@ -122,19 +151,20 @@ export class FairChainComponent implements OnInit {
         this.edges.push(edgeData);
       },
     },
-    groups: {
-      myGroup: {color:{background:'red'}, borderWidth:3}
-    }
   };
 
-  private editNodeBasedOnCurrentNodeOption(nodeData) {
+  private editNodeBasedOnCurrentNodeOption(nodeData: vis.Node) {
     switch (+this.changesNode) {
-      case ChangingNode.NodeLabel:{
+      case ChangingNode.NodeLabel: {
         nodeData.label = this.nodeEdgeLabel;
         break;
       }
-      case ChangingNode.NodeColor:{
+      case ChangingNode.NodeColor: {
         nodeData.color = this.nodeEdgeColor;
+        break;
+      }
+      case ChangingNode.NodeGroup: {
+        this.updateNodeGroup(nodeData);
         break;
       }
     }
@@ -153,7 +183,10 @@ export class FairChainComponent implements OnInit {
     }
   }
 
-  constructor(private importExportService:ImportExportService) { }
+  constructor(private importExportService:ImportExportService) {
+    this.enumKeys = Object.keys(this.groups).filter(f => !isNaN(Number(f)));
+    console.log("keys =", this.enumKeys);
+  }
 
   public ngOnInit(): void {
     this.network = new vis.Network(this.graph, this.data, this.options);
@@ -171,13 +204,13 @@ export class FairChainComponent implements OnInit {
   public addNodeInNetwork() {
     switch(+this.currentTool)
     {
-      case activeTool.AddingNode : 
+      case activeTool.AddingNode :
       {
         this.network.disableEditMode();
         this.currentTool = activeTool.Idle;
         break;
       }
-      default : 
+      default :
       {
         this.currentTool = activeTool.AddingNode;
         this.network.addNodeMode();
@@ -192,13 +225,13 @@ export class FairChainComponent implements OnInit {
   public addEdgeInNetwork() {
     switch(+this.currentTool)
     {
-      case activeTool.AddingEdge : 
+      case activeTool.AddingEdge :
       {
         this.network.disableEditMode();
         this.currentTool = activeTool.Idle;
         break;
       }
-      default : 
+      default :
       {
         this.currentTool = activeTool.AddingEdge;
         this.network.addEdgeMode();
@@ -355,5 +388,32 @@ export class FairChainComponent implements OnInit {
     this.isChangeEdgeColor =! this.isChangeEdgeColor;
     this.changesEdge = ChangingEdge.EdgeColor;
     if(!this.isChangeEdgeColor) this.changesEdge = ChangingEdge.None;
+  }
+  public changeNodeGroup() {
+    this.changesNode = ChangingNode.NodeGroup;
+    this.isChangeNodeGroup =! this.isChangeNodeGroup;
+    //this.selectedGroup = document.getElementById("groups");
+    this.network.editNode();
+    //this.changesNode = ChangingNode.None;
+  }
+
+  public updateNodeGroup(node: vis.Node) {
+    switch (this.selectedGroup) {
+      case "Group1": {
+        node.group = this.options.groups.group1;
+        node.color = this.options.groups.group1.color;
+        break;
+      }
+      case "Group2": {
+        node.group = this.options.groups.group2;
+        node.color = this.options.groups.group2.color;
+        break;
+      }
+      case "Group3": {
+        node.group = this.options.groups.group3;
+        node.color = this.options.groups.group3.color;
+        break;
+      }
+    }
   }
 }
