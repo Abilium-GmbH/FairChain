@@ -26,10 +26,13 @@ export class RelabelPopUpComponent implements OnInit {
   }
 
   public updateLabel() {
-    this.labelChange.emit(this.relabelTextArea.innerText);
+    this.labelChange.emit(this.convertToMultiline(this.relabelTextArea.innerText));
   }
 
-  
+  private convertToMultiline(text: string) {
+    return text.replace('\n', '\n');
+  }
+
   public get relabelTextArea() {
     return this.relabelTextAreaRef.nativeElement;
   } 
