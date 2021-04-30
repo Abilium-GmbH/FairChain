@@ -45,7 +45,6 @@ export class ImportExportService{
         nodes: this.extractNodeData(parsedImportedJson.nodes),
         edges: this.extractEdgeData(parsedImportedJson.edges)
       };
-      console.log(this.data);
       return this.data;
     }
     catch{
@@ -84,6 +83,23 @@ export class ImportExportService{
       }
     });
     return networkEdges;
+  }
+
+  public async upload(file: File){
+    return new Promise ((resolve, reject) => {
+      const reader = new FileReader();
+      var importedJson;
+      var data;
+      var service = new ImportExportService;
+      reader.readAsBinaryString(file);
+
+      reader.onload = function(e) {
+        importedJson = e.target.result;
+        const parsedImportedJson = JSON.parse(importedJson);
+        data = service.overwriteData(parsedImportedJson);
+        resolve(data);
+      }
+    })
   }
 
   public getNodes(){

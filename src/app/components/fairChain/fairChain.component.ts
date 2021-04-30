@@ -53,7 +53,7 @@ export class FairChainComponent implements OnInit {
 
   private network: vis.Network;
   private subscriptions: Subscription = new Subscription();
-  private fileToUpload: File = null;
+
   private changesNode: ChangingNode = ChangingNode.None;
   private changesEdge: ChangingEdge = ChangingEdge.None;
   public currentTool: activeTool = activeTool.Idle;
@@ -344,25 +344,10 @@ export class FairChainComponent implements OnInit {
    *
    * @param files is the file selected to import.
    */
-  public importGraph(files: FileList) {
+  public async importGraph(files: FileList) {
     //TODO: Missing a check that the file is valid
-    this.fileToUpload = files.item(0);
-    const reader = new FileReader();
-    var importedJson;
-    var importService = this.importExportService;
-    var data;
-    reader.readAsBinaryString(this.fileToUpload);
-
-    reader.onload = function(e) {
-      importedJson = e.target.result;
-      const parsedImportedJson = JSON.parse(importedJson);
-      data = importService.overwriteData(parsedImportedJson);
-    }
-
-    setTimeout(() => {
-      this.updateData(data);
-      this.makeSnapshot();
-    }, 100);
+    this.updateData( await this.importExportService.upload(files.item(0)));
+    this.makeSnapshot();
   }
 
   public updateData(data){
