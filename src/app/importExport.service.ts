@@ -51,7 +51,7 @@ export class ImportExportService{
 
     data.forEach(function (elem, index, array) {
       networkNodes.push({
-        id: elem.id,
+        /*id: elem.id,
         label: elem.label,
         x: elem.x,
         y: elem.y,
@@ -62,6 +62,9 @@ export class ImportExportService{
         imagePadding: elem.imagePadding,
         shadow: elem.shadow,
         group: elem.group
+
+         */
+        elem
       });
     });
     return networkNodes;

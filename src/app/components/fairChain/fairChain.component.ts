@@ -58,7 +58,7 @@ export class FairChainComponent implements OnInit {
 
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
-  public selectedGroup;
+  public selectedGroup = "Group1";
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
 
@@ -71,12 +71,7 @@ export class FairChainComponent implements OnInit {
 
 
   // Create an array with nodes
-  private nodes: vis.Node[] = [
-    {id: 1, group: "group1"},
-    {id: 2, group: "group1"},
-    {id: 3, group: "group2"},
-    {id: 4, group: "group2"},
-  ];
+  private nodes: vis.Node[] = [];
 
   // Create an array with edges
   private edges: vis.Edge[] = [];
@@ -123,10 +118,16 @@ export class FairChainComponent implements OnInit {
     manipulation: {
       // Defines logic for Add Node functionality
       addNode: (data: vis.Node, callback) => {
-        assert(this.currentTool === activeTool.AddingNode, 'The current tool should be adding a node');
+        assert(this.currentTool === activeTool.AddingNode, 'The current tool should be adding a node')
+        data.group = this.selectedGroup.toLowerCase();
+
+
+        //data.color = "orange";
+
+
+        this.nodes.push(data);
         callback(data);
         this.network.addNodeMode();
-        this.nodes.push(data);
       },
       // Defines logic for Add Edge functionality
       addEdge: (data: vis.Edge, callback) => {
@@ -139,9 +140,10 @@ export class FairChainComponent implements OnInit {
       editNode: (nodeData: vis.Node, callback) => {
         assert(this.changesNode !== ChangingNode.None, 'The edge should not be edited when no option is selected');
         this.editNodeBasedOnCurrentNodeOption(nodeData);
-        callback(nodeData);
         this.nodes=this.nodes.filter(node=> node.id!=nodeData.id);
         this.nodes.push(nodeData);
+        callback(nodeData);
+        //this.network.setData({nodes: this.nodes, edges: this.edges});
       },
       editEdge: (edgeData: vis.Edge, callback) => {
         assert(this.changesEdge !== ChangingEdge.None, 'The edge should not be edited when no option is selected');
@@ -152,6 +154,11 @@ export class FairChainComponent implements OnInit {
       },
     },
   };
+
+  public changeGroup1ColorInBlack() {
+    this.options.groups.group1.color = "black";
+    this.network.setOptions(this.options);
+  }
 
   private editNodeBasedOnCurrentNodeOption(nodeData: vis.Node) {
     switch (+this.changesNode) {
@@ -400,18 +407,24 @@ export class FairChainComponent implements OnInit {
   public updateNodeGroup(node: vis.Node) {
     switch (this.selectedGroup) {
       case "Group1": {
-        node.group = this.options.groups.group1;
-        node.color = this.options.groups.group1.color;
+        //node.group = this.selectedGroup.toLowerCase();
+        //node.color = this.options.groups.group1.color;
+        this.network.updateClusteredNode(node.id, {group: "group1"});
         break;
       }
       case "Group2": {
-        node.group = this.options.groups.group2;
+        /*node.group = this.selectedGroup.toLowerCase();
         node.color = this.options.groups.group2.color;
+        break;
+
+         */
+        this.network.updateClusteredNode(node.id, {group: "group2"});
         break;
       }
       case "Group3": {
-        node.group = this.options.groups.group3;
-        node.color = this.options.groups.group3.color;
+        /*node.group = this.selectedGroup.toLowerCase();
+        node.color = this.options.groups.group3.color;*/
+        this.network.updateClusteredNode(node.id, {group: "group3"});
         break;
       }
     }
