@@ -413,17 +413,19 @@ export class FairChainComponent implements OnInit {
         break;
       }
       case "Group2": {
-        /*node.group = this.selectedGroup.toLowerCase();
-        node.color = this.options.groups.group2.color;
+        //node.group = this.selectedGroup.toLowerCase();
+        //node.color = this.options.groups.group2.color;
         break;
 
-         */
+
         this.network.updateClusteredNode(node.id, {group: "group2"});
         break;
       }
       case "Group3": {
-        /*node.group = this.selectedGroup.toLowerCase();
-        node.color = this.options.groups.group3.color;*/
+        /*
+        node.group = this.selectedGroup.toLowerCase();
+        node.color = this.options.groups.group3.color;
+         */
         this.network.updateClusteredNode(node.id, {group: "group3"});
         break;
       }
