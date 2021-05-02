@@ -285,7 +285,8 @@ export class FairChainComponent implements OnInit {
     this.edges.add(data.edges);
     
     this.data = {nodes: this.nodes, edges: this.edges};
-    this.network.setData(data);
+    this.network = new Network(this.graph, this.data, this.options);
+    //this.network.setData(data);
   }
 
   /**

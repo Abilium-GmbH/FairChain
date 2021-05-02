@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Node, Edge, Data, DataSetNodes, DataSetEdges} from "vis-network/peer/esm/vis-network";
+import { DataSetNodes, DataSetEdges} from "vis-network/peer/esm/vis-network";
 import { ImportExportService } from './importExport.service';
 
 @Injectable({
@@ -8,37 +8,26 @@ import { ImportExportService } from './importExport.service';
 
 export class UndoRedoService{
     private snapshots=[];
-    private data: Data = {
-        nodes: [],
-        edges: []
-      };
-    private counter = -1;
+    private counter = 0;
 
-    constructor(private importExportService:ImportExportService) { }
+    constructor(private importExportService:ImportExportService) {
+        this.snapshots.push("{\"nodes\":[],\"edges\":[]}");
+    }
 
     public getPredecessorSnapshot(){
-        if (this.counter == 0){
-            return this.data;
-        }
-        else {
-            this.counter--;
-            return this.importExportService.overwriteData(JSON.parse(this.snapshots[this.counter]));
-        }
+        if (this.counter > 0) this.counter--;
+        return JSON.parse(this.snapshots[this.counter]);
     }
 
     public getSuccessorSnapshot(){
-        if (this.counter < this.snapshots.length - 1){
-            this.counter++;
-            return this.importExportService.overwriteData(JSON.parse(this.snapshots[this.counter]));
-        }
-        else{
-            return this.importExportService.overwriteData(JSON.parse(this.snapshots[this.counter]));
-        }
+        if (this.counter < this.snapshots.length - 1) this.counter++;
+        return JSON.parse(this.snapshots[this.counter]);
     }
 
     public addSnapshot(nodes: DataSetNodes, edges: DataSetEdges){
+        if (this.counter + 1 < this.snapshots.length) this.snapshots.splice(this.counter + 1, this.snapshots.length);
         this.counter++;
-        this.snapshots[this.counter] = this.importExportService.convertNetworkToJSON(nodes, edges)
-        this.snapshots = this.snapshots.slice(0, this.counter + 1);
+        this.snapshots[this.counter] = this.importExportService.convertNetworkToJSON(nodes, edges);
+
     }
 }
