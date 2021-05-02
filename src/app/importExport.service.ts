@@ -2,7 +2,7 @@ import { identifierModuleUrl } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { strict as assert } from 'assert';
 
-import {Node, Edge, Data} from "vis-network/peer/esm/vis-network";
+import {Node, Edge, Data, DataSetNodes, DataSetEdges, IdType} from "vis-network/peer/esm/vis-network";
 
 @Injectable({
     providedIn: 'root'
@@ -94,7 +94,6 @@ export class ImportExportService{
     return new Promise ((resolve, reject) => {
       const reader = new FileReader();
       var importedJson;
-      var data;
       var service = new ImportExportService;
       reader.readAsBinaryString(file);
 
@@ -106,6 +105,20 @@ export class ImportExportService{
         resolve(parsedImportedJson);
       }
     })
+  }
+
+  public convertNetworkToJSON(nodes: DataSetNodes, edges: DataSetEdges): string {
+    return "{\"nodes\":[NODES],\"edges\":[EDGES]}"
+      .replace('NODES', this.datasetToJSON(nodes))
+      .replace('EDGES', this.datasetToJSON(edges));
+  }
+
+  private datasetToJSON(data: DataSetNodes | DataSetEdges): string 
+  {
+    if (data.length === 0) return '';
+    return data.getIds().map((id: IdType) => {
+      return JSON.stringify(data.get(id))
+    }).join(',');
   }
 
   public getNodes(){

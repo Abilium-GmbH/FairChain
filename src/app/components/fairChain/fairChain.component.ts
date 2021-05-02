@@ -259,19 +259,9 @@ export class FairChainComponent implements OnInit {
    * Downloads the file as Graph.json with the method in importExport.service.
    */
   public exportGraph(){
-    var text = "{\"nodes\":[NODES],\"edges\":[EDGES]}"
-      .replace('NODES', this.datasetToJSON(this.nodes))
-      .replace('EDGES', this.datasetToJSON(this.edges));
+    var text = this.importExportService.convertNetworkToJSON(this.nodes, this.edges);
     var filename = "Graph.json";
     this.importExportService.download(filename, text);
-  }
-
-  private datasetToJSON(data: DataSetNodes | DataSetEdges): string 
-  {
-    if (data.length === 0) return '';
-    return data.getIds().map((id: IdType) => {
-      return JSON.stringify(data.get(id))
-    }).join(',');
   }
 
   /**

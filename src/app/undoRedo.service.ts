@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as vis from 'vis-network';
+import {Node, Edge, Data, DataSetNodes, DataSetEdges} from "vis-network/peer/esm/vis-network";
 import { ImportExportService } from './importExport.service';
 
 @Injectable({
@@ -8,7 +8,7 @@ import { ImportExportService } from './importExport.service';
 
 export class UndoRedoService{
     private snapshots=[];
-    private data: vis.Data = {
+    private data: Data = {
         nodes: [],
         edges: []
       };
@@ -36,9 +36,9 @@ export class UndoRedoService{
         }
     }
 
-    public addSnapshot(nodes, edges){
+    public addSnapshot(nodes: DataSetNodes, edges: DataSetEdges){
         this.counter++;
-        this.snapshots[this.counter] = "{\"nodes\":" + JSON.stringify(nodes) +",\"edges\":" + JSON.stringify(edges)+"}";
+        this.snapshots[this.counter] = this.importExportService.convertNetworkToJSON(nodes, edges)
         this.snapshots = this.snapshots.slice(0, this.counter + 1);
     }
 }
