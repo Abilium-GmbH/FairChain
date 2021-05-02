@@ -1,15 +1,17 @@
 import { identifierModuleUrl } from '@angular/compiler';
 import { Injectable } from '@angular/core';
-import * as vis from 'vis-network';
+import { strict as assert } from 'assert';
+
+import {Node, Edge, Data} from "vis-network/peer/esm/vis-network";
 
 @Injectable({
     providedIn: 'root'
   })
 export class ImportExportService{
 
-  private nodes: vis.Node[] = [];
-  private edges: vis.Edge[] = [];
-  private data: vis.Data = {
+  private nodes: Node[] = [];
+  private edges: Edge[] = [];
+  private data: Data = {
     nodes: this.nodes,
     edges: this.edges,
   };
@@ -59,14 +61,12 @@ export class ImportExportService{
    */
 
   private extractNodeData(data) {
-    var networkNodes = [];
-    data.forEach(function (elem) {
-      if (elem.x && elem.y && elem.id != undefined){
-        networkNodes.push(elem);
-      }
-      
+    return data.map((element) => {
+      if (!element.x) throw new Error('All nodes must have an x-coordinate');
+      if (!element.y) throw new Error('All nodes must have an y-coordinate');
+      if (!element.id) throw new Error('All nodes must have an id');
+      return element
     });
-    return networkNodes;
   }
   
   /**
@@ -75,14 +75,19 @@ export class ImportExportService{
    * @returns the array of edges
    */
 
-  private extractEdgeData(data) {
-    var networkEdges = [];
-    data.forEach(function (elem) {
-      if (elem.from && elem.to && elem.id != undefined){
-        networkEdges.push(elem);
-      }
+   private extractEdgeData(data) {
+    return data.map((element) => {
+      if (!element.from) throw new Error('All edges must have a source node');
+      if (!element.to) throw new Error('All edges must have a target node');
+      if (!element.id) throw new Error('All edges must have an id');
+      return element
     });
-    return networkEdges;
+  }
+  
+  //TODO make sure that the data is correct
+  private checkThatImportDataIsValid(data) {
+    assert(data.nodes, 'The import file has no attribute \'nodes\'');
+    assert(data.edges, 'The import file has no attribute \'edges\'');
   }
 
   public async upload(file: File){
@@ -96,8 +101,9 @@ export class ImportExportService{
       reader.onload = function(e) {
         importedJson = e.target.result;
         const parsedImportedJson = JSON.parse(importedJson);
-        data = service.overwriteData(parsedImportedJson);
-        resolve(data);
+        console.log(parsedImportedJson);
+        service.checkThatImportDataIsValid(parsedImportedJson);
+        resolve(parsedImportedJson);
       }
     })
   }
