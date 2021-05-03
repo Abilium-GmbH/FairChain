@@ -91,7 +91,7 @@ describe('ImportExportService', () => {
 
     it('#upload should work on empty network', (done) => {
         var file = new File(["{\"nodes\":[],\"edges\":[]}"], "foo.json", {
-            type: "json/plain",
+            type: "application/json",
           });
     service.upload(file)
         .then((imp) => {
@@ -116,7 +116,7 @@ describe('ImportExportService', () => {
 
     it('#upload should fail if file size is to large', (done) => {
         var file = new File([""], "foo.json", {
-            type: "json/plain"
+            type: "application/json"
           });
         file['Size'] = 1e6;
         service.upload(file)

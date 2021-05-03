@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { strict as assert } from 'assert';
 
 import { ImportData } from './interfaces/importData'
-import { DataSetNodes, DataSetEdges, IdType } from "vis-network/peer/esm/vis-network";
+import { DataSetNodes, DataSetEdges, IdType, Color } from "vis-network/peer/esm/vis-network";
 
 @Injectable({
     providedIn: 'root'
@@ -60,25 +60,25 @@ export class ImportExportService{
     for (let entry of data.edges) {this.checkEdgesHasCorrectFormat(entry);}
   }
 
+  //TODO: check if attributes match the ones defined in vis.js
   private checkNodesHasCorrectFormat(entry): void {
     if (!entry.id && typeof entry.id !== 'string') throw new Error();
     if (!entry.label && typeof entry.id !== 'string') throw new Error();
     if (!entry.x && typeof entry.x !== 'number') throw new Error();
     if (!entry.y && typeof entry.y !== 'number') throw new Error();
-    if (!!entry.color && typeof entry.color !== 'string') throw new Error();
   }
 
+  //TODO: check if attributes match the ones defined in vis.js
   private checkEdgesHasCorrectFormat(entry): void {
     if (!entry.id && typeof entry.id !== 'string') throw new Error();
     if (!entry.from && typeof entry.from !== 'string') throw new Error();
     if (!entry.to && typeof entry.to !== 'string') throw new Error();
-    if (!!entry.color && typeof entry.color !== 'string') throw new Error();
   }
 
   //TODO make method shorter
   public async upload(file: File) {
     return new Promise ((resolve, reject) => {
-      if (file.type != 'json/plain') reject('The file type is not JSON');
+      if (file.type != 'application/json') reject('The file type is not JSON');
       if (file['Size']> 1e5) reject('The file size is to large');
       const reader = new FileReader();
       var importedJson;

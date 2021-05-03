@@ -7,7 +7,7 @@ import { strict as assert } from 'assert';
 import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data"
 
-enum activeTool {
+enum Tools {
   AddingNode, AddingEdge, Idle
 }
 
@@ -34,6 +34,15 @@ export class FairChainComponent implements OnInit {
 
   public ngOnInit(): void {
     this.network = new Network(this.graph, this.data, this.options);
+    this.makeSubscriptions();
+  }
+
+  constructor(private importExportService:ImportExportService, private undoRedoService:UndoRedoService) {
+    this.undoRedoService.addSnapshot(this.nodes, this.edges);
+  }
+
+  private makeSubscriptions(): void {
+    this.subscriptions = new Subscription();
     this.subscriptions.add(
       fromEvent(this.network, 'click').subscribe(params => {
         this.onClick(params);
@@ -46,25 +55,22 @@ export class FairChainComponent implements OnInit {
     );
   }
 
-  constructor(private importExportService:ImportExportService, private undoRedoService:UndoRedoService) {
-    this.undoRedoService.addSnapshot(this.nodes, this.edges);
-  }
-
-  public isAddingNode() : boolean {return this.currentTool === activeTool.AddingNode;}
-  public isAddingEdge() : boolean {return this.currentTool === activeTool.AddingEdge;}
+  public isAddingNode() : boolean {return this.currentTool === Tools.AddingNode;}
+  public isAddingEdge() : boolean {return this.currentTool === Tools.AddingEdge;}
   public isChangingNodeLabel() : boolean {return this.changesNode === ChangingNode.NodeLabel;}
   public isChangingEdgeLabel() : boolean {return this.changesEdge === ChangingEdge.EdgeLabel;}
   public isChangingColor() : boolean {return this.changesNode === ChangingNode.NodeColor;}
   public isInNodeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
   public isInEdgeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
+  private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
+  private makeToolIdle() : void {this.currentTool = Tools.Idle;}
 
   // A handy debug buttom for any 
   public isDebugging = true;
   public __debug__() 
   {
     assert(this.isDebugging, 'Function should not be called unless in debug mode');
-    let a = this.nodes.getIds()[0];
-    console.log(this.nodes.get(a));
+    console.log(this.isChangingNodeLabel());
   }
 
   public nodeEdgeLabel = "";
@@ -73,11 +79,11 @@ export class FairChainComponent implements OnInit {
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
 
   private network: Network;
-  private subscriptions: Subscription = new Subscription();
+  private subscriptions: Subscription;
 
   private changesNode: ChangingNode = ChangingNode.None;
   private changesEdge: ChangingEdge = ChangingEdge.None;
-  private currentTool: activeTool = activeTool.Idle;
+  private currentTool: Tools = Tools.Idle;
 
 
   // Create an array with nodes
@@ -129,6 +135,7 @@ export class FairChainComponent implements OnInit {
     manipulation: {
       // Defines logic for Add Node functionality
       addNode: (data: Node, callback) => {
+        console.log('yay');
         assert(this.isAddingNode(), 'The current tool should be adding a node');
         callback(data);
         this.network.addNodeMode();
@@ -175,11 +182,12 @@ export class FairChainComponent implements OnInit {
    * on or off if the button is pressed
    */
   public addNodeInNetwork() {
+    this.stopEditMode();
     if (this.isAddingNode()) {
-      this.currentTool = activeTool.Idle;
+      this.currentTool = Tools.Idle;
       this.network.disableEditMode();
     } else {
-      this.currentTool = activeTool.AddingNode;
+      this.currentTool = Tools.AddingNode;
       this.network.addNodeMode();
     }
   }
@@ -189,11 +197,12 @@ export class FairChainComponent implements OnInit {
    * on or off if the button is pressed
    */
   public addEdgeInNetwork() {
+    this.stopEditMode();
     if (this.isAddingEdge()) {
-      this.currentTool = activeTool.Idle;
+      this.currentTool = Tools.Idle;
       this.network.disableEditMode();
     } else {
-      this.currentTool = activeTool.AddingEdge;
+      this.currentTool = Tools.AddingEdge;
       this.network.addEdgeMode();
     }
   }
@@ -240,11 +249,13 @@ export class FairChainComponent implements OnInit {
 
   // Boolean switch value if someone wants to change the nodeLabel name for button color
   public changeNodeName() {
+    this.makeToolIdle();
     if (this.isChangingNodeLabel()) this.changesNode = ChangingNode.None;
     else this.changesNode = ChangingNode.NodeLabel;
   };
 
   public changeEdgeName() {
+    this.makeToolIdle();
     if (this.isChangingNodeLabel()) this.changesEdge = ChangingEdge.None;
     else this.changesEdge = ChangingEdge.EdgeLabel;
   };
@@ -274,6 +285,7 @@ export class FairChainComponent implements OnInit {
   public async importGraph(files: FileList) {
     //TODO: Missing a check that the file is valid
     this.updateData( await this.importExportService.upload(files.item(0)));
+    this.makeSubscriptions();
     this.makeSnapshot();
   }
 
@@ -286,18 +298,19 @@ export class FairChainComponent implements OnInit {
     
     this.data = {nodes: this.nodes, edges: this.edges};
     this.network = new Network(this.graph, this.data, this.options);
-    //this.network.setData(data);
   }
 
   /**
    * Declaration of the change Color method for nodes
    */
   public changeNodeColor(){
+    this.makeToolIdle();
     if (this.isChangingColor()) this.changesNode = ChangingNode.None;
     else this.changesNode = ChangingNode.NodeColor;
   }
 
   public changeEdgeColor(){
+    this.makeToolIdle();
     if (this.isChangingColor()) this.changesEdge = ChangingEdge.None;
     else this.changesEdge = ChangingEdge.EdgeColor;
   }
