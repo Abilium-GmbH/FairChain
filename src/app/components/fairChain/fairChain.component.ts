@@ -70,7 +70,7 @@ export class FairChainComponent implements OnInit {
   public __debug__() 
   {
     assert(this.isDebugging, 'Function should not be called unless in debug mode');
-    console.log(this.isChangingNodeLabel());
+    console.log(this.currentTool);
   }
 
   public nodeEdgeLabel = "";
@@ -135,7 +135,6 @@ export class FairChainComponent implements OnInit {
     manipulation: {
       // Defines logic for Add Node functionality
       addNode: (data: Node, callback) => {
-        console.log('yay');
         assert(this.isAddingNode(), 'The current tool should be adding a node');
         callback(data);
         this.network.addNodeMode();
@@ -156,6 +155,7 @@ export class FairChainComponent implements OnInit {
         this.makeSnapshot();
       },
       editEdge: (edgeData: Edge, callback) => {
+        console.log('yay');
         assert(this.isInEdgeEditMode(), 'The edge should not be edited when no option is selected');
         this.editEdgeBasedOnCurrentEdgeOption(edgeData);
         callback(edgeData);
@@ -226,7 +226,16 @@ export class FairChainComponent implements OnInit {
     if (this.isClickingOnNodeInNodeEditMode(params)) this.network.editNode();
     // Defines edge onClick actions
     //TODO: With new edge dataset, define custom events for changing labels/color
-    if (this.isClickingOnEdgeInEdgeEditMode(params)) this.network.editEdgeMode();
+    if (this.isClickingOnEdgeInEdgeEditMode(params)) this.editEdgeInDataset(params.edges);
+  }
+
+  private editEdgeInDataset(edges: IdType[]) {
+    edges.forEach((id) => {
+      let edgeData: Edge = this.edges.get(id);
+      this.editEdgeBasedOnCurrentEdgeOption(edgeData);
+      this.edges.update(edgeData);
+    });
+    this.network.disableEditMode();
   }
 
   private isClickingOnNodeInNodeEditMode(params): boolean {
@@ -298,6 +307,7 @@ export class FairChainComponent implements OnInit {
     
     this.data = {nodes: this.nodes, edges: this.edges};
     this.network = new Network(this.graph, this.data, this.options);
+    this.makeSubscriptions();
   }
 
   /**
