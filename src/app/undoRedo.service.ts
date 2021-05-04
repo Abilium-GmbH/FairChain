@@ -28,6 +28,5 @@ export class UndoRedoService{
         if (this.counter + 1 < this.snapshots.length) this.snapshots.splice(this.counter + 1, this.snapshots.length);
         this.counter++;
         this.snapshots[this.counter] = this.importExportService.convertNetworkToJSON(nodes, edges);
-
     }
 }
