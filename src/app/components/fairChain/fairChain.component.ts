@@ -173,7 +173,7 @@ export class FairChainComponent implements OnInit {
   }
 
   private editEdgeBasedOnCurrentEdgeOption(edgeData: Edge) {
-    if (this.isChangingEdgeLabel()) edgeData.label = this.nodeEdgeLabel;
+    if (this.isChangingEdgeLabel()) {edgeData.label = this.nodeEdgeLabel; console.log('yay');}
     if (this.isChangingColor()) edgeData.color = this.nodeEdgeColor;
   }
 
@@ -265,7 +265,7 @@ export class FairChainComponent implements OnInit {
 
   public changeEdgeName() {
     this.makeToolIdle();
-    if (this.isChangingNodeLabel()) this.changesEdge = ChangingEdge.None;
+    if (this.isChangingEdgeLabel()) this.changesEdge = ChangingEdge.None;
     else this.changesEdge = ChangingEdge.EdgeLabel;
   };
 
