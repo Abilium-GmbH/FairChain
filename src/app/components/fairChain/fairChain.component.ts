@@ -7,8 +7,6 @@ import { strict as assert } from 'assert';
 import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data"
 
-
-
 enum Tools {
   AddingNode, AddingEdge, Idle
 }
@@ -67,9 +65,9 @@ export class FairChainComponent implements OnInit {
   private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
   private makeToolIdle() : void {this.currentTool = Tools.Idle;}
 
-  // A handy debug buttom for any 
+  // A handy debug buttom for any
   public isDebugging = true;
-  public __debug__() 
+  public __debug__()
   {
     assert(this.isDebugging, 'Function should not be called unless in debug mode');
   }
@@ -103,7 +101,9 @@ export class FairChainComponent implements OnInit {
   /**
    * Initializes Node and Edge Properties
    *
-   * @private
+   * @private initializes the different options available for nodes and edges.
+   * The network physics sensibility is also set up in a way that looks more realistic
+   * less sensible when nodes are moved.
    */
   private options: Options = {
     nodes: {
@@ -226,7 +226,7 @@ export class FairChainComponent implements OnInit {
     if (this.isClickingOnNodeInNodeEditMode(params)) this.network.editNode();
     // Defines edge onClick actions
     //TODO: With new edge dataset, define custom events for changing labels/color
-    if (this.isClickingOnEdgeInEdgeEditMode(params)) this.editEdgeInDataset(params.edges);
+    if (this.isClickingOnEdgeInEdgeEditMode(params) && params.nodes.length == 0) this.editEdgeInDataset(params.edges);
   }
 
   private editEdgeInDataset(edges: IdType[]) {
@@ -240,14 +240,14 @@ export class FairChainComponent implements OnInit {
   }
 
   private isClickingOnNodeInNodeEditMode(params): boolean {
-    return params.nodes 
-      && params.nodes.length >= 1 
+    return params.nodes
+      && params.nodes.length >= 1
       && this.isInNodeEditMode()
   }
 
   private isClickingOnEdgeInEdgeEditMode(params): boolean {
     return params.edges
-      && params.edges.length >= 1 
+      && params.edges.length >= 1
       && this.isInEdgeEditMode()
   }
 
@@ -302,10 +302,10 @@ export class FairChainComponent implements OnInit {
   public updateData(data){
     this.nodes = new DataSet();
     this.nodes.add(data.nodes);
-    
+
     this.edges = new DataSet();
     this.edges.add(data.edges);
-    
+
     this.data = {nodes: this.nodes, edges: this.edges};
     this.network = new Network(this.graph, this.data, this.options);
     this.makeSubscriptions();
@@ -320,6 +320,9 @@ export class FairChainComponent implements OnInit {
     else this.changesNode = ChangingNode.NodeColor;
   }
 
+  /**
+   * Declaration of the change Color method for edges
+   */
   public changeEdgeColor(){
     this.makeToolIdle();
     if (this.isChangingColor()) this.changesEdge = ChangingEdge.None;
