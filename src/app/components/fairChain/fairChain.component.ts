@@ -68,6 +68,7 @@ export class FairChainComponent implements OnInit {
   public isInEdgeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
   private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
   private makeToolIdle() : void {this.currentTool = Tools.Idle;}
+  private isChangingGroup(): boolean {return this.changesNode===ChangingNode.NodeGroup}
 
   // A handy debug buttom for any
   groups = NodeGroups;
@@ -172,7 +173,7 @@ export class FairChainComponent implements OnInit {
       },
       // Responsible for the Edit Node Label
       editNode: (nodeData: Node, callback) => {
-        assert(this.isInNodeEditMode(), 'The edge should not be edited when no option is selected');
+        assert(this.isInNodeEditMode(), 'The node should not be edited when no option is selected');
         this.editNodeBasedOnCurrentNodeOption(nodeData);
         callback(nodeData);
         this.makeSnapshot();
@@ -366,9 +367,9 @@ export class FairChainComponent implements OnInit {
 
   public changeNodeGroup() {
     this.makeToolIdle();
-    if (this.isChangingColor()) this.changesEdge = ChangingEdge.None;
+    if (this.isChangingGroup()) this.changesEdge = ChangingEdge.None;
     //this.selectedGroup = document.getElementById("groups");
-    else this.network.editNode();
+    else this.changesNode=ChangingNode.NodeGroup;
     //this.changesNode = ChangingNode.None;
   }
 
@@ -383,7 +384,7 @@ export class FairChainComponent implements OnInit {
       case "Group2": {
         //node.group = this.selectedGroup.toLowerCase();
         //node.color = this.options.groups.group2.color;
-        break;
+        //break;
 
 
         this.network.updateClusteredNode(node.id, {group: "group2"});
