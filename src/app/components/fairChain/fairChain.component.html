@@ -1,10 +1,12 @@
+{{selectedGroup}}
+
 <mat-card class="application-head">
   <button mat-button class="buttonsToolbarAbove" (click)="exportGraph()">Export</button>
   <button mat-button class="buttonsToolbarAbove" (click)= "hiddenfileinput.click()"> Import </button>
   <button mat-button class="buttonsToolbarAbove" (click)= "undo()"> Undo </button>
   <button mat-button class="buttonsToolbarAbove" (click)= "redo()"> Redo </button>
   <button mat-button class="buttonsToolbarAbove" (click)="__debug__()" *ngIf="isDebugging"> Debug </button>
-
+  <button mat-button class="buttonsToolbarAbove" (click)="changeGroup1ColorInBlack()"> groups </button>
   <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" #hiddenfileinput>
 </mat-card>
 
@@ -46,9 +48,9 @@
     <textarea class = "option-textArea" [(ngModel)]="nodeEdgeLabel"></textarea>
     <br>
     <!-- Alternate change Node name mode -->
-    <button mat-button 
+    <button mat-button
       class = "option-button"
-      [class.active] = "isChangingNodeLabel()" 
+      [class.active] = "isChangingNodeLabel()"
       (click)="changeNodeName(); changeEdgeName()">Change Name</button>
     <hr>
     <div>
@@ -56,11 +58,21 @@
         <p class="option-label">color</p>
         <input matInput class = "option-colorInput" type="color" [(ngModel)]="nodeEdgeColor">
       <br>
-      <button mat-button 
-        class="option-button" 
+      <button mat-button
+        class="option-button"
         [class.active] = "isChangingColor()"
         (click)="changeNodeColor(); changeEdgeColor()">Change color</button>
       <hr>
+    </div>
+    <div>
+      <div>
+        <select (change)="change($event.target.value)">
+          <option>Select Group</option>
+          <option *ngFor="let name of enumKeys"
+                  [value]="name">{{groups[name]}}</option>
+        </select>
+      </div>
+      <button mat-button class="buttonToolbarRight" (click)="changeNodeGroup()">Change Group</button>
     </div>
   </mat-card>
 </mat-card>

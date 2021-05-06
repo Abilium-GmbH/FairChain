@@ -34,7 +34,7 @@ export class ImportExportService{
    * @param data is the node data that has to be extracted
    * @returns the array of nodes
    */
-  
+
   //TODO make sure that the data is correct
   public checkThatImportDataIsValid(data: any): boolean {
     this.checkDataHasCorrectFormat(data);
@@ -101,7 +101,7 @@ export class ImportExportService{
       .replace('EDGES', this.datasetToJSON(edges));
   }
 
-  private datasetToJSON(data: DataSetNodes | DataSetEdges): string 
+  private datasetToJSON(data: DataSetNodes | DataSetEdges): string
   {
     if (data.length === 0) return '';
     return data.getIds().map((id: IdType) => {

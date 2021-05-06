@@ -9,6 +9,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { ImportExportService } from '../importExport.service';
 import { UndoRedoService } from '../undoRedo.service';
+import {MatOptionModule} from '@angular/material/core';
+
 
 @NgModule({
   declarations: [
@@ -20,7 +22,8 @@ import { UndoRedoService } from '../undoRedo.service';
     MatCardModule,
     MatDialogModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
+    MatOptionModule
   ],
   exports: [
     FairChainComponent,

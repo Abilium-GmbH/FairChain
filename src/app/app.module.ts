@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { ComponentsModule } from './components/components.module';
 import { AppRoutingModule } from './app-routing.module';
@@ -9,7 +10,8 @@ import { EditorPage } from './pages/editor/editor.page';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -17,6 +19,10 @@ import { FormsModule } from '@angular/forms';
     EditorPage,
   ],
   imports: [
+    BrowserModule,BrowserAnimationsModule, FormsModule, ReactiveFormsModule, MatSelectModule,
+
+
+
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
@@ -24,6 +30,7 @@ import { FormsModule } from '@angular/forms';
     MatCardModule,
     MatButtonModule,
     MatInputModule,
+    NgbModule,
     FormsModule
   ],
   providers: [],
