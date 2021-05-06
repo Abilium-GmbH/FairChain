@@ -88,7 +88,6 @@ export class ImportExportService{
       reader.onload = function(e) {
         importedJson = e.target.result;
         const parsedImportedJson = JSON.parse(importedJson);
-        console.log(parsedImportedJson);
         service.checkThatImportDataIsValid(parsedImportedJson);
         resolve(parsedImportedJson);
       }

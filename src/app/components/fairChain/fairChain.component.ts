@@ -7,6 +7,8 @@ import { strict as assert } from 'assert';
 import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data"
 
+
+
 enum Tools {
   AddingNode, AddingEdge, Idle
 }
@@ -82,7 +84,6 @@ export class FairChainComponent implements OnInit {
   public __debug__()
   {
     assert(this.isDebugging, 'Function should not be called unless in debug mode');
-    console.log(this.currentTool);
   }
 
   public nodeEdgeLabel = "";
@@ -179,7 +180,6 @@ export class FairChainComponent implements OnInit {
         this.makeSnapshot();
       },
       editEdge: (edgeData: Edge, callback) => {
-        console.log('yay');
         assert(this.isInEdgeEditMode(), 'The edge should not be edited when no option is selected');
         this.editEdgeBasedOnCurrentEdgeOption(edgeData);
         callback(edgeData);
@@ -200,7 +200,7 @@ export class FairChainComponent implements OnInit {
   }
 
   private editEdgeBasedOnCurrentEdgeOption(edgeData: Edge) {
-    if (this.isChangingEdgeLabel()) {edgeData.label = this.nodeEdgeLabel; console.log('yay');}
+    if (this.isChangingEdgeLabel()) edgeData.label = this.nodeEdgeLabel;
     if (this.isChangingColor()) edgeData.color = this.nodeEdgeColor;
   }
 
@@ -264,6 +264,7 @@ export class FairChainComponent implements OnInit {
       this.edges.update(edgeData);
     });
     this.network.disableEditMode();
+    this.makeSnapshot()
   }
 
   private isClickingOnNodeInNodeEditMode(params): boolean {

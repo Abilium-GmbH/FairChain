@@ -14,21 +14,21 @@
   <!-- Holds primary tools of the application -->
   <mat-card #toolbar class="toolbar">
     <div>
-      <a (click)="addNodeInNetwork()" [class.active]="isAddingNode()" class="tool">
+      <a #addNodeButton (click)="addNodeInNetwork()" [class.active]="isAddingNode()" class="tool">
         <img class="icon-link" src="assets/icons/addnodeicon.png">
       </a>
     </div>
 
     <hr>
     <div>
-      <a (click)="addEdgeInNetwork()" [class.active]="isAddingEdge()" class="tool">
+      <a #addEdgeButton (click)="addEdgeInNetwork()" [class.active]="isAddingEdge()" class="tool">
         <img class="icon-link" src="assets/icons/addedgeicon.png">
       </a>
     </div>
 
     <hr>
     <div>
-      <a (click)="deleteNodeOrEdgeInNetwork()" class="tool">
+      <a #deleteSelectionButton (click)="deleteNodeOrEdgeInNetwork()" class="tool">
         <img class="icon-link" src="assets/icons/deleteselectionicon.png">
       </a>
     </div>
