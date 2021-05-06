@@ -3,21 +3,9 @@ import { fromEvent, Subscription } from 'rxjs';
 import { ImportExportService } from '../../importExport.service'
 import { UndoRedoService } from 'src/app/undoRedo.service';
 import { strict as assert } from 'assert';
-
+import { Tools, ChangingEdge, ChangingNode} from '../../Enums';
 import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data"
-
-enum Tools {
-  AddingNode, AddingEdge, Idle
-}
-
-enum ChangingNode {
-  NodeLabel,  NodeColor, None
-}
-
-enum ChangingEdge {
-  EdgeLabel, EdgeColor, None
-}
 
 @Component({
   selector: 'app-fairChain',
@@ -340,4 +328,9 @@ export class FairChainComponent implements OnInit {
   public redo(){
     this.updateData(this.undoRedoService.getSuccessorSnapshot())
   }
+  public getChangesNode(){return this.changesNode}
+  public getChangesEdge(){return this.changesEdge}
+  public getCurrentTool(){return this.currentTool}
+  public getNetwork(){return this.network}
 }
+
