@@ -8,7 +8,6 @@ import { FairChainComponent } from './fairChain/fairChain.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { ImportExportService } from '../importExport.service';
-import { UndoRedoService } from '../undoRedo.service';
 
 @NgModule({
   declarations: [
@@ -27,8 +26,7 @@ import { UndoRedoService } from '../undoRedo.service';
     MatDialogModule
   ],
   providers: [
-    ImportExportService,
-    UndoRedoService
+    ImportExportService
   ]
 })
 export class ComponentsModule { }

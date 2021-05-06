@@ -1,22 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FairChainComponent } from './fairChain.component';
-import { UndoRedoService } from './../../undoRedo.service';
-import { ImportExportService } from './../../importExport.service';
-import { Tools,ChangingNode,ChangingEdge} from '../../Enums';
 
 describe('FairChainComponent', () => {
   let component: FairChainComponent;
   let fixture: ComponentFixture<FairChainComponent>;
-  let importExportServiceStub: Partial<ImportExportService>;
-  let undoRedoServiceStub: Partial<UndoRedoService>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FairChainComponent ],
-      providers: [
-        {provide: ImportExportService, useValue: importExportServiceStub},
-        {provide: UndoRedoService, useValue: undoRedoServiceStub}]
+      declarations: [ FairChainComponent ]
     })
     .compileComponents();
   });
@@ -166,5 +158,5 @@ describe('FairChainComponent', () => {
     expect(currentTool).toBe(Tools.AddingNode, 'currentTool is wrong')
     expect(changesNode).toBe(ChangingNode.None, 'changesNode is wrong')
   })
-  
+
 });
