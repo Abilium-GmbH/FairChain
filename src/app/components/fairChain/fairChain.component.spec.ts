@@ -157,5 +157,14 @@ describe('FairChainComponent', () => {
     expect(currentTool).toBe(Tools.AddingNode, 'currentTool is wrong')
     expect(changesNode).toBe(ChangingNode.None, 'changesNode is wrong')
   })
+
+  it('should change currentTool to AddingEdge and changesNode to None if you first call changeNodeName and then addNodeInNetwork', ()=>{
+    component.changeNodeName();
+    component.addNodeInNetwork();
+    var currentTool = component.getCurrentTool();
+    var changesNode = component.getChangesNode()
+    expect(currentTool).toBe(Tools.AddingNode, 'currentTool is wrong')
+    expect(changesNode).toBe(ChangingNode.None, 'changesNode is wrong')
+  })
   
 });
