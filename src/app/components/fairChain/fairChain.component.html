@@ -62,6 +62,18 @@
         (click)="changeNodeColor(); changeEdgeColor()">Change color</button>
       <hr>
     </div>
-    <button mat-button class="option-button" [class.active] = "isChangingFlag()" (click)= "changeFlag()">Change Flag</button>
+    <div>
+      <p class="option-label">flag</p>
+      <mat-radio-group
+        [(ngModel)]="nodeFlag">
+        <mat-radio-button *ngFor="let emoji of emojis" [value]="emoji">
+          {{emoji}}
+        </mat-radio-button>
+      </mat-radio-group>
+      <br>
+      <button mat-button class="option-button" [class.active] = "isChangingFlag()" (click)= "changeFlag()">Change Flag</button>
+      <hr>
+    </div>
+    
   </mat-card>
 </mat-card>

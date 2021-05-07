@@ -7,7 +7,7 @@ import { strict as assert } from 'assert';
 import { Tools, ChangingEdge, ChangingNode} from '../../Enums';
 import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data"
-import * as emoji from 'node-emoji';
+import { emojis as flags } from '../../emojis'
 
 @Component({
   selector: 'app-fairChain',
@@ -31,6 +31,7 @@ export class FairChainComponent implements OnInit {
               private undoRedoService:UndoRedoService,
               private flagsService:FlagService) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges);
+    this.emojis = flags;
   }
 
   private makeSubscriptions(): void {
@@ -67,7 +68,8 @@ export class FairChainComponent implements OnInit {
 
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
-  public nodeFlag = emoji.get(':flag-mx:');
+  public nodeFlag = "🇦🇨";
+  public emojis;
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
 
@@ -324,6 +326,9 @@ export class FairChainComponent implements OnInit {
     else this.changesEdge = ChangingEdge.EdgeColor;
   }
 
+  /**
+   * Declaration of the change Flag method for nodes
+   */
   public changeFlag(){
     this.makeToolIdle();
     if (this.isChangingFlag()) this.changesNode = ChangingNode.None;
@@ -341,6 +346,7 @@ export class FairChainComponent implements OnInit {
   public redo(){
     this.updateData(this.undoRedoService.getSuccessorSnapshot())
   }
+  
   public getChangesNode(){return this.changesNode}
   public getChangesEdge(){return this.changesEdge}
   public getCurrentTool(){return this.currentTool}

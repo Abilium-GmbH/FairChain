@@ -4,7 +4,7 @@ import * as emoji from 'node-emoji'
 
 @Injectable({
     providedIn: 'root'
-  })
+})
 export class FlagService{
     public addOrChangeFlag(nodeData: Node, nodeflag){
         nodeData.label = this.deleteFlag(nodeData.label)
