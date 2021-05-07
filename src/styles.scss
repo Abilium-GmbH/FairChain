@@ -5,3 +5,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+@font-face {
+    font-family: "Flags";
+    src: url(./assets/fonts/BabelStoneFlags.ttf) format("truetype");
+}
+
+* {
+    font-family: "Flags", Arial, Helvetica, sans-serif;
+  }

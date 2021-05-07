@@ -5,8 +5,10 @@
   <button mat-button class="buttonsToolbarAbove" (click)= "redo()"> Redo </button>
   <button mat-button class="buttonsToolbarAbove" (click)="__debug__()" *ngIf="isDebugging"> Debug </button>
 
+
   <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" #hiddenfileinput>
 </mat-card>
+  <span>🇦🇩</span>
 
 <mat-card class="application-body">
   <!-- Holds primary tools of the application -->
@@ -53,7 +55,7 @@
     <hr>
     <div>
       <!-- Implements te color toolbar and button to change node/edge colors -->
-        <p class="option-label">color</p>
+        <p class="option-label" ></p>
         <input matInput class = "option-colorInput" type="color" [(ngModel)]="nodeEdgeColor">
       <br>
       <button mat-button 
