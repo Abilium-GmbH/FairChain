@@ -2,10 +2,12 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { ImportExportService } from '../../importExport.service'
 import { UndoRedoService } from 'src/app/undoRedo.service';
+import { FlagService } from '../../flag.service'
 import { strict as assert } from 'assert';
 import { Tools, ChangingEdge, ChangingNode} from '../../Enums';
 import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data"
+import * as emoji from 'node-emoji';
 
 @Component({
   selector: 'app-fairChain',
@@ -25,7 +27,9 @@ export class FairChainComponent implements OnInit {
     this.makeSubscriptions();
   }
 
-  constructor(private importExportService:ImportExportService, private undoRedoService:UndoRedoService) {
+  constructor(private importExportService:ImportExportService, 
+              private undoRedoService:UndoRedoService,
+              private flagsService:FlagService) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges);
   }
 
@@ -48,6 +52,7 @@ export class FairChainComponent implements OnInit {
   public isChangingNodeLabel() : boolean {return this.changesNode === ChangingNode.NodeLabel;}
   public isChangingEdgeLabel() : boolean {return this.changesEdge === ChangingEdge.EdgeLabel;}
   public isChangingColor() : boolean {return this.changesNode === ChangingNode.NodeColor;}
+  public isChangingFlag() : boolean {return this.changesNode === ChangingNode.NodeFlag;}
   public isInNodeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
   public isInEdgeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
   private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
@@ -62,6 +67,7 @@ export class FairChainComponent implements OnInit {
 
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
+  public nodeFlag = emoji.get(':flag-mx:');
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
 
@@ -158,6 +164,7 @@ export class FairChainComponent implements OnInit {
   private editNodeBasedOnCurrentNodeOption(nodeData: Node) {
     if (this.isChangingNodeLabel()) nodeData.label = this.nodeEdgeLabel;
     if (this.isChangingColor()) nodeData.color = this.nodeEdgeColor;
+    if (this.isChangingFlag()) nodeData.label = this.flagsService.addOrChangeFlag(nodeData, this.nodeFlag);
   }
 
   private editEdgeBasedOnCurrentEdgeOption(edgeData: Edge) {
@@ -315,6 +322,12 @@ export class FairChainComponent implements OnInit {
     this.makeToolIdle();
     if (this.isChangingColor()) this.changesEdge = ChangingEdge.None;
     else this.changesEdge = ChangingEdge.EdgeColor;
+  }
+
+  public changeFlag(){
+    this.makeToolIdle();
+    if (this.isChangingFlag()) this.changesNode = ChangingNode.None;
+    else this.changesNode = ChangingNode.NodeFlag;
   }
 
   private makeSnapshot(){

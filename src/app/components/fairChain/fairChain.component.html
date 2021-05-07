@@ -62,5 +62,6 @@
         (click)="changeNodeColor(); changeEdgeColor()">Change color</button>
       <hr>
     </div>
+    <button mat-button class="option-button" [class.active] = "isChangingFlag()" (click)= "changeFlag()">Change Flag</button>
   </mat-card>
 </mat-card>
