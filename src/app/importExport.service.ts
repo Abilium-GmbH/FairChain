@@ -1,19 +1,14 @@
 import { identifierModuleUrl } from '@angular/compiler';
 import { Injectable } from '@angular/core';
-import * as vis from 'vis-network';
+import { strict as assert } from 'assert';
+
+import { ImportData } from './interfaces/importData'
+import { DataSetNodes, DataSetEdges, IdType, Color } from "vis-network/peer/esm/vis-network";
 
 @Injectable({
     providedIn: 'root'
   })
 export class ImportExportService{
-
-  private nodes: vis.Node[] = [];
-  private edges: vis.Edge[] = [];
-  private data: vis.Data = {
-    nodes: this.nodes,
-    edges: this.edges,
-  };
-
   /**
    * Creates a temporary, non-visible HTML element with a download function, clicks on it and removes it from the document
    * Gets called when the export button is pressed
@@ -35,78 +30,81 @@ export class ImportExportService{
   }
 
   /**
-   * Overwrites the data variable with the data from parsedImportedJson
-   * @param parsedImportedJson is the object that you get after deserializing the imported JSON file
-   */
-
-  public overwriteData(parsedImportedJson){
-    try{
-      this.data = {
-        nodes: this.extractNodeData(parsedImportedJson.nodes),
-        edges: this.extractEdgeData(parsedImportedJson.edges)
-      };
-      return this.data;
-    }
-    catch{
-      return [];
-    }
-  }
-
-  /**
    * Extracts the data from the parameter into an array of nodes
    * @param data is the node data that has to be extracted
    * @returns the array of nodes
    */
-
-  private extractNodeData(data) {
-    var networkNodes = [];
-    data.forEach(function (elem) {
-      if (elem.x && elem.y && elem.id != undefined){
-        networkNodes.push(elem);
-      }
-      
-    });
-    return networkNodes;
-  }
   
-  /**
-   * Extracts the data from the parameter into an array of edges
-   * @param data is the edge data that has to be extracted
-   * @returns the array of edges
-   */
-
-  private extractEdgeData(data) {
-    var networkEdges = [];
-    data.forEach(function (elem) {
-      if (elem.from && elem.to && elem.id != undefined){
-        networkEdges.push(elem);
-      }
-    });
-    return networkEdges;
+  //TODO make sure that the data is correct
+  public checkThatImportDataIsValid(data: any): boolean {
+    this.checkDataHasCorrectFormat(data);
+    this.checkDataNodesAndEdgesAddUp(data);
+    return true;
   }
 
-  public async upload(file: File){
+  checkDataNodesAndEdgesAddUp(data: ImportData) {
+    let nodeList = data.nodes.map((node) => {return node.id});
+    data.edges.forEach((edge) => {
+      if (!nodeList.includes(edge.from)) throw new Error();
+      if (!nodeList.includes(edge.to)) throw new Error();
+    })
+  }
+
+  private checkDataHasCorrectFormat(data: any): void {
+    if (!data.nodes) throw new Error();
+    if (!data.edges) throw new Error();
+    for (let key in data) if (!['nodes','edges'].includes(key)) throw Error();
+    if (!Array.isArray(data.nodes)) throw new Error();
+    if (!Array.isArray(data.edges)) throw new Error();
+    for (let entry of data.nodes) {this.checkNodesHasCorrectFormat(entry);}
+    for (let entry of data.edges) {this.checkEdgesHasCorrectFormat(entry);}
+  }
+
+  //TODO: check if attributes match the ones defined in vis.js
+  private checkNodesHasCorrectFormat(entry): void {
+    if (!entry.id && typeof entry.id !== 'string') throw new Error();
+    if (!entry.label && typeof entry.id !== 'string') throw new Error();
+    if (!entry.x && typeof entry.x !== 'number') throw new Error();
+    if (!entry.y && typeof entry.y !== 'number') throw new Error();
+  }
+
+  //TODO: check if attributes match the ones defined in vis.js
+  private checkEdgesHasCorrectFormat(entry): void {
+    if (!entry.id && typeof entry.id !== 'string') throw new Error();
+    if (!entry.from && typeof entry.from !== 'string') throw new Error();
+    if (!entry.to && typeof entry.to !== 'string') throw new Error();
+  }
+
+  //TODO make method shorter
+  public async upload(file: File) {
     return new Promise ((resolve, reject) => {
+      if (file.type != 'application/json') reject('The file type is not JSON');
+      if (file['Size']> 1e5) reject('The file size is to large');
       const reader = new FileReader();
       var importedJson;
-      var data;
       var service = new ImportExportService;
       reader.readAsBinaryString(file);
 
       reader.onload = function(e) {
         importedJson = e.target.result;
         const parsedImportedJson = JSON.parse(importedJson);
-        data = service.overwriteData(parsedImportedJson);
-        resolve(data);
+        service.checkThatImportDataIsValid(parsedImportedJson);
+        resolve(parsedImportedJson);
       }
     })
   }
 
-  public getNodes(){
-    return this.nodes;
+  public convertNetworkToJSON(nodes: DataSetNodes, edges: DataSetEdges): string {
+    return "{\"nodes\":[NODES],\"edges\":[EDGES]}"
+      .replace('NODES', this.datasetToJSON(nodes))
+      .replace('EDGES', this.datasetToJSON(edges));
   }
 
-  public getEdges(){
-    return this.edges;
+  private datasetToJSON(data: DataSetNodes | DataSetEdges): string 
+  {
+    if (data.length === 0) return '';
+    return data.getIds().map((id: IdType) => {
+      return JSON.stringify(data.get(id))
+    }).join(',');
   }
 }
