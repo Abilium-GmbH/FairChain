@@ -19,9 +19,6 @@ import { DataSet } from "vis-data/peer/esm/vis-data"
  * such like addNode, addEdge, deleteSelection, edit NodeLabel and edge Label
  */
 export class FairChainComponent implements OnInit {
-  public isAddingNode() : boolean {return this.currentTool === activeTool.AddingNode;}
-  public isAddingEdge() : boolean {return this.currentTool === activeTool.AddingEdge;}
-
 
   public ngOnInit(): void {
     this.network = new Network(this.graph, this.data, this.options);
@@ -55,13 +52,6 @@ export class FairChainComponent implements OnInit {
   public isInEdgeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
   private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
   private makeToolIdle() : void {this.currentTool = Tools.Idle;}
-
-  // A handy debug buttom for any
-  public isDebugging = true;
-  public __debug__()
-  {
-    assert(this.isDebugging, 'Function should not be called unless in debug mode');
-  }
 
   public testClassCSS = false;
  

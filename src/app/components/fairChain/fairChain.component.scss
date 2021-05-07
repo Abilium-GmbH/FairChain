@@ -21,94 +21,6 @@
     margin: 0px;
     padding:0px;
 
-<<<<<<< HEAD
-.toolbar {
-    height: 100%;
-    width: 10%;
-    margin: 0px;
-    padding:0px;
-    float: left;
-
-    .tool {
-        padding: 5px;
-        background-color: #ffffff;
-        margin-top: 1rem;
-        margin-left: 1.5rem;
-        height: 3rem;
-    }
-    .tool.active {
-        background-color: #00c3ff;
-    }
-}
-
-.canvas {
-    background-color: #f0fcfc;
-    height: 100%;
-    width: 83%;
-    float:left;
-    margin: 0px;
-    padding:0px;
-}
-
-.toolbar-options {
-    height: 100%;
-    width: 6%;
-    float: left;
-    margin: 0px;
-    padding: 0px;
-}
-
-// Initializes the interaction area properties
-.graph {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.icon-link{
-    margin-top: 1rem;
-    height: 3rem;
-}
-
-.icon{
-    margin-left: 1.5rem;
-}
-
-.label{
-    font-size:16px;
-    color: black;
-    padding-left: 7px;
-}
-.textAreaLabel{
-  font-size:16px;
-  height: 50px;
-  width: 95%;
-}
-
-// Gives the correct proportions of the edit color bar
-.colorInputBar{
-  font-size:16px;
-  width: 101%;
-}
-
-// Gives the correct proportions of the buttons located in the right toolbar
-.buttonsToolbarRight{
-  width: 100%;
-  padding-left: 5px;
-}
-
-#buttonsToolbarAbove{
-  font-size:16px;
-  color: black;
-  padding-left: 7px;
-}
-
-#fileToImport{
-    display: none;
-}
-=======
     .toolbar {
         height: 100%;
         width: 10%;
@@ -186,4 +98,3 @@
         }
     }
 }
->>>>>>> 905c4dea30dd603cb6b1dd99a29b5e1653a649e9
