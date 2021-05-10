@@ -63,12 +63,11 @@ export class FairChainComponent implements OnInit {
   public isDebugging = true;
   public __debug__()
   {
-    assert(this.isDebugging, 'Function should not be called unless in debug mode');
-  }
+    this.nodes.add({ id: 3, font: { multi: 'html', face: 'Flags' }, label: 'Wood 🇦🇱', x: 40, y: 40 })  }
 
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
-  public nodeFlag = "🇦🇨";
+  public nodeFlag = "🇩🇪";
   public emojis;
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;

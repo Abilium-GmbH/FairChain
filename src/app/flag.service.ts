@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Node, DataSetNodes, IdType} from "vis-network/peer/esm/vis-network";
+import { emojis as flags } from './emojis'
 
 @Injectable({
     providedIn: 'root'
@@ -11,8 +12,7 @@ export class FlagService{
     }
 
     private deleteFlag(label: string){
-        //label = emoji.unemojify(label);
-        if (label.includes(':flag-')){
+        if (label.includes(flags.toString())){
             label = label.slice(0,-9);
         }
         return label;
