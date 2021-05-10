@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Node, DataSetNodes, IdType} from "vis-network/peer/esm/vis-network";
+import { Node } from "vis-network/peer/esm/vis-network";
 import { emojis as flags } from './emojis'
 
 @Injectable({

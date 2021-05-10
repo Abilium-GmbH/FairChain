@@ -13,7 +13,7 @@ import { emojis as flags } from '../../emojis'
   selector: 'app-fairChain',
   templateUrl: './fairChain.component.html',
   styleUrls: ['./fairChain.component.scss'],
-  providers: [ ImportExportService, UndoRedoService ]
+  providers: [ ImportExportService, UndoRedoService, FlagService ]
 })
 
 /**
@@ -63,12 +63,13 @@ export class FairChainComponent implements OnInit {
   public isDebugging = true;
   public __debug__()
   {
-    this.nodes.add({ id: 3, font: { multi: 'html', face: 'Flags' }, label: 'Wood 🇦🇱', x: 40, y: 40 })  }
+    this.nodes.add({ id: 3, font: { multi: 'html', face: 'Flags' }, label: 'Wood 🇦🇱', x: 40, y: 40 })  
+  }
 
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
   public nodeFlag = "🇩🇪";
-  public emojis;
+  public emojis: string[];
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
 
@@ -103,7 +104,8 @@ export class FairChainComponent implements OnInit {
   private options: Options = {
     nodes: {
       shape: 'box',
-      physics: true
+      physics: true,
+      font: {multi: 'html', face: 'Flags'}
     },
     edges: {
       color: {
