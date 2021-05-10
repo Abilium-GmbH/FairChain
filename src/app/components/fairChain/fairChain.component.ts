@@ -1,14 +1,12 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
-import { map, buffer, debounceTime, filter, bufferCount } from 'rxjs/operators';
 import { ImportExportService } from '../../importExport.service'
 import { UndoRedoService } from 'src/app/undoRedo.service';
 import { strict as assert } from 'assert';
-import { animation } from '@angular/animations';
-import { relabelPopUpInfo } from '../interfaces';
 
 import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data"
+import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
 
 
 
@@ -41,7 +39,7 @@ export class FairChainComponent implements OnInit {
     this.network = new Network(this.graph, this.data, this.options);
     this.makeSubscriptions();
   }
-  public relabelPopUpInfo: relabelPopUpInfo;
+  public relabelPopUpInfo: RectOnDOM;
 
   constructor(private importExportService:ImportExportService, private undoRedoService:UndoRedoService) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges);
@@ -59,6 +57,16 @@ export class FairChainComponent implements OnInit {
         this.onDragEnd(params);
       })
     );
+    this.subscriptions.add(
+      fromEvent(this.network, 'doubleClick').subscribe(params => {
+        this.onDoubleClick(params);
+      })
+    );
+    this.subscriptions.add(
+      fromEvent(this.network, 'dragging').subscribe(params => {
+        if (this.isShowingRelabelPopUp) this.closeNodeRelabelPopUp();
+      })
+    );
   }
 
   public isAddingNode() : boolean {return this.currentTool === Tools.AddingNode;}
@@ -70,20 +78,26 @@ export class FairChainComponent implements OnInit {
   public isInEdgeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
   private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
   private makeToolIdle() : void {this.currentTool = Tools.Idle;}
+  private closeNodeRelabelPopUp() : void {
+    assert(this.isShowingRelabelPopUp, 'There is no pop up menu to close');
+    assert(this.nodeToRelableId, 'There is no node to apply the change to'); 
+    this.nodes.update({id: this.nodeToRelableId, label: this.nodeEdgeLabel});
+    this.isShowingRelabelPopUp = false;
+    this.nodeToRelableId = undefined;
+  }
 
   // A handy debug buttom for any 
   public isDebugging = true;
   public __debug__() 
   {
     assert(this.isDebugging, 'Function should not be called unless in debug mode');
+    console.log(this.isShowingRelabelPopUp);
   }
 
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
-  public nodeToRelableId = '';
+  public nodeToRelableId: IdType;
   public isShowingRelabelPopUp = false;
-
-  
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
   //@ViewChild('nodeRelabelPopUp', {static: true}) nodeRelabelPopUpRef: ElementRef;
@@ -238,6 +252,7 @@ export class FairChainComponent implements OnInit {
    * @private
    */
   private onClick(params) {
+    if (this.isShowingRelabelPopUp) this.closeNodeRelabelPopUp();
     // Defines node onClick actions
     if (this.isClickingOnNodeInNodeEditMode(params)) this.network.editNode();
     // Defines edge onClick actions
@@ -272,14 +287,9 @@ export class FairChainComponent implements OnInit {
       this.makeSnapshot();
     }
   }
-  private onDoubleClick(params) {
-    if (params.nodes.length === 1) 
-    {
-      this.network.unselectAll();
-      this.nodeToRelableId = params.nodes[0];
-      this.network.selectNodes([this.nodeToRelableId]);
-      this.showRelabelPopUp(params.pointer);
-    }
+  private onDoubleClick(pointer) {
+    this.network.disableEditMode();
+    if (pointer.nodes.length === 1) this.showRelabelPopUp(pointer);
   }
 
   // Boolean switch value if someone wants to change the nodeLabel name for button color
@@ -376,32 +386,71 @@ export class FairChainComponent implements OnInit {
   }
 
   private showRelabelPopUp(pointer) {
-    const boundingBox = this.network.getBoundingBox(this.nodeToRelableId);
-    const upperLeftCorner = this.network.canvasToDOM({x: boundingBox.left, y: boundingBox.top});
-    const bottomRightCorner = this.network.canvasToDOM({x: boundingBox.right, y: boundingBox.bottom});
-    const currentLabel = this.nodes.get(this.nodeToRelableId).label;
-    this.nodeEdgeLabel = currentLabel;
-
-    const offSet_x = this.graph.getBoundingClientRect().left;
-    const offSet_y = this.graph.getBoundingClientRect().top;
-    
-    const x = upperLeftCorner.x + offSet_x;
-    const y = upperLeftCorner.y + offSet_y;
-
-    this.relabelPopUpInfo = {
-      x: x,
-      y: y,
-      width: bottomRightCorner.x - upperLeftCorner.x,
-      height: bottomRightCorner.y - upperLeftCorner.y
-    }
+    this.nodeToRelableId = pointer.nodes[0];
+    let relabelRectOnDOM = this.getBoundingBoxOfNodeAsRectInDOM();
+    this.relabelPopUpInfo = this.cropAndTranslateRectInDOMToBeOverCanvasAndNode(relabelRectOnDOM);
+    this.nodeEdgeLabel = this.nodes.get(this.nodeToRelableId).label;
 
     this.isShowingRelabelPopUp  = true;
   }
 
-  public changingNodeLabel(event) {
-    assert(this.isShowingRelabelPopUp);
-    assert(this.nodeToRelableId);
-    assert(this.nodes.get(this.nodeToRelableId))
-    this.nodeEdgeLabel = event.target.textContent;
+  private cropAndTranslateRectInDOMToBeOverCanvasAndNode(rect: RectOnDOM): RectOnDOM {
+    const min_x = this.graph.getBoundingClientRect().left;
+    const min_y = this.graph.getBoundingClientRect().top;
+    const max_x = this.graph.getBoundingClientRect().right;
+    const max_y = this.graph.getBoundingClientRect().bottom;
+
+    rect = this.moveRectOverNode(rect, min_x, min_y);
+    rect = this.cropRectToFitCanvas(rect, min_x, min_y, max_x, max_y)
+    rect = this.moveRectLeftToFitCanvas(rect, min_x);
+    rect = this.moveRectRightToFitCanvas(rect, max_x);
+    rect = this.moveRectDownToFitCanvas(rect, min_y);
+    rect = this.moveRectUpToFitCanvas(rect, max_y);
+
+    return rect;
   }
+
+  moveRectUpToFitCanvas(rect: RectOnDOM, max_y: number): RectOnDOM {
+    if (rect.y + rect.height > max_y) rect.y = max_y - rect.height;
+    return rect;
+  }
+
+  moveRectDownToFitCanvas(rect: RectOnDOM, min_y: number): RectOnDOM {
+    if (rect.y < min_y) rect.y = min_y;
+    return rect;
+  }
+
+  moveRectRightToFitCanvas(rect: RectOnDOM, max_x: number): RectOnDOM {
+    if (rect.x + rect.width > max_x) rect.x = max_x - rect.width;
+    return rect;
+  }
+
+  moveRectLeftToFitCanvas(rect: RectOnDOM, min_x: number): RectOnDOM {
+    if (rect.x < min_x) rect.x = min_x;
+    return rect;
+  }
+
+  private cropRectToFitCanvas(rect: RectOnDOM, min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
+    if (rect.width > max_x - min_x) rect.width = max_x - min_x;
+    if (rect.height > max_y - min_y) rect.height = max_y - min_y;
+    return rect;
+  }
+
+  private moveRectOverNode(rect: RectOnDOM, min_x: number, min_y: number): RectOnDOM {
+    rect.x += min_x;
+    rect.y += min_y;
+    return rect;
+  }
+
+  private getBoundingBoxOfNodeAsRectInDOM() : RectOnDOM {
+    const boundingBox = this.network.getBoundingBox(this.nodeToRelableId);
+    const upperLeftCorner = this.network.canvasToDOM({x: boundingBox.left, y: boundingBox.top});
+    const bottomRightCorner = this.network.canvasToDOM({x: boundingBox.right, y: boundingBox.bottom});
+    return {
+      x: upperLeftCorner.x,
+      y: upperLeftCorner.y,
+      width: bottomRightCorner.x - upperLeftCorner.x,
+      height: bottomRightCorner.y - upperLeftCorner.y};
+  }
+
 }

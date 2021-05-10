@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { strict as assert } from 'assert';
-import { relabelPopUpInfo } from '../interfaces';
+import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
 
 @Component({
   selector: 'relabel-pop-up',
@@ -9,26 +9,18 @@ import { relabelPopUpInfo } from '../interfaces';
 })
 export class RelabelPopUpComponent implements OnInit {
 
-  private minCol: number = 10;
-  private maxCol: number = 30;
-  private minRow: number = 1;
-  private maxRow: number = 5;
-  private maxNumCharacters: number = 144;
   private prevLabel: string;
 
   constructor() { }
 
-  @Input() info: relabelPopUpInfo;
+  @Input() info: RectOnDOM;
   
   @Input()  label: string;
   @Output() labelChange = new EventEmitter<string>();
 
-  //@ViewChild('relabelTextArea') relabelTextAreaRef: ElementRef;
   @ViewChild('relabelTextArea') relabelTextAreaRef: ElementRef;
 
   ngOnInit(): void {
-    assert(this.minCol <= this.maxCol);
-    assert(this.minRow <= this.maxRow);
   }
 
   ngAfterViewInit(): void {
@@ -48,12 +40,13 @@ export class RelabelPopUpComponent implements OnInit {
 
   private applyUpdateToLabel() {
     this.prevLabel = this.relabelText;
-    this.labelChange.emit(this.convertToMultiline(this.relabelTextArea.innerText));
+    this.labelChange.emit(this.convertToMultiline(this.relabelText));
   }
 
   private isNotAbleToUpdate(): boolean {
-    if (this.relabelText.length > this.maxNumCharacters) return true;
-    if (this.relabelText.split('\n').length > this.maxRow + 1) return true;
+    return false;
+    //if (this.relabelText.length > this.maxNumCharacters) return true;
+    //if (this.relabelText.split('\n').length > this.maxRow + 1) return true;
   }
 
   private convertToMultiline(text: string) {
