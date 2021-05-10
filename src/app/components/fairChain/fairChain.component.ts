@@ -25,7 +25,6 @@ export class FairChainComponent implements OnInit {
     this.network = new Network(this.graph, this.data, this.options);
     this.makeSubscriptions();
   }
-  public relabelPopUpInfo: RectOnDOM;
 
   constructor(private importExportService:ImportExportService, private undoRedoService:UndoRedoService) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges);
@@ -55,6 +54,7 @@ export class FairChainComponent implements OnInit {
     );
   }
 
+  public isRelabelPopUpVisible() : boolean {return this.isShowingRelabelPopUp;}
   public isAddingNode() : boolean {return this.currentTool === Tools.AddingNode;}
   public isAddingEdge() : boolean {return this.currentTool === Tools.AddingEdge;}
   public isChangingNodeLabel() : boolean {return this.changesNode === ChangingNode.NodeLabel;}
@@ -69,7 +69,8 @@ export class FairChainComponent implements OnInit {
     assert(this.nodeToRelableId, 'There is no node to apply the change to'); 
     this.nodes.update({id: this.nodeToRelableId, label: this.nodeEdgeLabel});
     this.isShowingRelabelPopUp = false;
-    this.nodeToRelableId = undefined;
+    this.nodeToRelableId = '';
+    this.makeSnapshot();
   }
 
   // A handy debug buttom for any
@@ -77,13 +78,13 @@ export class FairChainComponent implements OnInit {
   public __debug__()
   {
     assert(this.isDebugging, 'Function should not be called unless in debug mode');
-    console.log(this.isShowingRelabelPopUp);
   }
 
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
   public nodeToRelableId: IdType;
   public isShowingRelabelPopUp = false;
+  public relabelPopUpInfo: RectOnDOM;
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
   //@ViewChild('nodeRelabelPopUp', {static: true}) nodeRelabelPopUpRef: ElementRef;
@@ -379,13 +380,13 @@ export class FairChainComponent implements OnInit {
   private showRelabelPopUp(pointer) {
     this.nodeToRelableId = pointer.nodes[0];
     let relabelRectOnDOM = this.getBoundingBoxOfNodeAsRectInDOM();
-    this.relabelPopUpInfo = this.cropAndTranslateRectInDOMToBeOverCanvasAndNode(relabelRectOnDOM);
+    this.relabelPopUpInfo = this.cropAndTranslateRect(relabelRectOnDOM);
     this.nodeEdgeLabel = this.nodes.get(this.nodeToRelableId).label;
 
     this.isShowingRelabelPopUp  = true;
   }
 
-  private cropAndTranslateRectInDOMToBeOverCanvasAndNode(rect: RectOnDOM): RectOnDOM {
+  private cropAndTranslateRect(rect: RectOnDOM): RectOnDOM {
     const min_x = this.graph.getBoundingClientRect().left;
     const min_y = this.graph.getBoundingClientRect().top;
     const max_x = this.graph.getBoundingClientRect().right;
