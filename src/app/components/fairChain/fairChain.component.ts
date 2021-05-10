@@ -148,6 +148,7 @@ export class FairChainComponent implements OnInit {
     this.edges.update({id: this.edgeToRelableId, label: this.nodeEdgeLabel});
     this.isShowingEdgeRelabelPopUp = false;
     this.nodeToRelableId = undefined;
+    this.makeSnapshot();
   }
 
   // A handy debug buttom for any
@@ -478,16 +479,25 @@ export class FairChainComponent implements OnInit {
     this.relabelPopUpInfo.active = true;
   }
 
+  //Very ugly code will be fixed in refactor
   private showEdgeRelabelPopUp(pointer) {
     this.updateNodePositions();
+
+    //Get edge
     this.edgeToRelableId = pointer.edges[0];
     let edge: Edge = this.edges.get(this.edgeToRelableId);
+    if (!edge.label) this.nodeEdgeLabel = '';
+    else this.nodeEdgeLabel = edge.label;
+    
+    //Compute center of edge
     let node1: Node = this.nodes.get(edge.from);
     let node2: Node = this.nodes.get(edge.to);
     let centerx: number = (node1.x + node2.x)/2;
     let centery: number = (node1.y + node2.y)/2;
     let center: Position = {x: centerx, y:centery};
     center = this.network.canvasToDOM(center);
+    
+    //Minor offset details
     let offsetx: number = this.graph.getBoundingClientRect().left;
     let offsety: number = this.graph.getBoundingClientRect().top;
     let w: number = 50;
@@ -498,6 +508,8 @@ export class FairChainComponent implements OnInit {
       width: w,
       height: h
     };
+
+    //Show pop up
     this.isShowingEdgeRelabelPopUp = true;
   }
 
