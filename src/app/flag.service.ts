@@ -6,14 +6,15 @@ import { emojis as flags } from './emojis'
     providedIn: 'root'
 })
 export class FlagService{
+
     public addOrChangeFlag(nodeData: Node, nodeflag){
         nodeData.label = this.deleteFlag(nodeData.label)
         return nodeData.label + nodeflag;
     }
 
     private deleteFlag(label: string){
-        if (label.includes(flags.toString())){
-            label = label.slice(0,-9);
+        if (flags.some(v => label.includes(v))){
+            label = label.slice(0,-4);
         }
         return label;
     }
