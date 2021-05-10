@@ -4,7 +4,7 @@ import { ImportExportService } from '../../importExport.service'
 import { UndoRedoService } from 'src/app/undoRedo.service';
 import { strict as assert } from 'assert';
 import { Tools, ChangingEdge, ChangingNode} from '../../Enums';
-import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges } from "vis-network/peer/esm/vis-network";
+import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges, Position } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data"
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
 
@@ -50,6 +50,7 @@ export class FairChainComponent implements OnInit {
     this.subscriptions.add(
       fromEvent(this.network, 'dragging').subscribe(params => {
         if (this.isShowingRelabelPopUp) this.closeNodeRelabelPopUp();
+        if (this.isShowingEdgeRelabelPopUp) this.closeEdgeRelabelPopUp();
       })
     );
   }
@@ -72,6 +73,13 @@ export class FairChainComponent implements OnInit {
     this.nodeToRelableId = '';
     this.makeSnapshot();
   }
+  private closeEdgeRelabelPopUp() : void {
+    assert(this.isShowingEdgeRelabelPopUp, 'There is no pop up menu to close');
+    assert(this.edgeToRelableId, 'There is no edge to apply the change to'); 
+    this.edges.update({id: this.edgeToRelableId, label: this.nodeEdgeLabel});
+    this.isShowingEdgeRelabelPopUp = false;
+    this.nodeToRelableId = undefined;
+  }
 
   // A handy debug buttom for any
   public isDebugging = true;
@@ -85,6 +93,10 @@ export class FairChainComponent implements OnInit {
   public nodeToRelableId: IdType;
   public isShowingRelabelPopUp = false;
   public relabelPopUpInfo: RectOnDOM;
+
+  public edgeToRelableId: IdType;
+  public isShowingEdgeRelabelPopUp = false;
+  public edgeRelabelPopUpInfo: RectOnDOM;
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
   //@ViewChild('nodeRelabelPopUp', {static: true}) nodeRelabelPopUpRef: ElementRef;
@@ -127,7 +139,7 @@ export class FairChainComponent implements OnInit {
       color: {
         inherit: false
       },
-      smooth: true,
+      smooth: false,
       physics: false,
       arrows: {
         to: {
@@ -242,6 +254,7 @@ export class FairChainComponent implements OnInit {
    */
   private onClick(params) {
     if (this.isShowingRelabelPopUp) this.closeNodeRelabelPopUp();
+    if (this.isShowingEdgeRelabelPopUp) this.closeEdgeRelabelPopUp();
     // Defines node onClick actions
     if (this.isClickingOnNodeInNodeEditMode(params)) this.network.editNode();
     // Defines edge onClick actions
@@ -279,6 +292,7 @@ export class FairChainComponent implements OnInit {
   private onDoubleClick(pointer) {
     this.network.disableEditMode();
     if (pointer.nodes.length === 1) this.showRelabelPopUp(pointer);
+    if (pointer.edges.length === 1 && pointer.nodes.length !==1) this.showEdgeRelabelPopUp(pointer);
   }
 
   // Boolean switch value if someone wants to change the nodeLabel name for button color
@@ -347,6 +361,13 @@ export class FairChainComponent implements OnInit {
     this.makeSubscriptions();
   }
 
+  private updateNodePositions() {
+    this.nodes.getIds().forEach((id: IdType) => {
+      const pos: Position = this.network.getPosition(id);
+      this.nodes.update({id:id, x:pos.x, y:pos.y});
+    })
+  }
+
   /**
    * Declaration of the change Color method for nodes
    */
@@ -375,6 +396,29 @@ export class FairChainComponent implements OnInit {
 
   public redo(){
     this.updateData(this.undoRedoService.getSuccessorSnapshot())
+  }
+
+  private showEdgeRelabelPopUp(pointer) {
+    this.updateNodePositions();
+    this.edgeToRelableId = pointer.edges[0];
+    let edge: Edge = this.edges.get(this.edgeToRelableId);
+    let node1: Node = this.nodes.get(edge.from);
+    let node2: Node = this.nodes.get(edge.to);
+    let centerx: number = (node1.x + node2.x)/2;
+    let centery: number = (node1.y + node2.y)/2;
+    let center: Position = {x: centerx, y:centery};
+    center = this.network.canvasToDOM(center);
+    let offsetx: number = this.graph.getBoundingClientRect().left;
+    let offsety: number = this.graph.getBoundingClientRect().top;
+    let w: number = 50;
+    let h: number = 30;
+    this.edgeRelabelPopUpInfo = {
+      x: offsetx + center.x-w/2,
+      y: offsety + center.y-h/2,
+      width: w,
+      height: h
+    };
+    this.isShowingEdgeRelabelPopUp = true;
   }
 
   private showRelabelPopUp(pointer) {

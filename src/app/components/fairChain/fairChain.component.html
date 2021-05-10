@@ -68,3 +68,7 @@
 <relabel-pop-up *ngIf="isRelabelPopUpVisible()" 
   [info]='relabelPopUpInfo'
   [(label)]="nodeEdgeLabel"></relabel-pop-up>
+
+<relabel-pop-up *ngIf="isShowingEdgeRelabelPopUp" 
+  [info]='edgeRelabelPopUpInfo'
+  [(label)]="nodeEdgeLabel"></relabel-pop-up>
