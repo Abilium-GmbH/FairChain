@@ -95,7 +95,18 @@
         // Gives the correct proportions of the edit color bar
         .option-colorInput{
             font-size:16px;
-            width: 101%;
+            width: 95%;
         }
+    }
+}
+
+.drawer-container{
+    height: 100%;
+    background-color: white;
+
+    .radio-flags{
+        width: 50%;
+        display:inline-block;
+        vertical-align: top;
     }
 }

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { MatLabel } from '@angular/material/form-field';
 import { Node } from "vis-network/peer/esm/vis-network";
 import { emojis as flags } from './emojis'
 
