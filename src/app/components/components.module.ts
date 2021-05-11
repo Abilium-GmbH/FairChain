@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 
 import { FairChainComponent } from './fairChain/fairChain.component';
+import { RelabelPopUpComponent } from './relabel-pop-up/relabel-pop-up.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { ImportExportService } from '../importExport.service';
@@ -12,7 +13,8 @@ import { UndoRedoService } from '../undoRedo.service';
 
 @NgModule({
   declarations: [
-    FairChainComponent
+    FairChainComponent,
+    RelabelPopUpComponent
   ],
   imports: [
     BrowserModule,
