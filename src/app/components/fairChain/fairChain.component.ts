@@ -54,6 +54,7 @@ export class FairChainComponent implements OnInit {
   public isChangingEdgeLabel() : boolean {return this.changesEdge === ChangingEdge.EdgeLabel;}
   public isChangingColor() : boolean {return this.changesNode === ChangingNode.NodeColor;}
   public isChangingFlag() : boolean {return this.changesNode === ChangingNode.NodeFlag;}
+  public isDeletingFlag() : boolean {return this.changesNode === ChangingNode.DeleteNodeFlag;}
   public isInNodeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
   public isInEdgeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
   private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
@@ -63,7 +64,7 @@ export class FairChainComponent implements OnInit {
   public isDebugging = true;
   public __debug__()
   {
-    this.nodes.add({ id: 3, font: { multi: 'html', face: 'Flags' }, label: 'Wood 🇦🇱', x: 40, y: 40 })  
+    this.nodes.add({ id: 3, font: { face: 'Flags' }, label: '🇦🇱 \n Wood', x: 40, y: 40 })  
   }
 
   public nodeEdgeLabel = "";
@@ -105,7 +106,7 @@ export class FairChainComponent implements OnInit {
     nodes: {
       shape: 'box',
       physics: true,
-      font: {multi: 'html', face: 'Flags'}
+      font: { face: 'Flags'}
     },
     edges: {
       color: {
@@ -165,9 +166,10 @@ export class FairChainComponent implements OnInit {
   };
 
   private editNodeBasedOnCurrentNodeOption(nodeData: Node) {
-    if (this.isChangingNodeLabel()) nodeData.label = this.nodeEdgeLabel;
+    if (this.isChangingNodeLabel()) nodeData.label = this.flagsService.changeLabelWithoutChangingFlag(nodeData.label, this.nodeEdgeLabel);
     if (this.isChangingColor()) nodeData.color = this.nodeEdgeColor;
     if (this.isChangingFlag()) nodeData.label = this.flagsService.addOrChangeFlag(nodeData, this.nodeFlag);
+    if (this.isDeletingFlag()) nodeData.label = this.flagsService.removeFlagFromLabel(nodeData.label);
   }
 
   private editEdgeBasedOnCurrentEdgeOption(edgeData: Edge) {
@@ -334,6 +336,13 @@ export class FairChainComponent implements OnInit {
     this.makeToolIdle();
     if (this.isChangingFlag()) this.changesNode = ChangingNode.None;
     else this.changesNode = ChangingNode.NodeFlag;
+  }
+
+  public deleteFlag(){
+    this.makeToolIdle();
+    if (this.isDeletingFlag()) this.changesNode = ChangingNode.None;
+    else this.changesNode = ChangingNode.DeleteNodeFlag;
+    
   }
 
   private makeSnapshot(){
