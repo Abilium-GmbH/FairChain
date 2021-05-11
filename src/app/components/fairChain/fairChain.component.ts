@@ -337,6 +337,7 @@ export class FairChainComponent implements OnInit {
   }
 
   private onDragEnd(params) {
+    this.updateNodePositions();
     if (params.nodes && params.nodes.length >= 1) {
       this.makeSnapshot();
     }
@@ -494,7 +495,6 @@ export class FairChainComponent implements OnInit {
           return true;
       })
     ).subscribe(params => {
-      console.log('yay');
       this.cancelMouseHoveringNodeSubscription();
     });
 
