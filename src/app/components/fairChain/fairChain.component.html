@@ -72,3 +72,8 @@
 <relabel-pop-up *ngIf="isShowingEdgeRelabelPopUp" 
   [info]='edgeRelabelPopUpInfo'
   [(label)]="nodeEdgeLabel"></relabel-pop-up>
+
+  <nodeHoverOption *ngIf="isAddNodeOptionVisible()"
+    [info]='addChildNodeInfo'
+    (onOptionClicked)='addChildNodeToHoveredNode()'
+  ></nodeHoverOption>

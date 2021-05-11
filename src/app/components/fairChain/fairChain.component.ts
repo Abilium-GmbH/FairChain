@@ -1,12 +1,16 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { ImportExportService } from '../../importExport.service'
 import { UndoRedoService } from 'src/app/undoRedo.service';
 import { strict as assert } from 'assert';
 import { Tools, ChangingEdge, ChangingNode} from '../../Enums';
 import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges, Position } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data"
+
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
+import { HoverOptionOnDOM } from 'src/app/interfaces/HoverOptionOnDOM';
+import { DOMBoundingBox } from 'src/app/interfaces/DOMBoundingBox';
 
 @Component({
   selector: 'app-fairChain',
@@ -20,6 +24,7 @@ import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
  * such like addNode, addEdge, deleteSelection, edit NodeLabel and edge Label
  */
 export class FairChainComponent implements OnInit {
+  nodeHoverSubscription: Subscription;
 
   public ngOnInit(): void {
     this.network = new Network(this.graph, this.data, this.options);
@@ -53,8 +58,21 @@ export class FairChainComponent implements OnInit {
         if (this.isShowingEdgeRelabelPopUp) this.closeEdgeRelabelPopUp();
       })
     );
+    this.subscriptions.add(
+      fromEvent(this.network, 'hoverNode').subscribe(params => {
+        this.onHoverNode(params);
+      })
+    );
+  }
+  
+  private onHoverNode(params): void {
+    if (this.isAddNodeOptionVisible()) return;
+    let boundingBox: DOMBoundingBox = this.showAddChildNodeOptions(params);
+    this.makeMouseHoveringNodeSubscription(boundingBox);
+    this.isShowingAddChildNodeInfo = true;
   }
 
+  public isAddNodeOptionVisible() : boolean {return this.isShowingAddChildNodeInfo;}
   public isRelabelPopUpVisible() : boolean {return this.isShowingRelabelPopUp;}
   public isAddingNode() : boolean {return this.currentTool === Tools.AddingNode;}
   public isAddingEdge() : boolean {return this.currentTool === Tools.AddingEdge;}
@@ -81,12 +99,36 @@ export class FairChainComponent implements OnInit {
     this.nodeToRelableId = undefined;
     this.makeSnapshot();
   }
+  public addChildNodeToHoveredNode() {
+    const newNodeId = this.makeNewId()
+    const newEdgeId = this.makeNewId()
+    this.nodes.add({id:newNodeId, label:'New'})
+    this.edges.add({id:newEdgeId, from:this.hoveredNode, to:newNodeId});
+  }
+
+  private makeNewId() {
+    return this.genHexString(8) + '-' +
+      this.genHexString(4) + '-' +
+      this.genHexString(4) + '-' +
+      this.genHexString(4) + '-' +
+      this.genHexString(12);
+  }
+
+  private genHexString(len) {
+    const hex = '0123456789abcdef';
+    let output = '';
+    for (let i = 0; i < len; ++i) {
+        output += hex.charAt(Math.floor(Math.random() * hex.length));
+    }
+    return output;
+}
 
   // A handy debug buttom for any
   public isDebugging = true;
   public __debug__()
   {
     assert(this.isDebugging, 'Function should not be called unless in debug mode');
+    this.nodes.getIds().forEach((id) => console.log(id));
   }
 
   public nodeEdgeLabel = "";
@@ -98,6 +140,10 @@ export class FairChainComponent implements OnInit {
   public edgeToRelableId: IdType;
   public isShowingEdgeRelabelPopUp = false;
   public edgeRelabelPopUpInfo: RectOnDOM;
+
+  public hoveredNode: IdType;
+  public isShowingAddChildNodeInfo = false;
+  public addChildNodeInfo: HoverOptionOnDOM;
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
   //@ViewChild('nodeRelabelPopUp', {static: true}) nodeRelabelPopUpRef: ElementRef;
@@ -159,6 +205,7 @@ export class FairChainComponent implements OnInit {
       maxVelocity: 10,
       minVelocity: 10,
     },
+    interaction: {hover:true},
     manipulation: {
       // Defines logic for Add Node functionality
       addNode: (data: Node, callback) => {
@@ -431,6 +478,66 @@ export class FairChainComponent implements OnInit {
 
     //Show pop up
     this.isShowingEdgeRelabelPopUp = true;
+  }
+
+  makeMouseHoveringNodeSubscription(boundingBox: DOMBoundingBox) {
+    this.nodeHoverSubscription = fromEvent(document, 'mousemove').pipe(
+      filter((pointer: MouseEvent) => {
+        if (!(boundingBox.left <= pointer.clientX
+          && pointer.clientX <= boundingBox.right 
+          && boundingBox.bottom <= pointer.clientY
+          && pointer.clientY <= boundingBox.top))
+          return true;
+      })
+    ).subscribe(params => {
+      console.log('yay');
+      this.cancelMouseHoveringNodeSubscription();
+    });
+
+    this.subscriptions.add(this.nodeHoverSubscription);
+  }
+
+  cancelMouseHoveringNodeSubscription() {
+    this.nodeHoverSubscription.unsubscribe();
+    this.isShowingAddChildNodeInfo = false;
+  }
+
+  private showAddChildNodeOptions(params): DOMBoundingBox {
+    this.hoveredNode = params.node;
+    let node: Node = this.nodes.get(this.hoveredNode);
+    
+    let centerx: number = node.x;
+    let centery: number = node.y;
+    let center: Position = {x: centerx, y:centery};
+    center = this.network.canvasToDOM(center);
+    
+    //Minor offset details
+    let offsetx: number = this.graph.getBoundingClientRect().left;
+    let offsety: number = this.graph.getBoundingClientRect().top;
+
+    let dx: number = -15;
+    let dy: number = -50;
+
+    this.addChildNodeInfo = {
+      x: center.x + offsetx + dx,
+      y: center.y + offsety + dy,
+      scale: 2
+    };
+
+    let bb = this.network.getBoundingBox(this.hoveredNode);
+    let corner1 = this.network.canvasToDOM({x: bb.left, y: bb.top});
+    let corner2 = this.network.canvasToDOM({x: bb.right, y: bb.bottom});
+
+    corner1 = {x:corner1.x + offsetx, y:corner1.y + offsety};
+    corner2 = {x:corner2.x + offsetx, y:corner2.y + offsety};
+
+    let padding: number = 40;
+
+    return {
+      left: corner1.x - padding,
+      right: corner2.x + padding,
+      bottom: corner1.y - padding,
+      top: corner2.y + padding};
   }
 
   private showRelabelPopUp(pointer) {

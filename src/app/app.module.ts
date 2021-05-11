@@ -10,6 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { NodeHoverOptionComponent } from './components/node-hover-option/node-hover-option.component';
 //import { RelabelPopUpComponent } from './components/relabel-pop-up/relabel-pop-up.component';
 
 @NgModule({

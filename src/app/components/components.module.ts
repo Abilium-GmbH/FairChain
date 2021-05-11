@@ -10,11 +10,13 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { ImportExportService } from '../importExport.service';
 import { UndoRedoService } from '../undoRedo.service';
+import { NodeHoverOptionComponent } from './node-hover-option/node-hover-option.component';
 
 @NgModule({
   declarations: [
     FairChainComponent,
-    RelabelPopUpComponent
+    RelabelPopUpComponent,
+    NodeHoverOptionComponent
   ],
   imports: [
     BrowserModule,
