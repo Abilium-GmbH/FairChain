@@ -194,8 +194,8 @@ export class FairChainComponent implements OnInit {
   private editNodeBasedOnCurrentNodeOption(nodeData: Node) {
     if (this.isChangingNodeLabel()) nodeData.label = this.flagsService.changeLabelWithoutChangingFlag(nodeData.label, this.nodeEdgeLabel);
     if (this.isChangingColor()) nodeData.color = this.nodeEdgeColor;
-    if (this.isChangingFlag()) nodeData.label = this.flagsService.addOrChangeFlag(nodeData, this.nodeFlag);
-    if (this.isDeletingFlag()) nodeData.label = this.flagsService.removeFlagFromLabel(nodeData.label);
+    if (this.isChangingFlag()) this.nodeEdgeLabel = this.flagsService.addOrChangeFlag(nodeData, this.nodeFlag);
+    if (this.isDeletingFlag()) this.nodeEdgeLabel = this.flagsService.removeFlagFromLabel(nodeData.label);
   }
 
   private editEdgeBasedOnCurrentEdgeOption(edgeData: Edge) {
