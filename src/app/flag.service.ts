@@ -13,6 +13,9 @@ export class FlagService{
     }
 
     public removeFlagFromLabel(label: string){
+        if (label === undefined){
+            return label;
+        }
         if (flags.some(v => label.includes(v))){
             label = label.slice(5);
         }
@@ -20,9 +23,12 @@ export class FlagService{
     }
 
     public changeLabelWithoutChangingFlag(originalLabel: string, newLabel: string){
-        if (flags.some(v => originalLabel.includes(v))){
-            newLabel = originalLabel.slice(0,5) + newLabel;
+        if (originalLabel === undefined){
+            return newLabel;
         }
-        return newLabel;
+        if (flags.some(v => originalLabel.includes(v))){
+                newLabel = originalLabel.slice(0,5) + newLabel;
+        }
+        return newLabel;         
     }
 }
