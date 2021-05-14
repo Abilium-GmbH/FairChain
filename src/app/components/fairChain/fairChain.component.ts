@@ -2,11 +2,13 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { ImportExportService } from '../../importExport.service'
 import { UndoRedoService } from 'src/app/undoRedo.service';
+import { RelabelPopUpGeometryService } from 'src/app/relabel-pop-up-geometry-service.service'
 import { strict as assert } from 'assert';
 import { Tools, ChangingEdge, ChangingNode} from '../../Enums';
 import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data"
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
+import { NodeRelabelInfo } from '../../interfaces/NodeRelabelInfo'
 
 @Component({
   selector: 'app-fairChain',
@@ -26,7 +28,7 @@ export class FairChainComponent implements OnInit {
     this.makeSubscriptions();
   }
 
-  constructor(private importExportService:ImportExportService, private undoRedoService:UndoRedoService) {
+  constructor(private importExportService:ImportExportService, private undoRedoService:UndoRedoService, private relabelPopUpGeometryService:RelabelPopUpGeometryService) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges);
   }
 
@@ -54,7 +56,7 @@ export class FairChainComponent implements OnInit {
     );
   }
 
-  public isRelabelPopUpVisible() : boolean {return this.isShowingRelabelPopUp;}
+  public isRelabelPopUpVisible() : boolean {return this.trueRelabelPopUpInfo.active;}
   public isAddingNode() : boolean {return this.currentTool === Tools.AddingNode;}
   public isAddingEdge() : boolean {return this.currentTool === Tools.AddingEdge;}
   public isChangingNodeLabel() : boolean {return this.changesNode === ChangingNode.NodeLabel;}
@@ -65,11 +67,11 @@ export class FairChainComponent implements OnInit {
   private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
   private makeToolIdle() : void {this.currentTool = Tools.Idle;}
   private closeNodeRelabelPopUp() : void {
-    assert(this.isShowingRelabelPopUp, 'There is no pop up menu to close');
-    assert(this.nodeToRelableId, 'There is no node to apply the change to'); 
-    this.nodes.update({id: this.nodeToRelableId, label: this.nodeEdgeLabel});
-    this.isShowingRelabelPopUp = false;
-    this.nodeToRelableId = '';
+    assert(this.trueRelabelPopUpInfo.active, 'There is no pop up menu to close');
+    assert(this.trueRelabelPopUpInfo, 'There is no node to apply the change to'); 
+    this.nodes.update({id: this.trueRelabelPopUpInfo.nodeId, label: this.trueRelabelPopUpInfo.label});
+    this.trueRelabelPopUpInfo.active = false;
+    this.trueRelabelPopUpInfo.nodeId = '';
     this.makeSnapshot();
   }
 
@@ -85,6 +87,13 @@ export class FairChainComponent implements OnInit {
   public nodeToRelableId: IdType;
   public isShowingRelabelPopUp = false;
   public relabelPopUpInfo: RectOnDOM;
+
+  private trueRelabelPopUpInfo: NodeRelabelInfo = {
+    nodeId: '',
+    active: false,
+    label: '',
+    rect: undefined
+  };
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
   //@ViewChild('nodeRelabelPopUp', {static: true}) nodeRelabelPopUpRef: ElementRef;
@@ -241,7 +250,7 @@ export class FairChainComponent implements OnInit {
    * @private
    */
   private onClick(params) {
-    if (this.isShowingRelabelPopUp) this.closeNodeRelabelPopUp();
+    if (this.trueRelabelPopUpInfo.active) this.closeNodeRelabelPopUp();
     // Defines node onClick actions
     if (this.isClickingOnNodeInNodeEditMode(params)) this.network.editNode();
     // Defines edge onClick actions
@@ -278,7 +287,7 @@ export class FairChainComponent implements OnInit {
   }
   private onDoubleClick(pointer) {
     this.network.disableEditMode();
-    if (pointer.nodes.length === 1) this.showRelabelPopUp(pointer);
+    if (pointer.nodes.length === 1) this.showRelabelPopUp(pointer.nodes[0]);
   }
 
   // Boolean switch value if someone wants to change the nodeLabel name for button color
@@ -377,72 +386,29 @@ export class FairChainComponent implements OnInit {
     this.updateData(this.undoRedoService.getSuccessorSnapshot())
   }
 
-  private showRelabelPopUp(pointer) {
-    this.nodeToRelableId = pointer.nodes[0];
-    let relabelRectOnDOM = this.getBoundingBoxOfNodeAsRectInDOM();
-    this.relabelPopUpInfo = this.cropAndTranslateRect(relabelRectOnDOM);
-    this.nodeEdgeLabel = this.nodes.get(this.nodeToRelableId).label;
-
-    this.isShowingRelabelPopUp  = true;
+  private showRelabelPopUp(nodeId: IdType) {
+    this.trueRelabelPopUpInfo.nodeId = nodeId;
+    this.trueRelabelPopUpInfo.rect   = this.getRelabelPopUpRect(nodeId);
+    this.trueRelabelPopUpInfo.label  = this.nodes.get(nodeId).label;
+    this.trueRelabelPopUpInfo.active = true;
   }
 
-  private cropAndTranslateRect(rect: RectOnDOM): RectOnDOM {
+  getRelabelPopUpRect(nodeId: IdType): RectOnDOM {
+    const boundingBox = this.network.getBoundingBox(nodeId);
+    const upperLeftCorner = this.network.canvasToDOM({x: boundingBox.left, y: boundingBox.top});
+    const bottomRightCorner = this.network.canvasToDOM({x: boundingBox.right, y: boundingBox.bottom});
+    let rect: RectOnDOM = {
+      x: upperLeftCorner.x,
+      y: upperLeftCorner.y,
+      width: bottomRightCorner.x - upperLeftCorner.x,
+      height: bottomRightCorner.y - upperLeftCorner.y};
+
     const min_x = this.graph.getBoundingClientRect().left;
     const min_y = this.graph.getBoundingClientRect().top;
     const max_x = this.graph.getBoundingClientRect().right;
     const max_y = this.graph.getBoundingClientRect().bottom;
 
-    rect = this.moveRectOverNode(rect, min_x, min_y);
-    rect = this.cropRectToFitCanvas(rect, min_x, min_y, max_x, max_y)
-    rect = this.moveRectLeftToFitCanvas(rect, min_x);
-    rect = this.moveRectRightToFitCanvas(rect, max_x);
-    rect = this.moveRectDownToFitCanvas(rect, min_y);
-    rect = this.moveRectUpToFitCanvas(rect, max_y);
-
-    return rect;
-  }
-
-  moveRectUpToFitCanvas(rect: RectOnDOM, max_y: number): RectOnDOM {
-    if (rect.y + rect.height > max_y) rect.y = max_y - rect.height;
-    return rect;
-  }
-
-  moveRectDownToFitCanvas(rect: RectOnDOM, min_y: number): RectOnDOM {
-    if (rect.y < min_y) rect.y = min_y;
-    return rect;
-  }
-
-  moveRectRightToFitCanvas(rect: RectOnDOM, max_x: number): RectOnDOM {
-    if (rect.x + rect.width > max_x) rect.x = max_x - rect.width;
-    return rect;
-  }
-
-  moveRectLeftToFitCanvas(rect: RectOnDOM, min_x: number): RectOnDOM {
-    if (rect.x < min_x) rect.x = min_x;
-    return rect;
-  }
-
-  private cropRectToFitCanvas(rect: RectOnDOM, min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
-    if (rect.width > max_x - min_x) rect.width = max_x - min_x;
-    if (rect.height > max_y - min_y) rect.height = max_y - min_y;
-    return rect;
-  }
-
-  private moveRectOverNode(rect: RectOnDOM, min_x: number, min_y: number): RectOnDOM {
-    rect.x += min_x;
-    rect.y += min_y;
-    return rect;
-  }
-
-  private getBoundingBoxOfNodeAsRectInDOM() : RectOnDOM {
-    const boundingBox = this.network.getBoundingBox(this.nodeToRelableId);
-    const upperLeftCorner = this.network.canvasToDOM({x: boundingBox.left, y: boundingBox.top});
-    const bottomRightCorner = this.network.canvasToDOM({x: boundingBox.right, y: boundingBox.bottom});
-    return {
-      x: upperLeftCorner.x,
-      y: upperLeftCorner.y,
-      width: bottomRightCorner.x - upperLeftCorner.x,
-      height: bottomRightCorner.y - upperLeftCorner.y};
+    return this.relabelPopUpGeometryService.getRelabelPopUpRect(rect, min_x, min_y, max_x, max_y);
   }
 
   public getChangesNode(){return this.changesNode}
