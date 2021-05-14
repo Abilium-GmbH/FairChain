@@ -13,6 +13,8 @@ export class RelabelPopUpComponent implements OnInit {
 
   constructor() { }
 
+  private max_cols = 15;
+
   @Input() info: RectOnDOM;
   
   @Input()  label: string;
@@ -28,40 +30,34 @@ export class RelabelPopUpComponent implements OnInit {
     this.prevLabel = this.label;
   }
 
-  public updateLabel() {
-    if (this.isNotAbleToUpdate()) this.denyUpdate();
-    this.applyUpdateToLabel()
-  }
-  
-  private denyUpdate() {
-    this.relabelText = this.prevLabel;
-    throw new Error('Character Limit reached');
+  private f(label: string): string {
+    let out = '';
+    for (let i = 0; i < label.length; i++) {
+      out += label.charAt(i);
+      if (i % this.max_cols === 0 && i+1 !== label.length) out += '\n';
+    }
+    return out;
   }
 
-  private applyUpdateToLabel() {
+  public updateLabel() {
+    this.relabelTextArea.innerText = this.f(this.label);
     this.prevLabel = this.relabelText;
     this.labelChange.emit(this.convertToMultiline(this.relabelText));
-  }
-
-  private isNotAbleToUpdate(): boolean {
-    return false;
-    //if (this.relabelText.length > this.maxNumCharacters) return true;
-    //if (this.relabelText.split('\n').length > this.maxRow + 1) return true;
   }
 
   private convertToMultiline(text: string) {
     return text.replace('\n', '\n');
   }
 
-  public get relabelTextArea() {
+  private get relabelTextArea() {
     return this.relabelTextAreaRef.nativeElement;
   }
   
-  public get relabelText(): string {
+  private get relabelText(): string {
     return this.relabelTextArea.innerText;
   }
 
-  public set relabelText(text: string) {
+  private set relabelText(text: string) {
     this.relabelTextArea.innerText = text;
   }
   

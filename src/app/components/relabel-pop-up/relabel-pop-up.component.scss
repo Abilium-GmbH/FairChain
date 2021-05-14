@@ -8,6 +8,11 @@
 .relabelTextArea {
     resize: none;
     overflow:hidden;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: inline-block;
+    min-width: 100px;
 }
 
 .boxsizingBorder {
@@ -15,3 +20,7 @@
        -moz-box-sizing: border-box;
             box-sizing: border-box;
 }
+
+[contenteditable] {
+    outline: 0px solid transparent;
+  }
