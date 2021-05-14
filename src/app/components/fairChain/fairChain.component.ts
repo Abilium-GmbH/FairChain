@@ -417,62 +417,21 @@ export class FairChainComponent implements OnInit {
   public changeNodeGroup() {
     this.makeToolIdle();
     if (this.isChangingGroup()) this.changesEdge = ChangingEdge.None;
-    //this.selectedGroup = document.getElementById("groups");
     else this.changesNode=ChangingNode.NodeGroup;
-    //this.changesNode = ChangingNode.None;
   }
 
   public updateNodeGroup(node: Node) {
-
     node.group = this.selectedGroup.toLowerCase()
     eval("node.color = this.options.groups." + this.selectedGroup.toLowerCase() + ".color")
-    // switch (this.selectedGroup) {
-    //   case "group1": {
-    //       node.group = this.selectedGroup.toLowerCase();
-    //     node.color = this.options.groups.group1.color;
-    //     this.network.updateClusteredNode(node.id, {group: "group1"});
-    //     break;
-    //   }
-    //   case "group2": {
-    //     node.group = this.selectedGroup.toLowerCase();
-    //     node.color = this.options.groups.group2.color;
-    //     break;
-
-
-    //     this.network.updateClusteredNode(node.id, {group: "group2"});
-    //     break;
-    //   }
-    //   case "group3": {
-
-    //     node.group = this.selectedGroup.toLowerCase();
-    //     node.color = this.options.groups.group3.color;
-
-    //     this.network.updateClusteredNode(node.id, {group: "group3"});
-    //     break;
-    //   }
-    //   case "group7": {
-    //     console.log(this.options)
-    //     node.group = this.selectedGroup.toLowerCase();
-    //     node.color = this.options.groups.group7.color;
-
-    //     this.network.updateClusteredNode(node.id, {group: "group3"});
-    //     break;
-    //   }
-    // }
   }
 
   public addGroup(){
     this.groupsServices.addGroup(this.nameOfNewGroup, this.nodeGroupColor);
     var temp = this.groupsServices.getGroups()
-    //temp = temp.substr(0,temp.length-1) + ',"group7": {  "color": "yellow"}}'
     this.options.groups=temp
     console.log(this.options)
     this.network.setOptions(this.options)
    this.listOfGroups= this.groupsServices.getGroupsName()
-  }
-
-  public addGroup7(){
-    this.selectedGroup="group7"
   }
 
   public changeNodeGroupColor(){

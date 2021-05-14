@@ -29,8 +29,9 @@ export class GroupsService {
 
   public addGroup(nameOfGroup:string, colorOfGroup:string) {
     for (var currentName in this.nameOfGroups){
-      if (currentName.toLowerCase()==nameOfGroup.toLowerCase())
-        return new Error("There already is a group with this name");
+      if (currentName.toLowerCase() === nameOfGroup.toLowerCase()){
+        throw new Error("eskere")
+      }
     }
     this.groups.push(new group (nameOfGroup, colorOfGroup))
     this.nameOfGroups.push(nameOfGroup)

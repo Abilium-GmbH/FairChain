@@ -15,16 +15,19 @@ describe('GroupsService', () => {
   });
 
   it('should initialize with group1, group2, group3', () => {
-    expect(service.getGroupsName()).toBe(["group1", "group2", "group3"])
+    var groupsName = service.getGroupsName()
+    var jsonGroup = JSON.stringify(service.getGroups())
+    expect(groupsName).toEqual(["none", "group1", "group2", "group3"])
+    expect(jsonGroup).toBe('{"group1":{"color":"red"},"group2":{"color":"green"},"group3":{"color":"yellow"}}')
   });
 
   it('should add a group', () => {
-    service.addGroup()
-    expect(service.getGroupsName()).toBe(["group1", "group2", "group3", "group4"])
+    service.addGroup("group4", "red")
+    var groupsName = service.getGroupsName()
+    var jsonGroup = JSON.stringify(service.getGroups())
+    expect(groupsName).toEqual(["none", "group1", "group2", "group3", "group4"])
+    expect(jsonGroup).toBe('{"group1":{"color":"red"},"group2":{"color":"green"},"group3":{"color":"yellow"},"group4":{"color":"red"}}')
   });
 
-  it('should add a group', () => {
-    service.addGroup()
-    expect(service.getGroupsName()).toBe(["group1", "group2", "group3", "group4"])
-  });
+  
 });
