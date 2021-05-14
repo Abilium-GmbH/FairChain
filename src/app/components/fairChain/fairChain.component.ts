@@ -6,21 +6,22 @@ import { strict as assert } from 'assert';
 
 import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data"
+import { group, GroupsService } from 'src/app/groups.service';
 
 
 
-enum Tools {
+export enum Tools {
   AddingNode, AddingEdge, Idle
 }
 
-enum ChangingNode {
+export enum ChangingNode {
   NodeLabel,  NodeColor, NodeGroup, None
 }
 
-enum ChangingEdge {
+export enum ChangingEdge {
   EdgeLabel, EdgeColor, None
 }
-enum NodeGroups {
+export enum NodeGroups {
   Group1, Group2, Group3, None
 }
 
@@ -42,9 +43,8 @@ export class FairChainComponent implements OnInit {
     this.makeSubscriptions();
   }
 
-  constructor(private importExportService:ImportExportService, private undoRedoService:UndoRedoService) {
+  constructor(private importExportService:ImportExportService, private undoRedoService:UndoRedoService, private groupsServices:GroupsService) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges);
-    this.enumKeys = Object.keys(this.groups).filter(f => !isNaN(Number(f)));
   }
 
   private makeSubscriptions(): void {
@@ -73,21 +73,23 @@ export class FairChainComponent implements OnInit {
   private isChangingGroup(): boolean {return this.changesNode===ChangingNode.NodeGroup}
 
   // A handy debug buttom for any
-  groups = NodeGroups;
-  enumKeys = [];
+  nameOfNewGroup: string="";
+  listOfGroups = ["group1", "group2", "group3", "none"];
 
   change(value: string) {
-    this.selectedGroup = this.groups[value];
+    this.selectedGroup = value;
   }
 
   public isDebugging = true;
   public __debug__()
   {
     assert(this.isDebugging, 'Function should not be called unless in debug mode');
+    console.log(this.nameOfNewGroup)
   }
 
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
+  public nodeGroupColor = "#002AFF";
   public selectedGroup = "Group1";
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
@@ -107,6 +109,18 @@ export class FairChainComponent implements OnInit {
   // Create an array with edges
   private edges: DataSetEdges = new DataSet();
 
+
+  private nodeGroups = {
+    group1: {
+      color: "red"
+    },
+    group2: {
+      color: "green"
+    },
+    group3: {
+      color: "yellow"
+    },
+  }
   // Create a network
   private data: Data = {
     nodes: this.nodes,
@@ -146,17 +160,8 @@ export class FairChainComponent implements OnInit {
       maxVelocity: 10,
       minVelocity: 10,
     },
-    groups: {
-      group1: {
-        color: "red"
-      },
-      group2: {
-        color: "green"
-      },
-      group3: {
-        color: "yellow"
-      }
-    },
+    groups: this.nodeGroups,
+
     manipulation: {
       // Defines logic for Add Node functionality
       addNode: (data: Node, callback) => {
@@ -194,10 +199,6 @@ export class FairChainComponent implements OnInit {
     if (this.changesNode === ChangingNode.NodeGroup) this.updateNodeGroup(nodeData);
   }
 
-  public changeGroup1ColorInBlack() {
-    this.options.groups.group1.color = "black";
-    this.network.setOptions(this.options);
-  }
 
   private editEdgeBasedOnCurrentEdgeOption(edgeData: Edge) {
     if (this.isChangingEdgeLabel()) edgeData.label = this.nodeEdgeLabel;
@@ -251,7 +252,7 @@ export class FairChainComponent implements OnInit {
    */
   private onClick(params) {
     // Defines node onClick actions
-    if (this.isClickingOnNodeInNodeEditMode(params)) this.network.editNode();
+    if (this.isClickingOnNodeInNodeEditMode(params)) this.editNodeInDataset(params.nodes);
     // Defines edge onClick actions
     //TODO: With new edge dataset, define custom events for changing labels/color
     if (this.isClickingOnEdgeInEdgeEditMode(params)) this.editEdgeInDataset(params.edges);
@@ -262,6 +263,15 @@ export class FairChainComponent implements OnInit {
       let edgeData: Edge = this.edges.get(id);
       this.editEdgeBasedOnCurrentEdgeOption(edgeData);
       this.edges.update(edgeData);
+    });
+    this.network.disableEditMode();
+    this.makeSnapshot()
+  }
+  private editNodeInDataset(nodes: IdType[]) {
+    nodes.forEach((id) => {
+      let nodeData: Node = this.nodes.get(id);
+      this.editNodeBasedOnCurrentNodeOption(nodeData);
+      this.nodes.update(nodeData);
     });
     this.network.disableEditMode();
     this.makeSnapshot()
@@ -366,6 +376,18 @@ export class FairChainComponent implements OnInit {
     this.updateData(this.undoRedoService.getSuccessorSnapshot())
   }
 
+  public getCurrentTool(){
+    return this.currentTool
+  }
+
+  public getChangesNode(){
+    return this.changesNode
+  }
+
+  public getChangesEdge(){
+    return this.changesEdge;
+  }
+
   public changeNodeGroup() {
     this.makeToolIdle();
     if (this.isChangingGroup()) this.changesEdge = ChangingEdge.None;
@@ -375,31 +397,73 @@ export class FairChainComponent implements OnInit {
   }
 
   public updateNodeGroup(node: Node) {
-    switch (this.selectedGroup) {
-      case "Group1": {
-        //node.group = this.selectedGroup.toLowerCase();
-        //node.color = this.options.groups.group1.color;
-        this.network.updateClusteredNode(node.id, {group: "group1"});
-        break;
-      }
-      case "Group2": {
-        //node.group = this.selectedGroup.toLowerCase();
-        //node.color = this.options.groups.group2.color;
-        //break;
+
+    node.group = this.selectedGroup.toLowerCase()
+    eval("node.color = this.options.groups." + this.selectedGroup.toLowerCase() + ".color")
+    // switch (this.selectedGroup) {
+    //   case "group1": {
+    //       node.group = this.selectedGroup.toLowerCase();
+    //     node.color = this.options.groups.group1.color;
+    //     this.network.updateClusteredNode(node.id, {group: "group1"});
+    //     break;
+    //   }
+    //   case "group2": {
+    //     node.group = this.selectedGroup.toLowerCase();
+    //     node.color = this.options.groups.group2.color;
+    //     break;
 
 
-        this.network.updateClusteredNode(node.id, {group: "group2"});
-        break;
+    //     this.network.updateClusteredNode(node.id, {group: "group2"});
+    //     break;
+    //   }
+    //   case "group3": {
+        
+    //     node.group = this.selectedGroup.toLowerCase();
+    //     node.color = this.options.groups.group3.color;
+        
+    //     this.network.updateClusteredNode(node.id, {group: "group3"});
+    //     break;
+    //   }
+    //   case "group7": {
+    //     console.log(this.options)
+    //     node.group = this.selectedGroup.toLowerCase();
+    //     node.color = this.options.groups.group7.color;
+        
+    //     this.network.updateClusteredNode(node.id, {group: "group3"});
+    //     break;
+    //   }
+    // }
+  }
+  
+  public changeNodeGroupColor(){
+    var selectedGroup =this.selectedGroup.toLowerCase();
+    eval("this.options.groups." + selectedGroup + ".color = " + "'" + this.nodeGroupColor + "'");
+
+    this.network.setOptions( this.options );
+
+    this.nodes.forEach( node =>{
+      if(node.group == selectedGroup) {
+        node.color=this.nodeGroupColor;
+        this.network.updateClusteredNode(node.id, {group: selectedGroup});
       }
-      case "Group3": {
-        /*
-        node.group = this.selectedGroup.toLowerCase();
-        node.color = this.options.groups.group3.color;
-         */
-        this.network.updateClusteredNode(node.id, {group: "group3"});
-        break;
-      }
-    }
+
+    })
+
+    this.network.disableEditMode();
+  }
+
+  public addGroup(){
+    this.groupsServices.addGroup(this.nameOfNewGroup, this.nodeGroupColor);
+    var temp = this.groupsServices.getGroups()
+    //temp = temp.substr(0,temp.length-1) + ',"group7": {  "color": "yellow"}}'
+    this.options.groups=temp
+    console.log(this.options)
+    this.network.setOptions(this.options)
+   this.listOfGroups= this.groupsServices.getGroupsName()
+  }
+  
+  public addGroup7(){
+    this.selectedGroup="group7"
   }
 }
 
