@@ -131,12 +131,13 @@ export class FairChainComponent implements OnInit {
     nodes: {
       shape: 'box',
       physics: true,
-      font: { face: 'Flags'}
+      font: { face: 'Flags', size: 30}
     },
     edges: {
       color: {
         inherit: false
       },
+      font: { face: 'Flags', size: 20},
       smooth: true,
       physics: false,
       arrows: {
@@ -191,19 +192,14 @@ export class FairChainComponent implements OnInit {
   };
 
   private editNodeBasedOnCurrentNodeOption(nodeData: Node) {
-    //if (this.isChangingNodeLabel()) nodeData.label = this.flagService.changeLabelWithoutChangingFlag(nodeData.label, this.nodeEdgeLabel);
     if (this.isChangingColor()) nodeData.color = this.nodeEdgeColor;
     if (this.isDeletingFlag()) nodeData.label = this.flagService.removeFlagFromLabel(nodeData.label);
+    if (this.isChangingFlag()) nodeData.label = this.flagService.addOrChangeFlag(nodeData.label, this.nodeFlag);
     if (this.isChangingNodeLabel()) {
-      
       this.flagService.saveFlagFromLabel(nodeData.label);
       this.nodeEdgeLabel = this.flagService.removeFlagFromLabel(this.nodeEdgeLabel);
       nodeData.label = this.flagService.addOrChangeFlag(this.nodeEdgeLabel, this.flagService.currentFlag);
     };
-
-    if (this.isChangingFlag()) nodeData.label = this.flagService.addOrChangeFlag(nodeData.label, this.nodeFlag);
-     
-    
   }
 
   private editEdgeBasedOnCurrentEdgeOption(edgeData: Edge) {
@@ -349,7 +345,6 @@ export class FairChainComponent implements OnInit {
    * @param files is the file selected to import.
    */
   public async importGraph(files: FileList) {
-    //TODO: Missing a check that the file is valid
     this.updateData( await this.importExportService.upload(files.item(0)));
     this.makeSubscriptions();
     this.makeSnapshot();
