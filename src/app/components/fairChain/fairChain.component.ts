@@ -366,6 +366,7 @@ export class FairChainComponent implements OnInit {
    * Declaration of the change Color method for nodes
    */
   public changeNodeColor(){
+    this.network.disableEditMode();
     this.makeToolIdle();
     if (this.isChangingColor()) this.changesNode = ChangingNode.None;
     else this.changesNode = ChangingNode.NodeColor;
@@ -375,6 +376,7 @@ export class FairChainComponent implements OnInit {
    * Declaration of the change Color method for edges
    */
   public changeEdgeColor(){
+    this.network.disableEditMode();
     this.makeToolIdle();
     if (this.isChangingColor()) this.changesEdge = ChangingEdge.None;
     else this.changesEdge = ChangingEdge.EdgeColor;
@@ -384,12 +386,14 @@ export class FairChainComponent implements OnInit {
    * Declaration of the change Flag method for nodes
    */
   public changeFlag(){
+    this.network.disableEditMode();
     this.makeToolIdle();
     if (this.isChangingFlag()) this.changesNode = ChangingNode.None;
     else this.changesNode = ChangingNode.NodeFlag;
   }
 
   public deleteFlag(){
+    this.network.disableEditMode();
     this.makeToolIdle();
     if (this.isDeletingFlag()) this.changesNode = ChangingNode.None;
     else this.changesNode = ChangingNode.DeleteNodeFlag;
