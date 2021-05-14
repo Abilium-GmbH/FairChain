@@ -25,7 +25,7 @@ export class FlagService{
     public changeLabelWithoutChangingFlag(originalLabel: string, newLabel: string){
         if (originalLabel === undefined){ return newLabel; }
         if (flags.some(v => originalLabel.includes(v))){
-                newLabel = originalLabel.slice(0,6) + newLabel;
+                newLabel = originalLabel.slice(0,5) + newLabel;
         }
         return newLabel;
     }
