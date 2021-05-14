@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Node } from "vis-network/peer/esm/vis-network";
 import { emojis as flags } from './emojis'
 
 @Injectable({
@@ -7,15 +6,16 @@ import { emojis as flags } from './emojis'
 })
 export class FlagService{
 
-    public addOrChangeFlag(nodeData: Node, nodeflag){
-        nodeData.label = this.removeFlagFromLabel(nodeData.label)
-        return nodeflag +"\n" + nodeData.label;
+    public currentFlag = "";
+
+    public addOrChangeFlag(nodeLabel: string, nodeFlag: string){
+        if (nodeFlag === ""){ return nodeLabel };
+        nodeLabel = this.removeFlagFromLabel(nodeLabel)
+        return nodeFlag +"\n" + nodeLabel;
     }
 
     public removeFlagFromLabel(label: string){
-        if (label === undefined){
-            return label;
-        }
+        if (label === undefined){ return label; }
         if (flags.some(v => label.includes(v))){
             label = label.slice(5);
         }
@@ -23,12 +23,18 @@ export class FlagService{
     }
 
     public changeLabelWithoutChangingFlag(originalLabel: string, newLabel: string){
-        if (originalLabel === undefined){
-            return newLabel;
-        }
+        if (originalLabel === undefined){ return newLabel; }
         if (flags.some(v => originalLabel.includes(v))){
-                newLabel = originalLabel.slice(0,5) + newLabel;
+                newLabel = originalLabel.slice(0,6) + newLabel;
         }
-        return newLabel;         
+        return newLabel;
+    }
+
+    public saveFlagFromLabel(label: string){
+        if (label === undefined){ this.currentFlag = ""; } 
+        else {
+            if (flags.some(v => label.includes(v))){ this.currentFlag =  label.slice(0,4); } 
+            else { this.currentFlag = ""; }  
+        }
     }
 }

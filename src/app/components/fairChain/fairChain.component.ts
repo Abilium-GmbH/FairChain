@@ -30,7 +30,7 @@ export class FairChainComponent implements OnInit {
 
   constructor(private importExportService:ImportExportService, 
               private undoRedoService:UndoRedoService,
-              private flagsService:FlagService) {
+              private flagService:FlagService) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges);
     this.emojis = flags;
   }
@@ -74,7 +74,7 @@ export class FairChainComponent implements OnInit {
   private closeNodeRelabelPopUp() : void {
     assert(this.isShowingRelabelPopUp, 'There is no pop up menu to close');
     assert(this.nodeToRelableId, 'There is no node to apply the change to'); 
-    this.nodes.update({id: this.nodeToRelableId, label: this.nodeEdgeLabel});
+    this.nodes.update({id: this.nodeToRelableId, label: this.flagService.addOrChangeFlag(this.nodeEdgeLabel, this.flagService.currentFlag)});
     this.isShowingRelabelPopUp = false;
     this.nodeToRelableId = '';
     this.makeSnapshot();
@@ -89,7 +89,7 @@ export class FairChainComponent implements OnInit {
 
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
-  public nodeFlag = "🇩🇪";
+  public nodeFlag = "🇨🇭";
   public emojis: string[];
   public nodeToRelableId: IdType;
   public isShowingRelabelPopUp = false;
@@ -175,7 +175,6 @@ export class FairChainComponent implements OnInit {
       editNode: (nodeData: Node, callback) => {
         assert(this.isInNodeEditMode(), 'The edge should not be edited when no option is selected');
         this.editNodeBasedOnCurrentNodeOption(nodeData);
-        nodeData.label = this.nodeEdgeLabel;
         callback(nodeData);
         this.makeSnapshot();
       },
@@ -192,10 +191,19 @@ export class FairChainComponent implements OnInit {
   };
 
   private editNodeBasedOnCurrentNodeOption(nodeData: Node) {
-    if (this.isChangingNodeLabel()) nodeData.label = this.flagsService.changeLabelWithoutChangingFlag(nodeData.label, this.nodeEdgeLabel);
+    //if (this.isChangingNodeLabel()) nodeData.label = this.flagService.changeLabelWithoutChangingFlag(nodeData.label, this.nodeEdgeLabel);
     if (this.isChangingColor()) nodeData.color = this.nodeEdgeColor;
-    if (this.isChangingFlag()) this.nodeEdgeLabel = this.flagsService.addOrChangeFlag(nodeData, this.nodeFlag);
-    if (this.isDeletingFlag()) this.nodeEdgeLabel = this.flagsService.removeFlagFromLabel(nodeData.label);
+    if (this.isDeletingFlag()) nodeData.label = this.flagService.removeFlagFromLabel(nodeData.label);
+    if (this.isChangingNodeLabel()) {
+      
+      this.flagService.saveFlagFromLabel(nodeData.label);
+      this.nodeEdgeLabel = this.flagService.removeFlagFromLabel(this.nodeEdgeLabel);
+      nodeData.label = this.flagService.addOrChangeFlag(this.nodeEdgeLabel, this.flagService.currentFlag);
+    };
+
+    if (this.isChangingFlag()) nodeData.label = this.flagService.addOrChangeFlag(nodeData.label, this.nodeFlag);
+     
+    
   }
 
   private editEdgeBasedOnCurrentEdgeOption(edgeData: Edge) {
@@ -390,7 +398,6 @@ export class FairChainComponent implements OnInit {
     this.makeToolIdle();
     if (this.isDeletingFlag()) this.changesNode = ChangingNode.None;
     else this.changesNode = ChangingNode.DeleteNodeFlag;
-    
   }
 
   private makeSnapshot(){
@@ -409,7 +416,8 @@ export class FairChainComponent implements OnInit {
     this.nodeToRelableId = pointer.nodes[0];
     let relabelRectOnDOM = this.getBoundingBoxOfNodeAsRectInDOM();
     this.relabelPopUpInfo = this.cropAndTranslateRect(relabelRectOnDOM);
-    this.nodeEdgeLabel = this.nodes.get(this.nodeToRelableId).label;
+    this.nodeEdgeLabel = this.flagService.removeFlagFromLabel(this.nodes.get(this.nodeToRelableId).label);
+    this.flagService.saveFlagFromLabel(this.nodes.get(this.nodeToRelableId).label);
 
     this.isShowingRelabelPopUp  = true;
   }
