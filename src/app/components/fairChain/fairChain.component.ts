@@ -434,7 +434,21 @@ export class FairChainComponent implements OnInit {
     //   }
     // }
   }
+
+  public addGroup(){
+    this.groupsServices.addGroup(this.nameOfNewGroup, this.nodeGroupColor);
+    var temp = this.groupsServices.getGroups()
+    //temp = temp.substr(0,temp.length-1) + ',"group7": {  "color": "yellow"}}'
+    this.options.groups=temp
+    console.log(this.options)
+    this.network.setOptions(this.options)
+   this.listOfGroups= this.groupsServices.getGroupsName()
+  }
   
+  public addGroup7(){
+    this.selectedGroup="group7"
+  }
+
   public changeNodeGroupColor(){
     var selectedGroup =this.selectedGroup.toLowerCase();
     eval("this.options.groups." + selectedGroup + ".color = " + "'" + this.nodeGroupColor + "'");
@@ -452,18 +466,5 @@ export class FairChainComponent implements OnInit {
     this.network.disableEditMode();
   }
 
-  public addGroup(){
-    this.groupsServices.addGroup(this.nameOfNewGroup, this.nodeGroupColor);
-    var temp = this.groupsServices.getGroups()
-    //temp = temp.substr(0,temp.length-1) + ',"group7": {  "color": "yellow"}}'
-    this.options.groups=temp
-    console.log(this.options)
-    this.network.setOptions(this.options)
-   this.listOfGroups= this.groupsServices.getGroupsName()
-  }
-  
-  public addGroup7(){
-    this.selectedGroup="group7"
-  }
 }
 
