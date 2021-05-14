@@ -89,3 +89,7 @@
     <hr>
   </mat-card>
 </mat-card>
+
+<relabel-pop-up *ngIf="isRelabelPopUpVisible()" 
+  [info]='relabelPopUpInfo'
+  [(label)]="nodeEdgeLabel"></relabel-pop-up>

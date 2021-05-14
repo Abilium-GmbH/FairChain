@@ -12,11 +12,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatSelectModule} from '@angular/material/select';
+//import { RelabelPopUpComponent } from './components/relabel-pop-up/relabel-pop-up.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    EditorPage,
+    EditorPage
   ],
   imports: [
     BrowserModule,BrowserAnimationsModule, FormsModule, ReactiveFormsModule, MatSelectModule,
