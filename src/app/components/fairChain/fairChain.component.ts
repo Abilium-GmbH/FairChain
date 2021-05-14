@@ -88,6 +88,7 @@ export class FairChainComponent implements OnInit {
 
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
+  public nodeGroupColor = "#002AFF";
   public selectedGroup = "Group1";
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
@@ -195,8 +196,17 @@ export class FairChainComponent implements OnInit {
   }
 
   public changeGroup1ColorInBlack() {
+
     this.options.groups.group1.color = "black";
     this.network.setOptions(this.options);
+    this.network.editNode()
+    this.nodes.forEach(node=>{
+      if(node.group=="group1") {
+        node.color=this.options.groups.group1.color;
+        this.network.updateClusteredNode(node.id, {group: "group1"});
+      }
+    })
+    this.network.disableEditMode()
   }
 
   private editEdgeBasedOnCurrentEdgeOption(edgeData: Edge) {
@@ -251,7 +261,7 @@ export class FairChainComponent implements OnInit {
    */
   private onClick(params) {
     // Defines node onClick actions
-    if (this.isClickingOnNodeInNodeEditMode(params)) this.network.editNode();
+    if (this.isClickingOnNodeInNodeEditMode(params)) this.editNodeInDataset(params.nodes);
     // Defines edge onClick actions
     //TODO: With new edge dataset, define custom events for changing labels/color
     if (this.isClickingOnEdgeInEdgeEditMode(params)) this.editEdgeInDataset(params.edges);
@@ -262,6 +272,15 @@ export class FairChainComponent implements OnInit {
       let edgeData: Edge = this.edges.get(id);
       this.editEdgeBasedOnCurrentEdgeOption(edgeData);
       this.edges.update(edgeData);
+    });
+    this.network.disableEditMode();
+    this.makeSnapshot()
+  }
+  private editNodeInDataset(nodes: IdType[]) {
+    nodes.forEach((id) => {
+      let nodeData: Node = this.nodes.get(id);
+      this.editNodeBasedOnCurrentNodeOption(nodeData);
+      this.nodes.update(nodeData);
     });
     this.network.disableEditMode();
     this.makeSnapshot()
@@ -377,29 +396,46 @@ export class FairChainComponent implements OnInit {
   public updateNodeGroup(node: Node) {
     switch (this.selectedGroup) {
       case "Group1": {
-        //node.group = this.selectedGroup.toLowerCase();
-        //node.color = this.options.groups.group1.color;
-        this.network.updateClusteredNode(node.id, {group: "group1"});
+        node.group = this.selectedGroup.toLowerCase();
+        node.color = this.options.groups.group1.color;
+        //this.network.updateClusteredNode(node.id, {group: "group1"});
         break;
       }
       case "Group2": {
-        //node.group = this.selectedGroup.toLowerCase();
-        //node.color = this.options.groups.group2.color;
+        node.group = this.selectedGroup.toLowerCase();
+        node.color = this.options.groups.group2.color;
         //break;
 
 
-        this.network.updateClusteredNode(node.id, {group: "group2"});
+        //this.network.updateClusteredNode(node.id, {group: "group2"});
         break;
       }
       case "Group3": {
-        /*
         node.group = this.selectedGroup.toLowerCase();
         node.color = this.options.groups.group3.color;
-         */
-        this.network.updateClusteredNode(node.id, {group: "group3"});
+
+        //this.network.updateClusteredNode(node.id, {group: "group3"});
         break;
       }
     }
   }
+
+  public changeNodeGroupColor(){
+    var selectedGroup =this.selectedGroup.toLowerCase();
+    eval("this.options.groups." + selectedGroup + ".color = " + "'" + this.nodeGroupColor + "'");
+
+    this.network.setOptions( this.options );
+
+    this.nodes.forEach( node =>{
+      if(node.group == selectedGroup) {
+        node.color=this.nodeGroupColor;
+        this.network.updateClusteredNode(node.id, {group: selectedGroup});
+      }
+
+    })
+
+    this.network.disableEditMode();
+  }
+
 }
 

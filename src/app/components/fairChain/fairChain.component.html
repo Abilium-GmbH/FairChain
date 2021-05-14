@@ -54,7 +54,7 @@
       (click)="changeNodeName(); changeEdgeName()">Change Name</button>
     <hr>
     <div>
-      <!-- Implements te color toolbar and button to change node/edge colors -->
+      <!-- Implements the color toolbar and button to change node/edge colors -->
         <p class="option-label">color</p>
         <input matInput class = "option-colorInput" type="color" [(ngModel)]="nodeEdgeColor">
       <br>
@@ -73,6 +73,15 @@
         </select>
       </div>
       <button mat-button class="buttonToolbarRight" (click)="changeNodeGroup()">Change Group</button>
+      <hr>
+      <!-- Implements the color toolbar and button to change node/edge colors -->
+      <p class="option-label">group's color</p>
+      <input matInput class = "option-colorInput" type="color" [(ngModel)]="nodeGroupColor">
+    <br>
+    <button mat-button
+      class="option-button"
+      (click)="changeNodeGroupColor()">Change</button>
+    <hr>
     </div>
   </mat-card>
 </mat-card>
