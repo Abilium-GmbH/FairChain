@@ -436,18 +436,19 @@ export class FairChainComponent implements OnInit {
 
   public changeNodeGroupColor(){
     var selectedGroup =this.selectedGroup.toLowerCase();
+    var loopActivated = false;
     eval("this.options.groups." + selectedGroup + ".color = " + "'" + this.nodeGroupColor + "'");
 
     this.network.setOptions( this.options );
 
     this.nodes.forEach( node =>{
       if(node.group == selectedGroup) {
+        loopActivated = true;
         node.color=this.nodeGroupColor;
         this.network.updateClusteredNode(node.id, {group: selectedGroup});
       }
-
     })
-
+    if(loopActivated) this.makeSnapshot();
     this.network.disableEditMode();
   }
 
