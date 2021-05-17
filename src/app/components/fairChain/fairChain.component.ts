@@ -69,7 +69,7 @@ export class FairChainComponent implements OnInit {
 
   // A handy debug buttom for any
   nameOfNewGroup: string="";
-  listOfGroups = ["none", "group1", "group2", "group3" ];
+  listOfGroups = ["none", "ethical", "unethical", "sustainable", "unsustainable" ];
 
   change(value: string) {
     this.selectedGroup = value;
@@ -119,17 +119,19 @@ export class FairChainComponent implements OnInit {
   // Create an array with edges
   private edges: DataSetEdges = new DataSet();
 
-
   private nodeGroups = {
-    group1: {
-      color: "red"
+    ethical: {
+      color: "blue"
     },
-    group2: {
+    unethical: {
+      color: "orange"
+    },
+    sustainable: {
       color: "green"
     },
-    group3: {
-      color: "yellow"
-    },
+    unsustainable:{
+      color: "red"
+    }
   }
   // Create a network
   private data: Data = {

@@ -24,15 +24,11 @@ export class group{
 export class GroupsService {
 
   constructor() { }
-  private nameOfGroups: string[]=["none","group1", "group2", "group3"]
-  private groups:group[] =[ new group("group1","red"), new group("group2","green"), new group("group3","yellow")]
+  private nameOfGroups: string[]=["none","ethical", "unethical", "sustainable", "unsustainable"]
+  private groups:group[] =[ new group("ethical","blue"), new group("unethical","orange"), new group("sustainable","green"), new group("unsustainable","red")]
 
   public addGroup(nameOfGroup:string, colorOfGroup:string) {
-    for (var currentName in this.nameOfGroups){
-      if (currentName.toLowerCase() === nameOfGroup.toLowerCase()){
-        throw new Error("I should show up")
-      }
-    }
+    //for (var currentName in this.nameOfGroups){if (currentName.toLowerCase() === nameOfGroup.toLowerCase()){throw new Error("I should show up")}}
     this.groups.push(new group (nameOfGroup, colorOfGroup))
     this.nameOfGroups.push(nameOfGroup)
   }
