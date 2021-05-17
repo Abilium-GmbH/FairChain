@@ -30,7 +30,7 @@ export class GroupsService {
   public addGroup(nameOfGroup:string, colorOfGroup:string) {
     for (var currentName in this.nameOfGroups){
       if (currentName.toLowerCase() === nameOfGroup.toLowerCase()){
-        throw new Error("eskere")
+        throw new Error("I should show up")
       }
     }
     this.groups.push(new group (nameOfGroup, colorOfGroup))

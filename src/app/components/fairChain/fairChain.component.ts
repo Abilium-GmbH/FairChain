@@ -69,7 +69,7 @@ export class FairChainComponent implements OnInit {
 
   // A handy debug buttom for any
   nameOfNewGroup: string="";
-  listOfGroups = ["group1", "group2", "group3", "none"];
+  listOfGroups = ["none", "group1", "group2", "group3" ];
 
   change(value: string) {
     this.selectedGroup = value;
