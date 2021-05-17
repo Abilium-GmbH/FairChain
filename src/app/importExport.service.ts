@@ -18,7 +18,8 @@ export class ImportExportService{
 
   public download(filename, text) {
     var element = document.createElement('a');
-    element.setAttribute('href', 'data:json/plain;charset=utf-8,' + encodeURIComponent(text));
+
+    element.setAttribute('href', 'data:json/plain;charset=utf-8,' + escape(text));
     element.setAttribute('download', filename);
 
     element.style.display = 'none';
@@ -79,7 +80,7 @@ export class ImportExportService{
   public async upload(file: File) {
     return new Promise ((resolve, reject) => {
       if (file.type != 'application/json') reject('The file type is not JSON');
-      if (file['Size']> 1e5) reject('The file size is to large');
+      if (file['Size']> 1e5) reject('The file size is too large');
       const reader = new FileReader();
       var importedJson;
       var service = new ImportExportService;
@@ -87,7 +88,8 @@ export class ImportExportService{
 
       reader.onload = function(e) {
         importedJson = e.target.result;
-        const parsedImportedJson = JSON.parse(importedJson);
+        let result = importedJson.split('%uD').join('\\uD');
+        const parsedImportedJson = JSON.parse(result);
         service.checkThatImportDataIsValid(parsedImportedJson);
         resolve(parsedImportedJson);
       }
