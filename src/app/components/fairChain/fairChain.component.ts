@@ -23,6 +23,41 @@ import { NodeRelabelInfo } from '../../interfaces/NodeRelabelInfo'
  */
 export class FairChainComponent implements OnInit {
 
+    public nodeEdgeLabel = "";
+  public nodeEdgeColor = "#002AFF";
+  public nodeToRelableId: IdType;
+  public isShowingRelabelPopUp = false;
+  
+  private relabelPopUpInfo: NodeRelabelInfo = {
+    nodeId: '',
+    active: false,
+    label: '',
+    rect: undefined
+  };
+
+  @ViewChild('graph', {static: true}) graphRef: ElementRef;
+
+  private network: Network;
+  private subscriptions: Subscription;
+
+  private changesNode: ChangingNode = ChangingNode.None;
+  private changesEdge: ChangingEdge = ChangingEdge.None;
+  private currentTool: Tools = Tools.Idle;
+
+
+  // Create an array with nodes
+  //private nodes: Node[] = [];
+  private nodes: DataSetNodes = new DataSet();
+
+  // Create an array with edges
+  private edges: DataSetEdges = new DataSet();
+
+  // Create a network
+  private data: Data = {
+    nodes: this.nodes,
+    edges: this.edges,
+  };
+
   public ngOnInit(): void {
     this.network = new Network(this.graph, this.data, this.options);
     this.makeSubscriptions();
@@ -56,7 +91,7 @@ export class FairChainComponent implements OnInit {
     );
   }
 
-  public isRelabelPopUpVisible() : boolean {return this.trueRelabelPopUpInfo.active;}
+  public isRelabelPopUpVisible() : boolean {return this.relabelPopUpInfo.active;}
   public isAddingNode() : boolean {return this.currentTool === Tools.AddingNode;}
   public isAddingEdge() : boolean {return this.currentTool === Tools.AddingEdge;}
   public isChangingNodeLabel() : boolean {return this.changesNode === ChangingNode.NodeLabel;}
@@ -67,11 +102,11 @@ export class FairChainComponent implements OnInit {
   private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
   private makeToolIdle() : void {this.currentTool = Tools.Idle;}
   private closeNodeRelabelPopUp() : void {
-    assert(this.trueRelabelPopUpInfo.active, 'There is no pop up menu to close');
-    assert(this.trueRelabelPopUpInfo, 'There is no node to apply the change to'); 
-    this.nodes.update({id: this.trueRelabelPopUpInfo.nodeId, label: this.trueRelabelPopUpInfo.label});
-    this.trueRelabelPopUpInfo.active = false;
-    this.trueRelabelPopUpInfo.nodeId = '';
+    assert(this.relabelPopUpInfo.active, 'There is no pop up menu to close');
+    assert(this.relabelPopUpInfo, 'There is no node to apply the change to'); 
+    this.nodes.update({id: this.relabelPopUpInfo.nodeId, label: this.relabelPopUpInfo.label});
+    this.relabelPopUpInfo.active = false;
+    this.relabelPopUpInfo.nodeId = '';
     this.makeSnapshot();
   }
 
@@ -81,44 +116,6 @@ export class FairChainComponent implements OnInit {
   {
     assert(this.isDebugging, 'Function should not be called unless in debug mode');
   }
-
-  public nodeEdgeLabel = "";
-  public nodeEdgeColor = "#002AFF";
-  public nodeToRelableId: IdType;
-  public isShowingRelabelPopUp = false;
-  public relabelPopUpInfo: RectOnDOM;
-
-  private trueRelabelPopUpInfo: NodeRelabelInfo = {
-    nodeId: '',
-    active: false,
-    label: '',
-    rect: undefined
-  };
-
-  @ViewChild('graph', {static: true}) graphRef: ElementRef;
-  //@ViewChild('nodeRelabelPopUp', {static: true}) nodeRelabelPopUpRef: ElementRef;
-  //@ViewChild('nodeRelabelPopUpContainer', {static: true}) nodeRelabelPopUpContainerRef: ElementRef;
-
-  private network: Network;
-  private subscriptions: Subscription;
-
-  private changesNode: ChangingNode = ChangingNode.None;
-  private changesEdge: ChangingEdge = ChangingEdge.None;
-  private currentTool: Tools = Tools.Idle;
-
-
-  // Create an array with nodes
-  //private nodes: Node[] = [];
-  private nodes: DataSetNodes = new DataSet();
-
-  // Create an array with edges
-  private edges: DataSetEdges = new DataSet();
-
-  // Create a network
-  private data: Data = {
-    nodes: this.nodes,
-    edges: this.edges,
-  };
 
   /**
    * Initializes Node and Edge Properties
@@ -250,7 +247,7 @@ export class FairChainComponent implements OnInit {
    * @private
    */
   private onClick(params) {
-    if (this.trueRelabelPopUpInfo.active) this.closeNodeRelabelPopUp();
+    if (this.relabelPopUpInfo.active) this.closeNodeRelabelPopUp();
     // Defines node onClick actions
     if (this.isClickingOnNodeInNodeEditMode(params)) this.network.editNode();
     // Defines edge onClick actions
@@ -387,10 +384,10 @@ export class FairChainComponent implements OnInit {
   }
 
   private showRelabelPopUp(nodeId: IdType) {
-    this.trueRelabelPopUpInfo.nodeId = nodeId;
-    this.trueRelabelPopUpInfo.rect   = this.getRelabelPopUpRect(nodeId);
-    this.trueRelabelPopUpInfo.label  = this.nodes.get(nodeId).label;
-    this.trueRelabelPopUpInfo.active = true;
+    this.relabelPopUpInfo.nodeId = nodeId;
+    this.relabelPopUpInfo.rect   = this.getRelabelPopUpRect(nodeId);
+    this.relabelPopUpInfo.label  = this.nodes.get(nodeId).label;
+    this.relabelPopUpInfo.active = true;
   }
 
   getRelabelPopUpRect(nodeId: IdType): RectOnDOM {

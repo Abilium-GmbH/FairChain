@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { strict as assert } from 'assert';
+import { fromEvent, Subscription } from 'rxjs';
+import { map, bufferCount, filter } from 'rxjs/operators';
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
 
 @Component({
@@ -9,56 +11,45 @@ import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
 })
 export class RelabelPopUpComponent implements OnInit {
 
-  private prevLabel: string;
-
   constructor() { }
 
-  private max_cols = 15;
+  private subscriptions: Subscription;
 
   @Input() info: RectOnDOM;
   
   @Input()  label: string;
   @Output() labelChange = new EventEmitter<string>();
-
+  @Output() closeRelabelPopUp = new EventEmitter();
   @ViewChild('relabelTextArea') relabelTextAreaRef: ElementRef;
 
   ngOnInit(): void {
+    this.subscriptions = new Subscription();
   }
 
   ngAfterViewInit(): void {
-    this.relabelTextArea.innerText = this.label;
-    this.prevLabel = this.label;
-  }
-
-  private f(label: string): string {
-    let out = '';
-    for (let i = 0; i < label.length; i++) {
-      out += label.charAt(i);
-      if (i % this.max_cols === 0 && i+1 !== label.length) out += '\n';
-    }
-    return out;
+    this.subscriptions.add(
+      fromEvent(this.relabelTextAreaRef.nativeElement, 'click').pipe(
+        map(() => new Date().getTime()),
+        bufferCount(2, 1),
+        filter((timestamps) => {
+          return timestamps[0] > new Date().getTime() - 200;
+        })
+      ).subscribe(() => {
+        this.isClosingPopUp();
+      })
+    )
   }
 
   public updateLabel() {
-    this.relabelTextArea.innerText = this.f(this.label);
-    this.prevLabel = this.relabelText;
-    this.labelChange.emit(this.convertToMultiline(this.relabelText));
+    this.labelChange.emit(this.convertToMultiline(this.label));
+  }
+
+  public isClosingPopUp() {
+    this.closeRelabelPopUp.emit();
   }
 
   private convertToMultiline(text: string) {
     return text.replace('\n', '\n');
-  }
-
-  private get relabelTextArea() {
-    return this.relabelTextAreaRef.nativeElement;
-  }
-  
-  private get relabelText(): string {
-    return this.relabelTextArea.innerText;
-  }
-
-  private set relabelText(text: string) {
-    this.relabelTextArea.innerText = text;
   }
   
 }

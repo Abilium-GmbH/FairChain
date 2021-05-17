@@ -66,5 +66,6 @@
 </mat-card>
 
 <relabel-pop-up *ngIf="isRelabelPopUpVisible()" 
-  [info]='trueRelabelPopUpInfo.rect'
-  [(label)]="trueRelabelPopUpInfo.label"></relabel-pop-up>
+  [info]='relabelPopUpInfo.rect'
+  [(label)]="relabelPopUpInfo.label"
+  (closeRelabelPopUp)="closeNodeRelabelPopUp()"></relabel-pop-up>

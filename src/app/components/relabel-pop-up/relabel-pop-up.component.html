@@ -4,19 +4,10 @@
     [style.width.px]='info.width' 
     [style.height.px]='info.height'>
 
-    <mat-form-field 
+    <textarea #relabelTextArea
+        class = "relabel-text-area"
         [style.width.px]='info.width'
-        [style.height.px]='info.height'>
-        <textarea
-            matInput
-            width:100%
-            height:100%>
-        </textarea>
-    </mat-form-field>
-
-    <!--
-    <p #relabelTextArea contenteditable="true" (input)=updateLabel()>
-        {{label}}
-    </p>
-    -->
+        [style.height.px]='info.height'
+        (input)=updateLabel()
+        [(ngModel)]='label'></textarea>
 </mat-card>

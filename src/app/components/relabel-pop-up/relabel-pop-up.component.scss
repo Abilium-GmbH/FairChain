@@ -5,22 +5,11 @@
     margin: 0px;
 }
 
-.relabelTextArea {
+.relabel-text-area {
     resize: none;
+    position: absolute;
     overflow:hidden;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    display: inline-block;
-    min-width: 100px;
+    background-color: rgba(255, 255, 255, 0);
+    padding: 0px;
+    margin: 0px;
 }
-
-.boxsizingBorder {
-    -webkit-box-sizing: border-box;
-       -moz-box-sizing: border-box;
-            box-sizing: border-box;
-}
-
-[contenteditable] {
-    outline: 0px solid transparent;
-  }
