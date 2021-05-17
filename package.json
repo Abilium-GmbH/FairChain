@@ -23,7 +23,7 @@
     "@angular/platform-browser-dynamic": "~11.1.0",
     "@angular/router": "~11.1.0",
     "@egjs/hammerjs": "^2.0.17",
-    "@ng-bootstrap/ng-bootstrap": "^9.1.0",
+    "@ng-bootstrap/ng-bootstrap": "^9.1.1",
     "bootstrap": "^5.0.0-beta3",
     "keycharm": "^0.4.0",
     "rxjs": "~6.6.0",
