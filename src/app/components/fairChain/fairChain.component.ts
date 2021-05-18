@@ -32,7 +32,7 @@ export class FairChainComponent implements OnInit {
   constructor(private importExportService:ImportExportService, 
               private undoRedoService:UndoRedoService,
               private flagService:FlagService) {
-    this.undoRedoService.addSnapshot(this.nodes, this.edges);
+    this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
     this.emojis = flags;
   }
 
@@ -96,7 +96,7 @@ export class FairChainComponent implements OnInit {
   public isShowingRelabelPopUp = false;
   public isMetadataVisible = false;
   public relabelPopUpInfo: RectOnDOM;
-  public metadata: string;
+  public metadata = "";
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
   //@ViewChild('nodeRelabelPopUp', {static: true}) nodeRelabelPopUpRef: ElementRef;
@@ -336,7 +336,7 @@ export class FairChainComponent implements OnInit {
    * Downloads the file as Graph.json with the method in importExport.service.
    */
   public exportGraph(){
-    var text = this.importExportService.convertNetworkToJSON(this.nodes, this.edges);
+    var text = this.importExportService.convertNetworkToJSON(this.nodes, this.edges, this.metadata);
     var filename = "Graph.json";
     this.importExportService.download(filename, text);
   }
@@ -360,6 +360,8 @@ export class FairChainComponent implements OnInit {
 
     this.edges = new DataSet();
     this.edges.add(data.edges);
+
+    this.metadata = data.metadata;
 
     this.data = {nodes: this.nodes, edges: this.edges};
     this.network = new Network(this.graph, this.data, this.options);
@@ -404,7 +406,7 @@ export class FairChainComponent implements OnInit {
   }
 
   private makeSnapshot(){
-    this.undoRedoService.addSnapshot(this.nodes, this.edges);
+    this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
   }
 
   public undo(){

@@ -90,16 +90,17 @@ export class ImportExportService{
         importedJson = e.target.result;
         let result = importedJson.split('%uD').join('\\uD');
         const parsedImportedJson = JSON.parse(result);
-        service.checkThatImportDataIsValid(parsedImportedJson);
+        //service.checkThatImportDataIsValid(parsedImportedJson);
         resolve(parsedImportedJson);
       }
     })
   }
 
-  public convertNetworkToJSON(nodes: DataSetNodes, edges: DataSetEdges): string {
-    return "{\"nodes\":[NODES],\"edges\":[EDGES]}"
+  public convertNetworkToJSON(nodes: DataSetNodes, edges: DataSetEdges, metadata:string): string {
+    return "{\"nodes\":[NODES],\"edges\":[EDGES],\"metadata\":[METADATA]}" 
       .replace('NODES', this.datasetToJSON(nodes))
-      .replace('EDGES', this.datasetToJSON(edges));
+      .replace('EDGES', this.datasetToJSON(edges))
+      .replace('METADATA', JSON.stringify(metadata));
   }
 
   private datasetToJSON(data: DataSetNodes | DataSetEdges): string 

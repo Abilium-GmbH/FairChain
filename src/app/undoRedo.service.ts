@@ -11,7 +11,7 @@ export class UndoRedoService{
     private counter = 0;
 
     constructor(private importExportService:ImportExportService) {
-        this.snapshots.push("{\"nodes\":[],\"edges\":[]}");
+        this.snapshots.push("{\"nodes\":[],\"edges\":[],\"metadata\":[\"\"]}");
     }
 
     public getPredecessorSnapshot(){
@@ -24,9 +24,9 @@ export class UndoRedoService{
         return JSON.parse(this.snapshots[this.counter]);
     }
 
-    public addSnapshot(nodes: DataSetNodes, edges: DataSetEdges){
+    public addSnapshot(nodes: DataSetNodes, edges: DataSetEdges, metadata:string){
         if (this.counter + 1 < this.snapshots.length) this.snapshots.splice(this.counter + 1, this.snapshots.length);
         this.counter++;
-        this.snapshots[this.counter] = this.importExportService.convertNetworkToJSON(nodes, edges);
+        this.snapshots[this.counter] = this.importExportService.convertNetworkToJSON(nodes, edges, metadata);
     }
 }
