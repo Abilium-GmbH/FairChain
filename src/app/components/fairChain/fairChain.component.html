@@ -4,7 +4,7 @@
   <button mat-button class="buttonsToolbarAbove" (click)= "undo()"> Undo </button>
   <button mat-button class="buttonsToolbarAbove" (click)= "redo()"> Redo </button>
   <button mat-button class="buttonsToolbarAbove" (click)="__debug__()" *ngIf="isDebugging"> Debug </button>
-
+  <button mat-button class="option-button" (click)= "downloadGraphAsJpeg()">Download Jpeg</button>
 
   <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" #hiddenfileinput>
 </mat-card>
@@ -32,14 +32,22 @@
       </a>
     </div>
     <hr>
-
   </mat-card>
 
   <!-- Container of Network canvas -->
   <mat-card class="canvas" id=networkContainer>
-      <mat-form-field class="metadata">
-        <textarea matInput></textarea>
+    <div [hidden]="!isMetadataVisible">
+      <mat-form-field class="metadataField">
+        <mat-label></mat-label>
+        <textarea matInput class="description" 
+          [(ngModel)]="metadata" 
+          placeholder="Enter Description" 
+          cdkTextareaAutosize
+          cdkAutosizeMinRows="1" 
+          cdkAutosizeMaxRows="5">
+        </textarea>
       </mat-form-field>
+    </div>
     <div #graph class="graph"></div>
   </mat-card>
 
@@ -58,7 +66,7 @@
     <hr>
     <div>
       <!-- Implements te color toolbar and button to change node/edge colors -->
-        <p class="option-label">color</p>
+        <p class="option-label">Color</p>
         <input matInput class = "option-colorInput" type="color" [(ngModel)]="nodeEdgeColor">
       <br>
       <button mat-button 
@@ -68,7 +76,7 @@
       <hr>
     </div>
     <div>
-      <p class="option-label">flag</p>
+      <p class="option-label">Flag</p>
 
         <mat-drawer #drawer class="drawer" mode="over" position="end">
           <mat-radio-group
@@ -86,7 +94,8 @@
       <button mat-button class="option-button" [class.active] = "isChangingFlag()" (click)= "changeFlag()">Apply Flag</button>
       <button mat-button class="option-button" [class.active] = "isDeletingFlag()" (click)= "deleteFlag()">Delete Flag</button>
       <hr>
-      <button mat-button class="option-button" (click)= "downloadGraphAsJpeg()">Download Jpeg</button>
+      <p class="option-label-metadata">Show Metadata</p>
+      <mat-slide-toggle class="option-toggle" [(ngModel)]="isMetadataVisible" color="primary"></mat-slide-toggle>
     </div>
   </mat-drawer-container>  
   </mat-card>

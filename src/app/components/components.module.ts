@@ -11,6 +11,7 @@ import { ImportExportService } from '../importExport.service';
 import { UndoRedoService } from '../undoRedo.service';
 import { MatRadioModule } from '@angular/material/radio'; 
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     MatInputModule,
     FormsModule,
     MatRadioModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatSlideToggleModule
   ],
   exports: [
     FairChainComponent,

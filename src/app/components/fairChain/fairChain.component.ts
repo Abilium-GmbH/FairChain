@@ -91,11 +91,12 @@ export class FairChainComponent implements OnInit {
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
   public nodeFlag = "🇨🇭";
-  public metadata = "Wow fairchain really is really good"
   public emojis: string[];
   public nodeToRelableId: IdType;
   public isShowingRelabelPopUp = false;
+  public isMetadataVisible = false;
   public relabelPopUpInfo: RectOnDOM;
+  public metadata: string;
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
   //@ViewChild('nodeRelabelPopUp', {static: true}) nodeRelabelPopUpRef: ElementRef;
