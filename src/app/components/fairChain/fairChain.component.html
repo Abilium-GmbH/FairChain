@@ -54,6 +54,7 @@
   <!-- Detailed options for a tool -->
   <mat-card #toolbar_options class="toolbar-options">
     <mat-drawer-container class="drawer-container" [hasBackdrop]="false">
+      <mat-drawer-content class="drawer-content">
     <!-- Text Area for Node Label -->
     <p class="option-label">Label</p>
     <textarea class = "option-textArea" [(ngModel)]="nodeEdgeLabel"></textarea>
@@ -97,6 +98,7 @@
       <p class="option-label-metadata">Show Metadata</p>
       <mat-slide-toggle class="option-toggle" [(ngModel)]="isMetadataVisible" color="primary"></mat-slide-toggle>
     </div>
+  </mat-drawer-content>
   </mat-drawer-container>  
   </mat-card>
 

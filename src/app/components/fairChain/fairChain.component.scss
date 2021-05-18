@@ -119,16 +119,22 @@
         .option-label-metadata {
             float: left;
         }
+
+        .drawer-container{
+            height: 100%;
+            background-color: white;
+            overflow-y: hidden;
+
+            .drawer-content {
+                overflow: hidden;
+            }
+        }
+
+        .radio-flags{
+            width: 50%;
+            display:inline-block;
+            vertical-align: top;
+        }
     }
 }
 
-.drawer-container{
-    height: 100%;
-    background-color: white;
-
-    .radio-flags{
-        width: 50%;
-        display:inline-block;
-        vertical-align: top;
-    }
-}
