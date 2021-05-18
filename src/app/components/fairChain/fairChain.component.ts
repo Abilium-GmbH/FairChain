@@ -37,6 +37,9 @@ export class FairChainComponent implements OnInit {
     rect: undefined
   };
 
+  public nodeFlag = "🇨🇭";
+  public emojis: string[];
+
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
 
   private network: Network;
@@ -92,7 +95,7 @@ export class FairChainComponent implements OnInit {
     );
     this.subscriptions.add(
       fromEvent(this.network, 'dragging').subscribe(params => {
-        if (this.isShowingRelabelPopUp) this.closeNodeRelabelPopUp();
+        if (this.isRelabelPopUpVisible()) this.closeNodeRelabelPopUp();
       })
     );
   }
@@ -111,8 +114,8 @@ export class FairChainComponent implements OnInit {
   private makeToolIdle() : void {this.currentTool = Tools.Idle;}
   private closeNodeRelabelPopUp() : void {
     assert(this.relabelPopUpInfo.active, 'There is no pop up menu to close');
-    assert(this.relabelPopUpInfo, 'There is no node to apply the change to'); 
-    this.nodes.update({id: this.nodeToRelableId, label: this.flagService.addOrChangeFlag(this.nodeEdgeLabel, this.flagService.currentFlag)});
+    assert(this.relabelPopUpInfo.nodeId, 'There is no node to apply the change to'); 
+    this.nodes.update({id: this.relabelPopUpInfo.nodeId, label: this.flagService.addOrChangeFlag(this.relabelPopUpInfo.label, this.flagService.currentFlag)});
     this.relabelPopUpInfo.active = false;
     this.relabelPopUpInfo.nodeId = '';
     this.makeSnapshot();
@@ -124,39 +127,6 @@ export class FairChainComponent implements OnInit {
   {
     this.nodes.add({ id: 3, font: { face: 'Flags' }, label: '🇦🇱 \n Wood', x: 40, y: 40 })  
   }
-
-  public nodeEdgeLabel = "";
-  public nodeEdgeColor = "#002AFF";
-  public nodeFlag = "🇨🇭";
-  public emojis: string[];
-  public nodeToRelableId: IdType;
-  public isShowingRelabelPopUp = false;
-  public relabelPopUpInfo: RectOnDOM;
-
-  @ViewChild('graph', {static: true}) graphRef: ElementRef;
-  //@ViewChild('nodeRelabelPopUp', {static: true}) nodeRelabelPopUpRef: ElementRef;
-  //@ViewChild('nodeRelabelPopUpContainer', {static: true}) nodeRelabelPopUpContainerRef: ElementRef;
-
-  private network: Network;
-  private subscriptions: Subscription;
-
-  private changesNode: ChangingNode = ChangingNode.None;
-  private changesEdge: ChangingEdge = ChangingEdge.None;
-  private currentTool: Tools = Tools.Idle;
-
-
-  // Create an array with nodes
-  //private nodes: Node[] = [];
-  private nodes: DataSetNodes = new DataSet();
-
-  // Create an array with edges
-  private edges: DataSetEdges = new DataSet();
-
-  // Create a network
-  private data: Data = {
-    nodes: this.nodes,
-    edges: this.edges,
-  };
 
   /**
    * Initializes Node and Edge Properties
