@@ -9,7 +9,6 @@ import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges 
 import { DataSet } from "vis-data/peer/esm/vis-data"
 import { emojis as flags } from '../../emojis'
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import domtoimage from 'dom-to-image';
 
 @Component({
@@ -32,8 +31,7 @@ export class FairChainComponent implements OnInit {
 
   constructor(private importExportService:ImportExportService, 
               private undoRedoService:UndoRedoService,
-              private flagService:FlagService,
-              private _snackBar: MatSnackBar) {
+              private flagService:FlagService) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges);
     this.emojis = flags;
   }
@@ -485,12 +483,7 @@ export class FairChainComponent implements OnInit {
       height: bottomRightCorner.y - upperLeftCorner.y};
   }
 
-  openSnackBar() {
-    this._snackBar.open(this.metadata, "back to fairchain");
-  }
-
   downloadGraphAsJpeg(){
-
     domtoimage.toJpeg(document.getElementById("networkContainer"))
     .then(function (dataUrl) {
         var link = document.createElement('a');
