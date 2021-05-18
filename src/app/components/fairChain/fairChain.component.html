@@ -68,7 +68,10 @@
                   [value]="nameOfGroup">{{nameOfGroup}}</option>
         </select>
       </div>
-      <button mat-button class="buttonToolbarRight" (click)="changeNodeGroup()">Change Group</button>
+      <button mat-button 
+      class="option-button"
+      [class.active] = "isChangingGroup()"
+      (click)="changeNodeGroup()">Change Group</button>
       <hr>
       <!-- Implements the color toolbar and button to change node/edge colors -->
       <p class="option-label">group's color</p>
@@ -81,7 +84,7 @@
     </div>
     <input matInput class = "option-colorInput" type="text" [(ngModel)]="nameOfNewGroup">
     <button mat-button
-      class="option-button"
+    class="option-button"
       (click)="addGroup()">addgroup</button>
     <hr>
   </mat-card>

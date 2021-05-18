@@ -65,7 +65,7 @@ export class FairChainComponent implements OnInit {
   public isInEdgeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
   private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
   private makeToolIdle() : void {this.currentTool = Tools.Idle;}
-  private isChangingGroup(): boolean {return this.changesNode===ChangingNode.NodeGroup}
+  public isChangingGroup(): boolean {return this.changesNode===ChangingNode.NodeGroup}
 
   // A handy debug buttom for any
   nameOfNewGroup: string="";
@@ -418,13 +418,14 @@ export class FairChainComponent implements OnInit {
 
   public changeNodeGroup() {
     this.makeToolIdle();
-    if (this.isChangingGroup()) this.changesEdge = ChangingEdge.None;
+    console.log(this.changesNode)
+    if (this.isChangingGroup()) this.changesNode= ChangingNode.None;
     else this.changesNode=ChangingNode.NodeGroup;
   }
 
   public updateNodeGroup(node: Node) {
-    node.group = this.selectedGroup.toLowerCase()
-    eval("node.color = this.options.groups." + this.selectedGroup.toLowerCase() + ".color")
+    node.group = this.selectedGroup.toLowerCase().trim()
+    eval("node.color = this.options.groups." + this.selectedGroup.toLowerCase().trim() + ".color")
   }
 
   public addGroup(){

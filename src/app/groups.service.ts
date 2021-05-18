@@ -14,7 +14,7 @@ export class group{
   public setName(name:string){this.name = name}
   public setColor(color:string){this.color=color}
   public toString(){
-    return '"' + this.name + '" : { "color" : "' + this.color + '" }'
+    return '"' + this.name.trim() + '" : { "color" : "' + this.color + '" }'
   }
 }
 
