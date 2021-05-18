@@ -9,6 +9,8 @@ import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges 
 import { DataSet } from "vis-data/peer/esm/vis-data"
 import { emojis as flags } from '../../emojis'
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import domtoimage from 'dom-to-image';
 
 @Component({
   selector: 'app-fairChain',
@@ -30,7 +32,8 @@ export class FairChainComponent implements OnInit {
 
   constructor(private importExportService:ImportExportService, 
               private undoRedoService:UndoRedoService,
-              private flagService:FlagService) {
+              private flagService:FlagService,
+              private _snackBar: MatSnackBar) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges);
     this.emojis = flags;
   }
@@ -90,6 +93,7 @@ export class FairChainComponent implements OnInit {
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
   public nodeFlag = "🇨🇭";
+  public metadata = "Wow fairchain really is really good"
   public emojis: string[];
   public nodeToRelableId: IdType;
   public isShowingRelabelPopUp = false;
@@ -479,6 +483,22 @@ export class FairChainComponent implements OnInit {
       y: upperLeftCorner.y,
       width: bottomRightCorner.x - upperLeftCorner.x,
       height: bottomRightCorner.y - upperLeftCorner.y};
+  }
+
+  openSnackBar() {
+    this._snackBar.open(this.metadata, "back to fairchain");
+  }
+
+  downloadGraphAsJpeg(){
+
+    domtoimage.toJpeg(document.getElementById("networkContainer"))
+    .then(function (dataUrl) {
+        var link = document.createElement('a');
+        link.download = 'my-image-name.jpeg';
+        link.href = dataUrl;
+        link.click();
+    });
+
   }
 
   public getChangesNode(){return this.changesNode}

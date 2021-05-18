@@ -53,6 +53,11 @@
         margin: 0px;
         padding:0px;
 
+        .metadata {
+            z-index: 2;
+            width: 50%;
+            background-color: #ffffff;
+        }
     
         // Initializes the interaction area properties
         .graph {

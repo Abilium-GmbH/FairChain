@@ -10,7 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { ImportExportService } from '../importExport.service';
 import { UndoRedoService } from '../undoRedo.service';
 import { MatRadioModule } from '@angular/material/radio'; 
-import {MatSidenavModule} from '@angular/material/sidenav';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import {MatSidenavModule} from '@angular/material/sidenav';
     MatInputModule,
     FormsModule,
     MatRadioModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatSnackBarModule
   ],
   exports: [
     FairChainComponent,

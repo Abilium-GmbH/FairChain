@@ -37,7 +37,10 @@
 
   <!-- Container of Network canvas -->
   <mat-card class="canvas" id=networkContainer>
-      <div #graph class="graph"></div>
+      <mat-form-field class="metadata">
+        <textarea matInput></textarea>
+      </mat-form-field>
+    <div #graph class="graph"></div>
   </mat-card>
 
   <!-- Detailed options for a tool -->
@@ -83,6 +86,8 @@
       <button mat-button class="option-button" [class.active] = "isChangingFlag()" (click)= "changeFlag()">Apply Flag</button>
       <button mat-button class="option-button" [class.active] = "isDeletingFlag()" (click)= "deleteFlag()">Delete Flag</button>
       <hr>
+      <button mat-button class="option-button" (click)= "openSnackBar()">Show Metadata</button>
+      <button mat-button class="option-button" (click)= "downloadGraphAsJpeg()">Download Jpeg</button>
     </div>
   </mat-drawer-container>  
   </mat-card>
