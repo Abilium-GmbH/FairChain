@@ -11,7 +11,7 @@ export class UndoRedoService{
     private counter = 0;
 
     constructor(private importExportService:ImportExportService) {
-        this.snapshots.push("{\"nodes\":[],\"edges\":[],\"metadata\":[\"\"]}");
+        this.snapshots.push("{\"nodes\":[],\"edges\":[],\"metadata\":\"\"}");
     }
 
     public getPredecessorSnapshot(){

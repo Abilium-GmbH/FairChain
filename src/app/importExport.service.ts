@@ -54,7 +54,7 @@ export class ImportExportService{
   private checkDataHasCorrectFormat(data: any): void {
     if (!data.nodes) throw new Error();
     if (!data.edges) throw new Error();
-    for (let key in data) if (!['nodes','edges'].includes(key)) throw Error();
+    for (let key in data) if (!['nodes','edges','metadata'].includes(key)) throw Error();
     if (!Array.isArray(data.nodes)) throw new Error();
     if (!Array.isArray(data.edges)) throw new Error();
     for (let entry of data.nodes) {this.checkNodesHasCorrectFormat(entry);}
@@ -90,14 +90,14 @@ export class ImportExportService{
         importedJson = e.target.result;
         let result = importedJson.split('%uD').join('\\uD');
         const parsedImportedJson = JSON.parse(result);
-        //service.checkThatImportDataIsValid(parsedImportedJson);
+        service.checkThatImportDataIsValid(parsedImportedJson);
         resolve(parsedImportedJson);
       }
     })
   }
 
   public convertNetworkToJSON(nodes: DataSetNodes, edges: DataSetEdges, metadata:string): string {
-    return "{\"nodes\":[NODES],\"edges\":[EDGES],\"metadata\":[METADATA]}" 
+    return "{\"nodes\":[NODES],\"edges\":[EDGES],\"metadata\":METADATA}" 
       .replace('NODES', this.datasetToJSON(nodes))
       .replace('EDGES', this.datasetToJSON(edges))
       .replace('METADATA', JSON.stringify(metadata));
