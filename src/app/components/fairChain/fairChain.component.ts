@@ -108,6 +108,11 @@ export class FairChainComponent implements OnInit {
         if (this.isAddingNode()) this.enableAddNodeMode();
       })
     );
+    this.subscriptions.add(
+      fromEvent(this.network, 'zoom').subscribe(params => {
+        if (this.relabelPopUpInfo.active) this.closeNodeRelabelPopUp();
+      })
+    );
   }
 
   public isRelabelPopUpVisible() : boolean {return this.relabelPopUpInfo.active;}
@@ -288,6 +293,11 @@ export class FairChainComponent implements OnInit {
     //TODO: With new edge dataset, define custom events for changing labels/color
     if (this.isClickingOnEdgeInEdgeEditMode(params) && params.nodes.length == 0) this.editEdgeInDataset(params.edges);
     if (this.isClickingOnNodeInAddNodeMode(params)) this.stopAddNodeMode();
+    if (this.isClickingOnCanvasInAddNodeMode(params)) this.enableAddNodeMode();
+  }
+
+  private isClickingOnCanvasInAddNodeMode(params: any) : boolean {
+    return params.nodes.length === 0 && params.edges.length === 0 && this.isAddingNode();
   }
 
   private isClickingOnNodeInAddNodeMode(params: any): boolean {
