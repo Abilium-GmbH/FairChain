@@ -98,6 +98,16 @@ export class FairChainComponent implements OnInit {
         if (this.isRelabelPopUpVisible()) this.closeNodeRelabelPopUp();
       })
     );
+    this.subscriptions.add(
+      fromEvent(this.network, 'hoverNode').subscribe(params => {
+        if (this.isAddingNode()) this.stopAddNodeMode();
+      })
+    );
+    this.subscriptions.add(
+      fromEvent(this.network, 'blurNode').subscribe(params => {
+        if (this.isAddingNode()) this.enableAddNodeMode();
+      })
+    );
   }
 
   public isRelabelPopUpVisible() : boolean {return this.relabelPopUpInfo.active;}
@@ -110,6 +120,8 @@ export class FairChainComponent implements OnInit {
   public isDeletingFlag() : boolean {return this.changesNode === ChangingNode.DeleteNodeFlag;}
   public isInNodeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
   public isInEdgeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
+  private stopAddNodeMode() : void {this.network.disableEditMode(); }
+  private enableAddNodeMode() : void {this.network.addNodeMode(); }
   private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
   private makeToolIdle() : void {this.currentTool = Tools.Idle;}
   private closeNodeRelabelPopUp() : void {
@@ -165,6 +177,9 @@ export class FairChainComponent implements OnInit {
       },
       maxVelocity: 10,
       minVelocity: 10,
+    },
+    interaction: {
+      hover:true
     },
     manipulation: {
       // Defines logic for Add Node functionality
