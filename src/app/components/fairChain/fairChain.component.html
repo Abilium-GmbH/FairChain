@@ -95,7 +95,6 @@
   [(label)]="relabelPopUpInfo.label"
   (closeRelabelPopUp)="closeNodeRelabelPopUp()"></relabel-pop-up>
 
-<relabel-pop-up *ngIf="isShowingEdgeRelabelPopUp" 
-  [info]='edgeRelabelPopUpInfo'
-  [(label)]="nodeEdgeLabel"></relabel-pop-up>
-
+<relabel-pop-up *ngIf="isEdgeRelabelPopUpVisible()" 
+  [info]='edgeRelabelInfo.rect'
+  [(label)]="edgeRelabelInfo.label"></relabel-pop-up>

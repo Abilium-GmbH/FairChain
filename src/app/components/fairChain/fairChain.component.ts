@@ -11,6 +11,7 @@ import { DataSet } from "vis-data/peer/esm/vis-data"
 import { emojis as flags } from '../../emojis'
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
 import { NodeRelabelInfo } from '../../interfaces/NodeRelabelInfo'
+import { EdgeRelabelInfo } from 'src/app/interfaces/EdgeRelabelInfo';
 
 @Component({
   selector: 'app-fairChain',
@@ -121,6 +122,7 @@ export class FairChainComponent implements OnInit {
   }
 
   public isRelabelPopUpVisible() : boolean {return this.relabelPopUpInfo.active;}
+  public isEdgeRelabelPopUpVisible() : boolean {return this.edgeRelabelInfo.active; }
   public isAddingNode() : boolean {return this.currentTool === Tools.AddingNode;}
   public isAddingEdge() : boolean {return this.currentTool === Tools.AddingEdge;}
   public isChangingNodeLabel() : boolean {return this.changesNode === ChangingNode.NodeLabel;}
@@ -156,6 +158,13 @@ export class FairChainComponent implements OnInit {
   public __debug__()
   {
     this.nodes.add({ id: 3, font: { face: 'Flags' }, label: '🇦🇱 \n Wood', x: 40, y: 40 })  
+  }
+
+  public edgeRelabelInfo: EdgeRelabelInfo = {
+    active: false,
+    label: '',
+    edgeToRelableId: '',
+    rect: undefined
   }
 
   /**
