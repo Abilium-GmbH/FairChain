@@ -96,7 +96,10 @@
       <button mat-button class="option-button" [class.active] = "isDeletingFlag()" (click)= "deleteFlag()">Delete Flag</button>
       <hr>
       <p class="option-label-metadata">Show Metadata</p>
-      <mat-slide-toggle class="option-toggle" [(ngModel)]="isMetadataVisible" color="primary"></mat-slide-toggle>
+      <div class="option-toggle" >
+        <mat-slide-toggle [(ngModel)]="isMetadataVisible" color="primary"></mat-slide-toggle>
+      </div>
+      <hr>
     </div>
   </mat-drawer-content>
   </mat-drawer-container>  
