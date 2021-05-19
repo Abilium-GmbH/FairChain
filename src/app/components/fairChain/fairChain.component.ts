@@ -287,6 +287,11 @@ export class FairChainComponent implements OnInit {
     // Defines edge onClick actions
     //TODO: With new edge dataset, define custom events for changing labels/color
     if (this.isClickingOnEdgeInEdgeEditMode(params) && params.nodes.length == 0) this.editEdgeInDataset(params.edges);
+    if (this.isClickingOnNodeInAddNodeMode(params)) this.stopAddNodeMode();
+  }
+
+  private isClickingOnNodeInAddNodeMode(params: any): boolean {
+    return params.nodes.length > 0 && this.isAddingNode();
   }
 
   private editEdgeInDataset(edges: IdType[]) {
