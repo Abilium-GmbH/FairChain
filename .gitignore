@@ -107,5 +107,4 @@ node_modules/@angular/platform-browser/package.json
 node_modules/@angular/platform-browser/platform-browser.d.ts
 node_modules/@angular/router/package.json
 node_modules/@angular/router/router.d.ts
-node_modules/dom-to-image/package.json
 /.idea/workspace.xml
