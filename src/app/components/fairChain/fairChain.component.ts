@@ -10,7 +10,7 @@ import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges 
 import { DataSet } from "vis-data/peer/esm/vis-data"
 import { emojis as flags } from '../../emojis'
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
-import {domtoimage} from 'dom-to-image';
+import { DomToImage } from 'dom-to-image';
 import { NodeRelabelInfo } from '../../interfaces/NodeRelabelInfo'
 
 @Component({
@@ -506,7 +506,7 @@ export class FairChainComponent implements OnInit {
    * downloads it as Fairchain.jpeg
    */
   downloadGraphAsJpeg(){
-    domtoimage.toJpeg(document.getElementById("networkContainer"))
+    DomToImage.toJpeg(document.getElementById("networkContainer"))
     .then(function (dataUrl) {
         var link = document.createElement('a');
         link.download = 'Fairchain.jpeg';
