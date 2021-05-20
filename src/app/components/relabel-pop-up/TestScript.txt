@@ -1,0 +1,88 @@
+#1 Should create a pop up over the node
+    1. Click add node button
+    2. Hover over canvas
+    3. Click Canvas
+    fail if there is no node in canvas
+    4. Click add node button
+    5. Hover over new node
+    6. Double Click node
+    7. fail if there is no pop-up over node
+    8. success
+
+#2 Pop Up should contain label of node
+    1. Click add node button
+    2. Hover over canvas
+    3. Click Canvas
+    fail if there is no node in canvas
+    4. Click add node button
+    5. Remember label of new node as |x|
+    5. Hover over new node
+    6. Double Click node
+    7. fail if text in pop-up is not |x|
+    8. success
+
+#3 Pop Up is contenteditable
+    1. Click add node button
+    2. Hover over canvas
+    3. Click Canvas
+    fail if there is no node in canvas
+    4. Click add node button
+    5. Hover over new node
+    6. Double Click node
+    7. click pop-up
+    8. fail if there is no caret in the text of pop-up
+    9. success
+
+#4 Text in Pop Up can be changed
+    1. Click add node button
+    2. Hover over canvas
+    3. Click Canvas
+    fail if there is no node in canvas
+    4. Click add node button
+    5. Hover over new node
+    6. Double Click node
+    7. click pop-up
+    8. Mix combinations of {Type letters in pop up, click different parts of the text in pop up}
+    9. fail if editing text has anomalies
+    10. success
+
+#5 Text in Pop Up disappears on clicking canvas
+    1. Click add node button
+    2. Hover over canvas
+    3. Click Canvas
+    fail if there is no node in canvas
+    4. Click add node button
+    5. Hover over new node
+    6. Double Click node
+    fail if there is no pop up
+    7. Click Canvas
+    8. fail if pop-up has not disappeared
+    9. success
+
+#6 Text in Pop Up disappears on dragging canvas
+    1. Click add node button
+    2. Hover over canvas
+    3. Click Canvas
+    fail if there is no node in canvas
+    4. Click add node button
+    5. Hover over new node
+    6. Double Click node
+    fail if there is no pop up
+    7. Click and Hold Canvas
+    8. Drag canvas
+    9. fail if pop-up has not disappeared
+    10. success
+
+#7 Text in Pop Up is applied to node
+    1. Click add node button
+    2. Hover over canvas
+    3. Click Canvas
+    fail if there is no node in canvas
+    4. Click add node button
+    5. Hover over new node
+    6. Double Click node
+    7. click pop-up
+    8. Remove Text and write 'New Label'
+    9. Click somewhere else on canvas
+    10. fail if node label is not 'New Label'
+    11. success

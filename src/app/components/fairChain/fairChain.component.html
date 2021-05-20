@@ -5,6 +5,7 @@
   <button mat-button class="buttonsToolbarAbove" (click)= "redo()"> Redo </button>
   <button mat-button class="buttonsToolbarAbove" (click)="__debug__()" *ngIf="isDebugging"> Debug </button>
 
+
   <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" #hiddenfileinput>
 </mat-card>
 
@@ -41,6 +42,7 @@
 
   <!-- Detailed options for a tool -->
   <mat-card #toolbar_options class="toolbar-options">
+    <mat-drawer-container class="drawer-container" [hasBackdrop]="false">
     <!-- Text Area for Node Label -->
     <p class="option-label">Label</p>
     <textarea class = "option-textArea" [(ngModel)]="nodeEdgeLabel"></textarea>
@@ -59,8 +61,35 @@
       <button mat-button 
         class="option-button" 
         [class.active] = "isChangingColor()"
-        (click)="changeNodeColor(); changeEdgeColor()">Change color</button>
+        (click)="changeNodeColor(); changeEdgeColor()">Change Color</button>
       <hr>
     </div>
+    <div>
+      <p class="option-label">flag</p>
+
+        <mat-drawer #drawer class="drawer" mode="over" position="end">
+          <mat-radio-group
+              [(ngModel)]="nodeFlag">
+              <mat-radio-button class="radio-flags" *ngFor="let emoji of emojis" [value]="emoji" (click)="drawer.close()">
+                {{emoji}}
+              </mat-radio-button>
+            </mat-radio-group>
+        </mat-drawer>
+          <button mat-button class="option-button" (click)="drawer.toggle()">
+            Choose Flag
+          </button>      
+
+      <br>
+      <button mat-button class="option-button" [class.active] = "isChangingFlag()" (click)= "changeFlag()">Apply Flag</button>
+      <button mat-button class="option-button" [class.active] = "isDeletingFlag()" (click)= "deleteFlag()">Delete Flag</button>
+      <hr>
+    </div>
+  </mat-drawer-container>  
   </mat-card>
+
 </mat-card>
+
+<relabel-pop-up *ngIf="isRelabelPopUpVisible()" 
+  [info]='relabelPopUpInfo.rect'
+  [(label)]="relabelPopUpInfo.label"
+  (closeRelabelPopUp)="closeNodeRelabelPopUp()"></relabel-pop-up>

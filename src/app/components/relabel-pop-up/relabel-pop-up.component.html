@@ -1,0 +1,13 @@
+<mat-card class="popUp" 
+    [style.left.px]='info.x' 
+    [style.top.px]='info.y' 
+    [style.width.px]='info.width' 
+    [style.height.px]='info.height'>
+
+    <textarea #relabelTextArea
+        class = "relabel-text-area"
+        [style.width.px]='info.width'
+        [style.height.px]='info.height'
+        (input)=updateLabel()
+        [(ngModel)]='label'></textarea>
+</mat-card>

@@ -114,7 +114,7 @@ describe('ImportExportService', () => {
             });
     });
 
-    it('#upload should fail if file size is to large', (done) => {
+    it('#upload should fail if file size is too large', (done) => {
         var file = new File([""], "foo.json", {
             type: "application/json"
           });
@@ -122,7 +122,7 @@ describe('ImportExportService', () => {
         service.upload(file)
             .then(() => done.fail('Import should not have worked'))
             .catch((msg) => {
-                expect(msg).toEqual('The file size is to large');
+                expect(msg).toEqual('The file size is too large');
                 done();
             });
     });

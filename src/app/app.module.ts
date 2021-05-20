@@ -10,11 +10,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+//import { RelabelPopUpComponent } from './components/relabel-pop-up/relabel-pop-up.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    EditorPage,
+    EditorPage
   ],
   imports: [
     BrowserModule,
@@ -24,7 +25,7 @@ import { FormsModule } from '@angular/forms';
     MatCardModule,
     MatButtonModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
