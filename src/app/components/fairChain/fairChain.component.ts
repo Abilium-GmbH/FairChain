@@ -31,7 +31,8 @@ export class FairChainComponent implements OnInit {
   public nodeEdgeColor = "#002AFF";
   public nodeToRelableId: IdType;
   public isShowingRelabelPopUp = false;
-  private metadata = ""
+  public metadata = ""
+  public isMetadataVisible = false;
   
   private relabelPopUpInfo: NodeRelabelInfo = {
     nodeId: '',
