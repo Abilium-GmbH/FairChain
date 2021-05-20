@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { ImportExportService } from '../../importExport.service'
 import { UndoRedoService } from 'src/app/undoRedo.service';
+import { RelabelPopUpGeometryService } from 'src/app/relabel-pop-up-geometry-service.service'
 import { FlagService } from '../../flag.service'
 import { strict as assert } from 'assert';
 import { Tools, ChangingEdge, ChangingNode} from '../../Enums';
@@ -9,6 +10,7 @@ import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges 
 import { DataSet } from "vis-data/peer/esm/vis-data"
 import { emojis as flags } from '../../emojis'
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
+import { NodeRelabelInfo } from '../../interfaces/NodeRelabelInfo'
 
 @Component({
   selector: 'app-fairChain',
@@ -23,6 +25,44 @@ import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
  */
 export class FairChainComponent implements OnInit {
 
+    public nodeEdgeLabel = "";
+  public nodeEdgeColor = "#002AFF";
+  public nodeToRelableId: IdType;
+  public isShowingRelabelPopUp = false;
+  
+  private relabelPopUpInfo: NodeRelabelInfo = {
+    nodeId: '',
+    active: false,
+    label: '',
+    rect: undefined
+  };
+
+  public nodeFlag = "🇨🇭";
+  public emojis: string[];
+
+  @ViewChild('graph', {static: true}) graphRef: ElementRef;
+
+  private network: Network;
+  private subscriptions: Subscription;
+
+  private changesNode: ChangingNode = ChangingNode.None;
+  private changesEdge: ChangingEdge = ChangingEdge.None;
+  private currentTool: Tools = Tools.Idle;
+
+
+  // Create an array with nodes
+  //private nodes: Node[] = [];
+  private nodes: DataSetNodes = new DataSet();
+
+  // Create an array with edges
+  private edges: DataSetEdges = new DataSet();
+
+  // Create a network
+  private data: Data = {
+    nodes: this.nodes,
+    edges: this.edges,
+  };
+
   public ngOnInit(): void {
     this.network = new Network(this.graph, this.data, this.options);
     this.makeSubscriptions();
@@ -30,7 +70,8 @@ export class FairChainComponent implements OnInit {
 
   constructor(private importExportService:ImportExportService, 
               private undoRedoService:UndoRedoService,
-              private flagService:FlagService) {
+              private flagService:FlagService,
+              private relabelPopUpGeometryService:RelabelPopUpGeometryService) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges);
     this.emojis = flags;
   }
@@ -54,12 +95,27 @@ export class FairChainComponent implements OnInit {
     );
     this.subscriptions.add(
       fromEvent(this.network, 'dragging').subscribe(params => {
-        if (this.isShowingRelabelPopUp) this.closeNodeRelabelPopUp();
+        if (this.isRelabelPopUpVisible()) this.closeNodeRelabelPopUp();
+      })
+    );
+    this.subscriptions.add(
+      fromEvent(this.network, 'hoverNode').subscribe(params => {
+        if (this.isAddingNode()) this.stopAddNodeMode();
+      })
+    );
+    this.subscriptions.add(
+      fromEvent(this.network, 'blurNode').subscribe(params => {
+        if (this.isAddingNode()) this.enableAddNodeMode();
+      })
+    );
+    this.subscriptions.add(
+      fromEvent(this.network, 'zoom').subscribe(params => {
+        if (this.relabelPopUpInfo.active) this.closeNodeRelabelPopUp();
       })
     );
   }
 
-  public isRelabelPopUpVisible() : boolean {return this.isShowingRelabelPopUp;}
+  public isRelabelPopUpVisible() : boolean {return this.relabelPopUpInfo.active;}
   public isAddingNode() : boolean {return this.currentTool === Tools.AddingNode;}
   public isAddingEdge() : boolean {return this.currentTool === Tools.AddingEdge;}
   public isChangingNodeLabel() : boolean {return this.changesNode === ChangingNode.NodeLabel;}
@@ -69,14 +125,16 @@ export class FairChainComponent implements OnInit {
   public isDeletingFlag() : boolean {return this.changesNode === ChangingNode.DeleteNodeFlag;}
   public isInNodeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
   public isInEdgeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
+  private stopAddNodeMode() : void {this.network.disableEditMode(); }
+  private enableAddNodeMode() : void {this.network.addNodeMode(); }
   private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
   private makeToolIdle() : void {this.currentTool = Tools.Idle;}
   private closeNodeRelabelPopUp() : void {
-    assert(this.isShowingRelabelPopUp, 'There is no pop up menu to close');
-    assert(this.nodeToRelableId, 'There is no node to apply the change to'); 
-    this.nodes.update({id: this.nodeToRelableId, label: this.flagService.addOrChangeFlag(this.nodeEdgeLabel, this.flagService.currentFlag)});
-    this.isShowingRelabelPopUp = false;
-    this.nodeToRelableId = '';
+    assert(this.relabelPopUpInfo.active, 'There is no pop up menu to close');
+    assert(this.relabelPopUpInfo.nodeId, 'There is no node to apply the change to'); 
+    this.nodes.update({id: this.relabelPopUpInfo.nodeId, label: this.flagService.addOrChangeFlag(this.relabelPopUpInfo.label, this.flagService.currentFlag)});
+    this.relabelPopUpInfo.active = false;
+    this.relabelPopUpInfo.nodeId = '';
     this.makeSnapshot();
   }
 
@@ -86,39 +144,6 @@ export class FairChainComponent implements OnInit {
   {
     this.nodes.add({ id: 3, font: { face: 'Flags' }, label: '🇦🇱 \n Wood', x: 40, y: 40 })  
   }
-
-  public nodeEdgeLabel = "";
-  public nodeEdgeColor = "#002AFF";
-  public nodeFlag = "🇨🇭";
-  public emojis: string[];
-  public nodeToRelableId: IdType;
-  public isShowingRelabelPopUp = false;
-  public relabelPopUpInfo: RectOnDOM;
-
-  @ViewChild('graph', {static: true}) graphRef: ElementRef;
-  //@ViewChild('nodeRelabelPopUp', {static: true}) nodeRelabelPopUpRef: ElementRef;
-  //@ViewChild('nodeRelabelPopUpContainer', {static: true}) nodeRelabelPopUpContainerRef: ElementRef;
-
-  private network: Network;
-  private subscriptions: Subscription;
-
-  private changesNode: ChangingNode = ChangingNode.None;
-  private changesEdge: ChangingEdge = ChangingEdge.None;
-  private currentTool: Tools = Tools.Idle;
-
-
-  // Create an array with nodes
-  //private nodes: Node[] = [];
-  private nodes: DataSetNodes = new DataSet();
-
-  // Create an array with edges
-  private edges: DataSetEdges = new DataSet();
-
-  // Create a network
-  private data: Data = {
-    nodes: this.nodes,
-    edges: this.edges,
-  };
 
   /**
    * Initializes Node and Edge Properties
@@ -157,6 +182,9 @@ export class FairChainComponent implements OnInit {
       },
       maxVelocity: 10,
       minVelocity: 10,
+    },
+    interaction: {
+      hover:true
     },
     manipulation: {
       // Defines logic for Add Node functionality
@@ -258,12 +286,22 @@ export class FairChainComponent implements OnInit {
    * @private
    */
   private onClick(params) {
-    if (this.isShowingRelabelPopUp) this.closeNodeRelabelPopUp();
+    if (this.relabelPopUpInfo.active) this.closeNodeRelabelPopUp();
     // Defines node onClick actions
     if (this.isClickingOnNodeInNodeEditMode(params)) this.network.editNode();
     // Defines edge onClick actions
     //TODO: With new edge dataset, define custom events for changing labels/color
     if (this.isClickingOnEdgeInEdgeEditMode(params) && params.nodes.length == 0) this.editEdgeInDataset(params.edges);
+    if (this.isClickingOnNodeInAddNodeMode(params)) this.stopAddNodeMode();
+    if (this.isClickingOnCanvasInAddNodeMode(params)) this.enableAddNodeMode();
+  }
+
+  private isClickingOnCanvasInAddNodeMode(params: any) : boolean {
+    return params.nodes.length === 0 && params.edges.length === 0 && this.isAddingNode();
+  }
+
+  private isClickingOnNodeInAddNodeMode(params: any): boolean {
+    return params.nodes.length > 0 && this.isAddingNode();
   }
 
   private editEdgeInDataset(edges: IdType[]) {
@@ -295,7 +333,7 @@ export class FairChainComponent implements OnInit {
   }
   private onDoubleClick(pointer) {
     this.network.disableEditMode();
-    if (pointer.nodes.length === 1) this.showRelabelPopUp(pointer);
+    if (pointer.nodes.length === 1) this.showRelabelPopUp(pointer.nodes[0]);
   }
 
   // Boolean switch value if someone wants to change the nodeLabel name for button color
@@ -412,73 +450,29 @@ export class FairChainComponent implements OnInit {
     this.updateData(this.undoRedoService.getSuccessorSnapshot())
   }
 
-  private showRelabelPopUp(pointer) {
-    this.nodeToRelableId = pointer.nodes[0];
-    let relabelRectOnDOM = this.getBoundingBoxOfNodeAsRectInDOM();
-    this.relabelPopUpInfo = this.cropAndTranslateRect(relabelRectOnDOM);
-    this.nodeEdgeLabel = this.flagService.removeFlagFromLabel(this.nodes.get(this.nodeToRelableId).label);
-    this.flagService.saveFlagFromLabel(this.nodes.get(this.nodeToRelableId).label);
-
-    this.isShowingRelabelPopUp  = true;
+  private showRelabelPopUp(nodeId: IdType) {
+    this.relabelPopUpInfo.nodeId = nodeId;
+    this.relabelPopUpInfo.rect   = this.getRelabelPopUpRect(nodeId);
+    this.relabelPopUpInfo.label  = this.nodes.get(nodeId).label;
+    this.relabelPopUpInfo.active = true;
   }
 
-  private cropAndTranslateRect(rect: RectOnDOM): RectOnDOM {
+  getRelabelPopUpRect(nodeId: IdType): RectOnDOM {
+    const boundingBox = this.network.getBoundingBox(nodeId);
+    const upperLeftCorner = this.network.canvasToDOM({x: boundingBox.left, y: boundingBox.top});
+    const bottomRightCorner = this.network.canvasToDOM({x: boundingBox.right, y: boundingBox.bottom});
+    let rect: RectOnDOM = {
+      x: upperLeftCorner.x,
+      y: upperLeftCorner.y,
+      width: bottomRightCorner.x - upperLeftCorner.x,
+      height: bottomRightCorner.y - upperLeftCorner.y};
+
     const min_x = this.graph.getBoundingClientRect().left;
     const min_y = this.graph.getBoundingClientRect().top;
     const max_x = this.graph.getBoundingClientRect().right;
     const max_y = this.graph.getBoundingClientRect().bottom;
 
-    rect = this.moveRectOverNode(rect, min_x, min_y);
-    rect = this.cropRectToFitCanvas(rect, min_x, min_y, max_x, max_y)
-    rect = this.moveRectLeftToFitCanvas(rect, min_x);
-    rect = this.moveRectRightToFitCanvas(rect, max_x);
-    rect = this.moveRectDownToFitCanvas(rect, min_y);
-    rect = this.moveRectUpToFitCanvas(rect, max_y);
-
-    return rect;
-  }
-
-  moveRectUpToFitCanvas(rect: RectOnDOM, max_y: number): RectOnDOM {
-    if (rect.y + rect.height > max_y) rect.y = max_y - rect.height;
-    return rect;
-  }
-
-  moveRectDownToFitCanvas(rect: RectOnDOM, min_y: number): RectOnDOM {
-    if (rect.y < min_y) rect.y = min_y;
-    return rect;
-  }
-
-  moveRectRightToFitCanvas(rect: RectOnDOM, max_x: number): RectOnDOM {
-    if (rect.x + rect.width > max_x) rect.x = max_x - rect.width;
-    return rect;
-  }
-
-  moveRectLeftToFitCanvas(rect: RectOnDOM, min_x: number): RectOnDOM {
-    if (rect.x < min_x) rect.x = min_x;
-    return rect;
-  }
-
-  private cropRectToFitCanvas(rect: RectOnDOM, min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
-    if (rect.width > max_x - min_x) rect.width = max_x - min_x;
-    if (rect.height > max_y - min_y) rect.height = max_y - min_y;
-    return rect;
-  }
-
-  private moveRectOverNode(rect: RectOnDOM, min_x: number, min_y: number): RectOnDOM {
-    rect.x += min_x;
-    rect.y += min_y;
-    return rect;
-  }
-
-  private getBoundingBoxOfNodeAsRectInDOM() : RectOnDOM {
-    const boundingBox = this.network.getBoundingBox(this.nodeToRelableId);
-    const upperLeftCorner = this.network.canvasToDOM({x: boundingBox.left, y: boundingBox.top});
-    const bottomRightCorner = this.network.canvasToDOM({x: boundingBox.right, y: boundingBox.bottom});
-    return {
-      x: upperLeftCorner.x,
-      y: upperLeftCorner.y,
-      width: bottomRightCorner.x - upperLeftCorner.x,
-      height: bottomRightCorner.y - upperLeftCorner.y};
+    return this.relabelPopUpGeometryService.getRelabelPopUpRect(rect, min_x, min_y, max_x, max_y);
   }
 
   public getChangesNode(){return this.changesNode}

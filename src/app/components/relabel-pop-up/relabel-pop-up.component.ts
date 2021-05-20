@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { strict as assert } from 'assert';
+import { fromEvent, Subscription } from 'rxjs';
+import { map, bufferCount, filter } from 'rxjs/operators';
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
 
 @Component({
@@ -9,60 +11,45 @@ import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
 })
 export class RelabelPopUpComponent implements OnInit {
 
-  private prevLabel: string;
-
   constructor() { }
+
+  private subscriptions: Subscription;
 
   @Input() info: RectOnDOM;
   
   @Input()  label: string;
   @Output() labelChange = new EventEmitter<string>();
-
+  @Output() closeRelabelPopUp = new EventEmitter();
   @ViewChild('relabelTextArea') relabelTextAreaRef: ElementRef;
 
   ngOnInit(): void {
+    this.subscriptions = new Subscription();
   }
 
   ngAfterViewInit(): void {
-    this.relabelTextArea.innerText = this.label;
-    this.prevLabel = this.label;
+    this.subscriptions.add(
+      fromEvent(this.relabelTextAreaRef.nativeElement, 'click').pipe(
+        map(() => new Date().getTime()),
+        bufferCount(2, 1),
+        filter((timestamps) => {
+          return timestamps[0] > new Date().getTime() - 200;
+        })
+      ).subscribe(() => {
+        this.isClosingPopUp();
+      })
+    )
   }
 
   public updateLabel() {
-    if (this.isNotAbleToUpdate()) this.denyUpdate();
-    this.applyUpdateToLabel()
-  }
-  
-  private denyUpdate() {
-    this.relabelText = this.prevLabel;
-    throw new Error('Character Limit reached');
+    this.labelChange.emit(this.convertToMultiline(this.label));
   }
 
-  private applyUpdateToLabel() {
-    this.prevLabel = this.relabelText;
-    this.labelChange.emit(this.convertToMultiline(this.relabelText));
-  }
-
-  private isNotAbleToUpdate(): boolean {
-    return false;
-    //if (this.relabelText.length > this.maxNumCharacters) return true;
-    //if (this.relabelText.split('\n').length > this.maxRow + 1) return true;
+  public isClosingPopUp() {
+    this.closeRelabelPopUp.emit();
   }
 
   private convertToMultiline(text: string) {
     return text.replace('\n', '\n');
-  }
-
-  public get relabelTextArea() {
-    return this.relabelTextAreaRef.nativeElement;
-  }
-  
-  public get relabelText(): string {
-    return this.relabelTextArea.innerText;
-  }
-
-  public set relabelText(text: string) {
-    this.relabelTextArea.innerText = text;
   }
   
 }
