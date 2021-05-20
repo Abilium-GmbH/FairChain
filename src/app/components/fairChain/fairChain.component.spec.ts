@@ -30,8 +30,6 @@ describe('FairChainComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-<<<<<<< HEAD
-=======
 
   it('should change changesNode to NodeColor', ()=>{
     component.changeNodeColor();
@@ -169,5 +167,4 @@ describe('FairChainComponent', () => {
     expect(changesNode).toBe(ChangingNode.None, 'changesNode is wrong')
   })
   
->>>>>>> 905c4dea30dd603cb6b1dd99a29b5e1653a649e9
 });
