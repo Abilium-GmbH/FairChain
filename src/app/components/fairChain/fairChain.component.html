@@ -108,5 +108,6 @@
 </mat-card>
 
 <relabel-pop-up *ngIf="isRelabelPopUpVisible()" 
-  [info]='relabelPopUpInfo'
-  [(label)]="nodeEdgeLabel"></relabel-pop-up>
+  [info]='relabelPopUpInfo.rect'
+  [(label)]="relabelPopUpInfo.label"
+  (closeRelabelPopUp)="closeNodeRelabelPopUp()"></relabel-pop-up>
