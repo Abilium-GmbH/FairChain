@@ -490,7 +490,7 @@ export class FairChainComponent implements OnInit {
     domtoimage.toJpeg(document.getElementById("networkContainer"))
     .then(function (dataUrl) {
         var link = document.createElement('a');
-        link.download = 'fairchain.jpeg';
+        link.download = 'Fairchain.jpeg';
         link.href = dataUrl;
         link.click();
     });
