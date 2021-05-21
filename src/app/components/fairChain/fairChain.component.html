@@ -1,9 +1,9 @@
 <mat-card class="application-head">
   <button mat-button class="buttonsToolbarAbove" (click)="exportGraph()">Export</button>
-  <button mat-button class="buttonsToolbarAbove" (click)= "hiddenfileinput.click()"> Import </button>
-  <button mat-button class="buttonsToolbarAbove" (click)= "undo()"> Undo </button>
-  <button mat-button class="buttonsToolbarAbove" (click)= "redo()"> Redo </button>
-  <button mat-button class="buttonsToolbarAbove" (click)="__debug__()" *ngIf="isDebugging"> Debug </button>
+  <button mat-button class="buttonsToolbarAbove" (click)="hiddenfileinput.click()"> Import</button>
+  <button mat-button class="buttonsToolbarAbove" (click)="undo()"> Undo</button>
+  <button mat-button class="buttonsToolbarAbove" (click)="redo()"> Redo</button>
+  <button mat-button class="buttonsToolbarAbove" (click)="__debug__()" *ngIf="isDebugging"> Debug</button>
 
 
   <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" #hiddenfileinput>
@@ -37,59 +37,63 @@
 
   <!-- Container of Network canvas -->
   <mat-card class="canvas" id=networkContainer>
-      <div #graph class="graph"></div>
+    <div #graph class="graph"></div>
   </mat-card>
 
   <!-- Detailed options for a tool -->
   <mat-card #toolbar_options class="toolbar-options">
     <mat-drawer-container class="drawer-container" [hasBackdrop]="false">
-    <!-- Text Area for Node Label -->
-    <p class="option-label">Label</p>
-    <textarea class = "option-textArea" [(ngModel)]="nodeEdgeLabel"></textarea>
-    <br>
-    <!-- Alternate change Node name mode -->
-    <button mat-button 
-      class = "option-button"
-      [class.active] = "isChangingNodeLabel()" 
-      (click)="changeNodeName(); changeEdgeName()">Change Name</button>
-    <hr>
-    <div>
-      <!-- Implements te color toolbar and button to change node/edge colors -->
-        <p class="option-label">color</p>
-        <input matInput class = "option-colorInput" type="color" [(ngModel)]="nodeEdgeColor">
+      <!-- Text Area for Node Label -->
+      <p class="option-label">Label</p>
+      <textarea class="option-textArea" [(ngModel)]="nodeEdgeLabel"></textarea>
       <br>
-      <button mat-button 
-        class="option-button" 
-        [class.active] = "isChangingColor()"
-        (click)="changeNodeColor(); changeEdgeColor()">Change Color</button>
+      <!-- Alternate change Node name mode -->
+      <button mat-button
+              class="option-button"
+              [class.active]="isChangingNodeLabel()"
+              (click)="changeNodeName(); changeEdgeName()">Change Name
+      </button>
       <hr>
-    </div>
-    <div>
-      <p class="option-label">flag</p>
+      <div>
+        <!-- Implements te color toolbar and button to change node/edge colors -->
+        <p class="option-label">color</p>
+        <input matInput class="option-colorInput" type="color" [(ngModel)]="nodeEdgeColor">
+        <br>
+        <button mat-button
+                class="option-button"
+                [class.active]="isChangingColor()"
+                (click)="changeNodeColor(); changeEdgeColor()">Change Color
+        </button>
+        <hr>
+      </div>
+      <div>
+        <p class="option-label">flag</p>
 
         <mat-drawer #drawer class="drawer" mode="over" position="end">
           <mat-radio-group
-              [(ngModel)]="nodeFlag">
-              <mat-radio-button class="radio-flags" *ngFor="let emoji of emojis" [value]="emoji" (click)="drawer.close()">
-                {{emoji}}
-              </mat-radio-button>
-            </mat-radio-group>
+            [(ngModel)]="nodeFlag">
+            <mat-radio-button class="radio-flags" *ngFor="let emoji of emojis" [value]="emoji" (click)="drawer.close()">
+              {{emoji}}
+            </mat-radio-button>
+          </mat-radio-group>
         </mat-drawer>
-          <button mat-button class="option-button" (click)="drawer.toggle()">
-            Choose Flag
-          </button>      
+        <button mat-button class="option-button" (click)="drawer.toggle()">
+          Choose Flag
+        </button>
 
-      <br>
-      <button mat-button class="option-button" [class.active] = "isChangingFlag()" (click)= "changeFlag()">Apply Flag</button>
-      <button mat-button class="option-button" [class.active] = "isDeletingFlag()" (click)= "deleteFlag()">Delete Flag</button>
-      <hr>
-    </div>
-  </mat-drawer-container>  
+        <br>
+        <button mat-button class="option-button" [class.active]="isChangingFlag()" (click)="changeFlag()">Apply Flag
+        </button>
+        <button mat-button class="option-button" [class.active]="isDeletingFlag()" (click)="deleteFlag()">Delete Flag
+        </button>
+        <hr>
+      </div>
+    </mat-drawer-container>
   </mat-card>
 
 </mat-card>
 
-<relabel-pop-up *ngIf="isRelabelPopUpVisible()" 
-  [info]='relabelPopUpInfo.rect'
-  [(label)]="relabelPopUpInfo.label"
-  (closeRelabelPopUp)="closeNodeRelabelPopUp()"></relabel-pop-up>
+<relabel-pop-up *ngIf="isRelabelPopUpVisible()"
+                [info]='relabelPopUpInfo.rect'
+                [(label)]="relabelPopUpInfo.label"
+                (closeRelabelPopUp)="closeNodeRelabelPopUp()"></relabel-pop-up>
