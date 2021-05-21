@@ -10,7 +10,7 @@ import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges 
 import { DataSet } from "vis-data/peer/esm/vis-data"
 import { emojis as flags } from '../../emojis'
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
-import { DomToImage } from 'dom-to-image';
+import DomToImage from 'dom-to-image';
 import { NodeRelabelInfo } from '../../interfaces/NodeRelabelInfo'
 
 @Component({
