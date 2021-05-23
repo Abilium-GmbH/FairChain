@@ -133,6 +133,17 @@ export class ImportExportService {
     });
   }
 
+  public async uploadLogo(file: File) {
+    return new Promise ((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      
+      reader.onload = function(e) {
+        resolve(e.target.result);
+      }
+    })
+  }
+
   public convertNetworkToJSON(nodes: DataSetNodes, edges: DataSetEdges): string {
     return '{"nodes":[NODES],"edges":[EDGES]}'
       .replace('NODES', this.datasetToJSON(nodes))
