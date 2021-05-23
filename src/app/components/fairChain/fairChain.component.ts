@@ -11,6 +11,7 @@ import {DataSet} from 'vis-data/peer/esm/vis-data';
 import {emojis as flags} from '../../emojis';
 import {RectOnDOM} from 'src/app/interfaces/RectOnDOM';
 import {NodeRelabelInfo} from '../../interfaces/NodeRelabelInfo';
+import { originalLogo } from 'src/assets/originalLogo';
 
 @Component({
   selector: 'app-fairChain',
@@ -75,7 +76,7 @@ export class FairChainComponent implements OnInit {
     this.emojis = flags;
     this.nodes.add({id: 1,
       label: "Double click to change label",
-      image: "../../assets/icons/Logo.png",
+      image: originalLogo,
       shape: "image",})
     this.makeSnapshot();
   }
