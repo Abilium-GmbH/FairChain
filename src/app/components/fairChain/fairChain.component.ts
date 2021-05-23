@@ -114,6 +114,7 @@ export class FairChainComponent implements OnInit {
   private closeNodeRelabelPopUp(): void {
     assert(this.isShowingRelabelPopUp, 'There is no pop up menu to close');
     assert(this.nodeToRelableId, 'There is no node to apply the change to');
+    //ToDo: Update makes the implementation group color + change color + poUp change label buggy
     this.nodes.update({id: this.nodeToRelableId, label: this.nodeEdgeLabel});
     this.isShowingRelabelPopUp = false;
     this.nodeToRelableId = '';
@@ -215,10 +216,12 @@ export class FairChainComponent implements OnInit {
     manipulation: {
       // Defines logic for Add Node functionality
       addNode: (data: Node, callback) => {
-        assert(this.isAddingNode(), 'The current tool should be adding a node');
-        callback(data);
-        this.network.addNodeMode();
-        this.makeSnapshot();
+        if (this.isAddingNode()) {
+          assert(this.isAddingNode(), 'The current tool should be adding a node');
+          callback(data);
+          this.network.addNodeMode();
+          this.makeSnapshot();
+        }
       },
       // Defines logic for Add Edge functionality
       addEdge: (data: Edge, callback) => {
@@ -489,6 +492,7 @@ export class FairChainComponent implements OnInit {
     this.makeToolIdle();
     if (this.isChangingGroup()) {
       this.changesNode = ChangingNode.None;
+      this.network.disableEditMode();
     } else {
       this.changesNode = ChangingNode.NodeGroup;
     }
@@ -496,9 +500,12 @@ export class FairChainComponent implements OnInit {
 
   public updateNodeGroup(node: Node) {
     node.group = this.groupsServices.findVisJsName(this.selectedGroup);
-    eval('node.color = this.options.groups.' + this.groupsServices.findVisJsName(this.selectedGroup) + '.color');
+    if (this.groupsServices.findVisJsName(this.selectedGroup) != 'none') {
+      eval('node.color = this.options.groups.' + this.groupsServices.findVisJsName(this.selectedGroup) + '.color');
+    }
   }
 
+  // ToDo: comment
   public addGroup() {
 
     if (this.groupsServices.checkGroupName(this.nameOfNewGroup)) {
@@ -511,7 +518,7 @@ export class FairChainComponent implements OnInit {
       this.listOfGroups = this.groupsServices.getGroupsName();
     }
   }
-
+  // ToDo: comment
   public changeNodeGroupColor() {
     var selectedGroup = this.groupsServices.findVisJsName(this.selectedGroup);
     var loopActivated = false;

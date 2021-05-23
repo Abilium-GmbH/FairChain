@@ -65,6 +65,7 @@
     </div>
     <div>
       <div>
+        <!-- ToDo: comment -->
         <select class="option-groupList" (change)="change($event.target.value)">
           <option *ngFor="let nameOfGroup of listOfGroups"
                   [value]="nameOfGroup">{{nameOfGroup}}</option>
@@ -86,6 +87,7 @@
       </button>
       <hr>
     </div>
+    <!-- ToDo: comment -->
     <input matInput class="option-groupList" type="text" [(ngModel)]="nameOfNewGroup">
     <button mat-button
             class="option-button"
@@ -95,6 +97,7 @@
   </mat-card>
 </mat-card>
 
+<!-- ToDo: comment -->
 <relabel-pop-up *ngIf="isRelabelPopUpVisible()"
                 [info]='relabelPopUpInfo'
                 [(label)]="nodeEdgeLabel"></relabel-pop-up>

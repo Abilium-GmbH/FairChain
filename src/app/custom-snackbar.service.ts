@@ -1,6 +1,10 @@
 import {Injectable, NgZone} from '@angular/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
+/**
+ * ToDo: Snackbar
+ */
+
 @Injectable({
   providedIn: 'root'
 })

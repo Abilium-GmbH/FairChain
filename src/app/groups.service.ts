@@ -1,5 +1,8 @@
 import {Injectable} from '@angular/core';
 
+/**
+ * description service group getters and various exports
+ */
 export class group {
 
   constructor(name: string, color: string, visJsName: string) {
@@ -40,6 +43,10 @@ export class group {
     return '"' + this.visJsName + '" : { "color" : "' + this.color + '" }';
   }
 }
+
+/**
+ * Service description hash table
+ */
 
 @Injectable({
   providedIn: 'root'
@@ -86,6 +93,7 @@ export class GroupsService {
   }
 
   public findVisJsName(groupName: string) {
+    if (groupName === "none") return "none";
     for (var group of this.groups) {
       if (group.getName() == groupName) {
         return group.getVisJsName()
