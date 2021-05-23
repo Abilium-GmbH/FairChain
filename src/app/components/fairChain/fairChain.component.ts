@@ -11,7 +11,7 @@ import {DataSet} from 'vis-data/peer/esm/vis-data';
 import {emojis as flags} from '../../emojis';
 import {RectOnDOM} from 'src/app/interfaces/RectOnDOM';
 import {NodeRelabelInfo} from '../../interfaces/NodeRelabelInfo';
-import { originalLogo } from 'src/assets/originalLogo';
+import {originalLogo} from 'src/assets/originalLogo';
 
 @Component({
   selector: 'app-fairChain',
@@ -74,13 +74,12 @@ export class FairChainComponent implements OnInit {
               private relabelPopUpGeometryService: RelabelPopUpGeometryService) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges);
     this.emojis = flags;
-    this.nodes.add({id: "1",
+    this.nodes.add({id: "Logo",
       label: "Double click to change label",
       image: originalLogo,
       shape: "image",
       x: 59,
-      y: 59})
-    console.log(this.nodes.get("1"))
+      y: 59});
     this.makeSnapshot();
   }
 
@@ -471,7 +470,7 @@ export class FairChainComponent implements OnInit {
   }
 
   public async importLogo(files:FileList){
-    var firstNode = this.nodes.get("1"); 
+    var firstNode = this.nodes.get("Logo"); 
     firstNode.image =  await this.importExportService.uploadLogo(files[0]);
     this.nodes.update(firstNode);
     this.makeSnapshot();
