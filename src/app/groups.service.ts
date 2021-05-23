@@ -2,19 +2,23 @@ import { Injectable } from '@angular/core';
 
 export class group{
 
-  constructor(name:string, color:string) { 
+  constructor(name:string, color:string, visjsName:string) {
     this.name = name;
     this.color = color;
+    this.visJsName = visjsName;
   }
   private name:string;
   private color:string;
+  private visJsName:string;
   public getName(){ return this.name}
   public getColor(){ return this.color}
-  
+  public getVisJsName() {return this.visJsName}
+
   public setName(name:string){this.name = name}
   public setColor(color:string){this.color=color}
+  public setVisJsName(visJsName:string){this.visJsName = visJsName}
   public toString(){
-    return '"' + this.name.trim() + '" : { "color" : "' + this.color + '" }'
+    return '"' + this.visJsName + '" : { "color" : "' + this.color + '" }'
   }
 }
 
@@ -25,27 +29,43 @@ export class GroupsService {
 
   constructor() { }
   private nameOfGroups: string[]=["none","ethical", "unethical", "sustainable", "unsustainable"]
-  private groups:group[] =[ new group("ethical","blue"), new group("unethical","orange"), new group("sustainable","green"), new group("unsustainable","red")]
+  private groups:group[] =[ new group("ethical","blue", "group1"), new group("unethical","orange", "group2"),
+    new group("sustainable","green", "group3"), new group("unsustainable","red", "group4")]
 
   public addGroup(nameOfGroup:string, colorOfGroup:string) {
-    //for (var currentName in this.nameOfGroups){if (currentName.toLowerCase() === nameOfGroup.toLowerCase()){throw new Error("I should show up")}}
-    this.groups.push(new group (nameOfGroup, colorOfGroup))
+    this.groups.push(new group (nameOfGroup, colorOfGroup, "group" + this.numberOfGroups()))
     this.nameOfGroups.push(nameOfGroup)
   }
 
+  public checkGroupName(groupName:string) {
+    for (var group of this.groups) {
+      if (group.getName() == groupName) return true;
+    }
+    return false
+  }
+
   public getGroups(){
-    
+
     var temp:string='{';
-    //for(var group of this.groups){ temp+=temp+'"GROUPNAME":{ "color": "COLOR"}, ';temp.replace('GROUPNAME', group.getName()).replace('COLOR',group.getColor());}
-    
+
     temp+=this.groups.toString()
     temp += '}';
     console.log(temp)
     return JSON.parse(temp);
   }
 
+  private numberOfGroups() {
+    return this.nameOfGroups.length
+  }
+
   public getGroupsName(){
     return this.nameOfGroups;
   }
-  
+
+  public findVisJsName(groupName : string) {
+    for (var group of this.groups) {
+      if (group.getName() == groupName) return group.getVisJsName()
+    }
+  }
+
 }

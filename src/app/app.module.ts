@@ -12,7 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatSelectModule} from '@angular/material/select';
-//import { RelabelPopUpComponent } from './components/relabel-pop-up/relabel-pop-up.component';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 
 
 @NgModule({
@@ -23,8 +23,6 @@ import {MatSelectModule} from '@angular/material/select';
   imports: [
     BrowserModule,BrowserAnimationsModule, FormsModule, ReactiveFormsModule, MatSelectModule,
 
-
-
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
@@ -33,7 +31,8 @@ import {MatSelectModule} from '@angular/material/select';
     MatButtonModule,
     MatInputModule,
     NgbModule,
-    FormsModule
+    FormsModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -9,7 +9,7 @@
         color: black;
         padding-left: 7px;
       }
-      
+
     #fileToImport{
         display: none;
     }
@@ -27,14 +27,14 @@
         margin: 0px;
         padding:0px;
         float: left;
-    
+
         .tool {
             padding: 5px;
             background-color: #ffffff;
             margin-top: 1rem;
             margin-left: 1.5rem;
             height: 3rem;
-    
+
             .icon-link{
                 margin-top: 1rem;
                 height: 3rem;
@@ -44,7 +44,7 @@
             background-color: #00c3ff;
         }
     }
-    
+
     .canvas {
         background-color: #f0fcfc;
         height: 100%;
@@ -52,7 +52,7 @@
         float:left;
         margin: 0px;
         padding:0px;
-    
+
         // Initializes the interaction area properties
         .graph {
             position: absolute;
@@ -62,26 +62,26 @@
             height: 100%;
         }
     }
-    
+
     .toolbar-options {
         height: 100%;
         width: 6%;
         float: left;
         margin: 0px;
         padding: 0px;
-    
+
         .option-label {
             font-size:16px;
             color: black;
             padding-left: 7px;
         }
-    
+
         .option-textArea {
             font-size:16px;
             height: 50px;
             width: 95%;
           }
-    
+
         .option-button {
             width: 100%;
             padding-left: 5px;
@@ -90,7 +90,7 @@
         .option-button.active {
             background-color: #00ccff;
         }
-    
+
         // Gives the correct proportions of the edit color bar
         .option-colorInput{
             font-size:16px;
