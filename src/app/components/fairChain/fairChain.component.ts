@@ -74,10 +74,13 @@ export class FairChainComponent implements OnInit {
               private relabelPopUpGeometryService: RelabelPopUpGeometryService) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges);
     this.emojis = flags;
-    this.nodes.add({id: 1,
+    this.nodes.add({id: "1",
       label: "Double click to change label",
       image: originalLogo,
-      shape: "image",})
+      shape: "image",
+      x: 59,
+      y: 59})
+    console.log(this.nodes.get("1"))
     this.makeSnapshot();
   }
 
@@ -468,7 +471,7 @@ export class FairChainComponent implements OnInit {
   }
 
   public async importLogo(files:FileList){
-    var firstNode = this.nodes.get(1); 
+    var firstNode = this.nodes.get("1"); 
     firstNode.image =  await this.importExportService.uploadLogo(files[0]);
     this.nodes.update(firstNode);
     this.makeSnapshot();
