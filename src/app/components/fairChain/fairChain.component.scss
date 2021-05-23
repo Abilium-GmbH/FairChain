@@ -1,106 +1,112 @@
 .application-head {
-    height: 6%;
-    width: 100%;
-    margin: 0px;
-    padding:0px;
+  height: 6%;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
 
-    #buttonsToolbarAbove{
-        font-size:16px;
-        color: black;
-        padding-left: 7px;
-      }
+  #buttonsToolbarAbove {
+    font-size: 16px;
+    color: black;
+    padding-left: 7px;
+  }
 
-    #fileToImport{
-        display: none;
-    }
+  #fileToImport {
+    display: none;
+  }
 }
 
 .application-body {
-    height: 94%;
-    width: 100%;
+  height: 94%;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+
+  .toolbar {
+    height: 100%;
+    width: 10%;
     margin: 0px;
-    padding:0px;
+    padding: 0px;
+    float: left;
 
-    .toolbar {
-        height: 100%;
-        width: 10%;
-        margin: 0px;
-        padding:0px;
-        float: left;
+    .tool {
+      padding: 5px;
+      background-color: #ffffff;
+      margin-top: 1rem;
+      margin-left: 1.5rem;
+      height: 3rem;
 
-        .tool {
-            padding: 5px;
-            background-color: #ffffff;
-            margin-top: 1rem;
-            margin-left: 1.5rem;
-            height: 3rem;
-
-            .icon-link{
-                margin-top: 1rem;
-                height: 3rem;
-            }
-        }
-        .tool.active {
-            background-color: #00c3ff;
-        }
+      .icon-link {
+        margin-top: 1rem;
+        height: 3rem;
+      }
     }
 
-    .canvas {
-        background-color: #f0fcfc;
-        height: 100%;
-        width: 83%;
-        float:left;
-        margin: 0px;
-        padding:0px;
+    .tool.active {
+      background-color: #00c3ff;
+    }
+  }
 
-        // Initializes the interaction area properties
-        .graph {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-        }
+  // Gives the network proportions and GUI
+  .canvas {
+    background-color: #f0fcfc;
+    height: 100%;
+    width: 83%;
+    float: left;
+    margin: 0px;
+    padding: 0px;
+
+    // Initializes the interaction area properties
+    .graph {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .toolbar-options {
+    height: 100%;
+    width: 6%;
+    float: left;
+    margin: 0px;
+    padding: 0px;
+
+    .option-label {
+      font-size: 16px;
+      color: black;
+      padding-left: 7px;
     }
 
-    .toolbar-options {
-        height: 100%;
-        width: 6%;
-        float: left;
-        margin: 0px;
-        padding: 0px;
-
-        .option-label {
-            font-size:16px;
-            color: black;
-            padding-left: 7px;
-        }
-
-        .option-textArea {
-            font-size:16px;
-            height: 50px;
-            width: 95%;
-          }
-
-        .option-button {
-            width: 100%;
-            padding-left: 5px;
-            background-color: #ffffff;
-        }
-        .option-button.active {
-            background-color: #00ccff;
-        }
-
-        // Gives the correct proportions of the edit color bar
-        .option-colorInput{
-            font-size:16px;
-            width: 101%;
-        }
-
-        .option-groupList{
-          font-size:11px;
-          width: 101%;
-        }
-
+    // Gives the layout of the text Area of Label
+    .option-textArea {
+      font-size: 16px;
+      height: 50px;
+      width: 95%;
     }
+
+    // Gives the layout of buttons
+    .option-button {
+      width: 100%;
+      padding-left: 5px;
+      background-color: #ffffff;
+    }
+
+    .option-button.active {
+      background-color: #00ccff;
+    }
+
+    // Gives the correct proportions of the edit color bar
+    .option-colorInput {
+      font-size: 16px;
+      width: 101%;
+    }
+
+    // Gives the correct proportions of the drop down list of group and add group text box
+    .option-groupList {
+      font-size: 11px;
+      width: 101%;
+    }
+
+  }
 }
