@@ -1,14 +1,11 @@
-import { identifierModuleUrl } from '@angular/compiler';
-import { Injectable } from '@angular/core';
-import { strict as assert } from 'assert';
-
-import { ImportData } from './interfaces/importData'
-import { DataSetNodes, DataSetEdges, IdType, Color } from "vis-network/peer/esm/vis-network";
+import {Injectable} from '@angular/core';
+import {ImportData} from './interfaces/importData';
+import {DataSetNodes, DataSetEdges, IdType, Color} from 'vis-network/peer/esm/vis-network';
 
 @Injectable({
-    providedIn: 'root'
-  })
-export class ImportExportService{
+  providedIn: 'root'
+})
+export class ImportExportService {
   /**
    * Creates a temporary, non-visible HTML element with a download function, clicks on it and removes it from the document
    * Gets called when the export button is pressed
@@ -35,7 +32,7 @@ export class ImportExportService{
    * @param data is the node data that has to be extracted
    * @returns the array of nodes
    */
-  
+
   //TODO make sure that the data is correct
   public checkThatImportDataIsValid(data: any): boolean {
     this.checkDataHasCorrectFormat(data);
@@ -44,43 +41,83 @@ export class ImportExportService{
   }
 
   checkDataNodesAndEdgesAddUp(data: ImportData) {
-    let nodeList = data.nodes.map((node) => {return node.id});
+    let nodeList = data.nodes.map((node) => {
+      return node.id;
+    });
     data.edges.forEach((edge) => {
-      if (!nodeList.includes(edge.from)) throw new Error();
-      if (!nodeList.includes(edge.to)) throw new Error();
-    })
+      if (!nodeList.includes(edge.from)) {
+        throw new Error();
+      }
+      if (!nodeList.includes(edge.to)) {
+        throw new Error();
+      }
+    });
   }
 
   private checkDataHasCorrectFormat(data: any): void {
-    if (!data.nodes) throw new Error();
-    if (!data.edges) throw new Error();
-    for (let key in data) if (!['nodes','edges'].includes(key)) throw Error();
-    if (!Array.isArray(data.nodes)) throw new Error();
-    if (!Array.isArray(data.edges)) throw new Error();
-    for (let entry of data.nodes) {this.checkNodesHasCorrectFormat(entry);}
-    for (let entry of data.edges) {this.checkEdgesHasCorrectFormat(entry);}
+    if (!data.nodes) {
+      throw new Error();
+    }
+    if (!data.edges) {
+      throw new Error();
+    }
+    for (let key in data) {
+      if (!['nodes', 'edges'].includes(key)) {
+        throw Error();
+      }
+    }
+    if (!Array.isArray(data.nodes)) {
+      throw new Error();
+    }
+    if (!Array.isArray(data.edges)) {
+      throw new Error();
+    }
+    for (let entry of data.nodes) {
+      this.checkNodesHasCorrectFormat(entry);
+    }
+    for (let entry of data.edges) {
+      this.checkEdgesHasCorrectFormat(entry);
+    }
   }
 
   //TODO: check if attributes match the ones defined in vis.js
   private checkNodesHasCorrectFormat(entry): void {
-    if (!entry.id && typeof entry.id !== 'string') throw new Error();
-    if (!entry.label && typeof entry.id !== 'string') throw new Error();
-    if (!entry.x && typeof entry.x !== 'number') throw new Error();
-    if (!entry.y && typeof entry.y !== 'number') throw new Error();
+    if (!entry.id && typeof entry.id !== 'string') {
+      throw new Error();
+    }
+    if (!entry.label && typeof entry.id !== 'string') {
+      throw new Error();
+    }
+    if (!entry.x && typeof entry.x !== 'number') {
+      throw new Error();
+    }
+    if (!entry.y && typeof entry.y !== 'number') {
+      throw new Error();
+    }
   }
 
   //TODO: check if attributes match the ones defined in vis.js
   private checkEdgesHasCorrectFormat(entry): void {
-    if (!entry.id && typeof entry.id !== 'string') throw new Error();
-    if (!entry.from && typeof entry.from !== 'string') throw new Error();
-    if (!entry.to && typeof entry.to !== 'string') throw new Error();
+    if (!entry.id && typeof entry.id !== 'string') {
+      throw new Error();
+    }
+    if (!entry.from && typeof entry.from !== 'string') {
+      throw new Error();
+    }
+    if (!entry.to && typeof entry.to !== 'string') {
+      throw new Error();
+    }
   }
 
   //TODO make method shorter
   public async upload(file: File) {
-    return new Promise ((resolve, reject) => {
-      if (file.type != 'application/json') reject('The file type is not JSON');
-      if (file['Size']> 1e5) reject('The file size is too large');
+    return new Promise((resolve, reject) => {
+      if (file.type != 'application/json') {
+        reject('The file type is not JSON');
+      }
+      if (file['Size'] > 1e5) {
+        reject('The file size is too large');
+      }
       const reader = new FileReader();
       var importedJson;
       var service = new ImportExportService;
@@ -92,19 +129,20 @@ export class ImportExportService{
         const parsedImportedJson = JSON.parse(result);
         service.checkThatImportDataIsValid(parsedImportedJson);
         resolve(parsedImportedJson);
-      }
-    })
+      };
+    });
   }
 
   public convertNetworkToJSON(nodes: DataSetNodes, edges: DataSetEdges): string {
-    return "{\"nodes\":[NODES],\"edges\":[EDGES]}"
+    return '{"nodes":[NODES],"edges":[EDGES]}'
       .replace('NODES', this.datasetToJSON(nodes))
       .replace('EDGES', this.datasetToJSON(edges));
   }
 
-  private datasetToJSON(data: DataSetNodes | DataSetEdges): string 
-  {
-    if (data.length === 0) return '';
+  private datasetToJSON(data: DataSetNodes | DataSetEdges): string {
+    if (data.length === 0) {
+      return '';
+    }
     return data.getIds().map((id: IdType) => {
       return JSON.stringify(data.get(id))
     }).join(',');
