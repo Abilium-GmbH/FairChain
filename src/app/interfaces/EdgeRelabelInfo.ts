@@ -3,7 +3,7 @@ import { IdType } from "vis-network/peer/esm/vis-network";
 
 export interface EdgeRelabelInfo {
     active: boolean,
-    edgeToRelableId: IdType,
+    edgeId: IdType,
     label: string,
     rect: RectOnDOM
 }

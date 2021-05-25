@@ -89,12 +89,12 @@
 
 </mat-card>
 
-<relabel-pop-up *ngIf="isRelabelPopUpVisible()" 
-
-  [info]='relabelPopUpInfo.rect'
-  [(label)]="relabelPopUpInfo.label"
+<relabel-pop-up *ngIf="isNodeRelabelPopUpVisible()" 
+  [info]='nodeRelabelPopUpInfo.rect'
+  [(label)]="nodeRelabelPopUpInfo.label"
   (closeRelabelPopUp)="closeNodeRelabelPopUp()"></relabel-pop-up>
 
 <relabel-pop-up *ngIf="isEdgeRelabelPopUpVisible()" 
-  [info]='edgeRelabelInfo.rect'
-  [(label)]="edgeRelabelInfo.label"></relabel-pop-up>
+  [info]='edgeRelabelPopUpInfo.rect'
+  [(label)]="edgeRelabelPopUpInfo.label"
+  (closeRelabelPopUp)="closeEdgeRelabelPopUp()"></relabel-pop-up>
