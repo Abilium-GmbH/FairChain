@@ -6,7 +6,7 @@ import {RelabelPopUpGeometryService} from 'src/app/relabel-pop-up-geometry-servi
 import {FlagService} from '../../flag.service';
 import {strict as assert} from 'assert';
 import {Tools, ChangingEdge, ChangingNode} from '../../Enums';
-import {Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges} from 'vis-network/peer/esm/vis-network';
+import {Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges, Position} from 'vis-network/peer/esm/vis-network';
 import {DataSet} from 'vis-data/peer/esm/vis-data';
 import {emojis as flags} from '../../emojis';
 import {RectOnDOM} from 'src/app/interfaces/RectOnDOM';
@@ -31,7 +31,7 @@ export class FairChainComponent implements OnInit {
   public nodeToRelableId: IdType;
   public isShowingRelabelPopUp = false;
 
-  private relabelPopUpInfo: NodeRelabelInfo = {
+  private nodeRelabelPopUpInfo: NodeRelabelInfo = {
 
     nodeId: '',
     active: false,
@@ -167,75 +167,6 @@ export class FairChainComponent implements OnInit {
     this.edges.update({id:this.edgeRelabelPopUpInfo.edgeId, label: this.edgeRelabelPopUpInfo.label});
     this.edgeRelabelPopUpInfo.active = false;
     this.edgeRelabelPopUpInfo.edgeId = undefined;
-
-  public isRelabelPopUpVisible(): boolean {
-    return this.relabelPopUpInfo.active;
-  }
-
-  public isAddingNode(): boolean {
-    return this.currentTool === Tools.AddingNode;
-  }
-
-  public isAddingEdge(): boolean {
-    return this.currentTool === Tools.AddingEdge;
-  }
-
-  public isChangingNodeLabel(): boolean {
-    return this.changesNode === ChangingNode.NodeLabel;
-  }
-
-  public isChangingEdgeLabel(): boolean {
-    return this.changesEdge === ChangingEdge.EdgeLabel;
-  }
-
-  public isChangingColor(): boolean {
-    return this.changesNode === ChangingNode.NodeColor;
-  }
-
-  public isChangingFlag(): boolean {
-    return this.changesNode === ChangingNode.NodeFlag;
-  }
-
-  public isDeletingFlag(): boolean {
-    return this.changesNode === ChangingNode.DeleteNodeFlag;
-  }
-
-  public isInNodeEditMode(): boolean {
-    return this.changesNode !== ChangingNode.None;
-  }
-
-  public isInEdgeEditMode(): boolean {
-    return this.changesNode !== ChangingNode.None;
-  }
-
-  private stopAddNodeMode(): void {
-    this.network.disableEditMode();
-  }
-
-  private enableAddNodeMode(): void {
-    this.network.addNodeMode();
-  }
-
-  private stopEditMode(): void {
-    this.changesNode = ChangingNode.None;
-    this.changesEdge = ChangingEdge.None;
-  }
-
-  private makeToolIdle(): void {
-    this.currentTool = Tools.Idle;
-  }
-
-  private closeNodeRelabelPopUp(): void {
-    assert(this.relabelPopUpInfo.active, 'There is no pop up menu to close');
-    assert(this.relabelPopUpInfo.nodeId, 'There is no node to apply the change to');
-    this.nodes.update({
-      id: this.relabelPopUpInfo.nodeId,
-      label: this.flagService.addOrChangeFlag(this.relabelPopUpInfo.label, this.flagService.currentFlag)
-    });
-    this.relabelPopUpInfo.active = false;
-    this.relabelPopUpInfo.nodeId = '';
-
-    this.makeSnapshot();
   }
 
   // A handy debug buttom for any
