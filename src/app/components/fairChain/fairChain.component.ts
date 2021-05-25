@@ -114,7 +114,7 @@ export class FairChainComponent implements OnInit {
     );
     this.subscriptions.add(
       fromEvent(this.network, 'hoverNode').subscribe(params => {
-        if (this.isAddingNode() || this.isAddingNode()) this.stopAddMode();
+        if (this.isAddingNode()) this.stopAddMode();
       })
     );
     this.subscriptions.add(
@@ -133,6 +133,8 @@ export class FairChainComponent implements OnInit {
       fromEvent(this.network, 'zoom').subscribe(params => {
         if (this.nodeRelabelPopUpInfo.active) this.closeNodeRelabelPopUp();
         if (this.edgeRelabelPopUpInfo.active) this.closeEdgeRelabelPopUp();
+        if (this.isAddingEdge()) this.enableAddEdgeMode();
+        if (this.isAddingNode()) this.enableAddNodeMode();
       })
     );
   }
@@ -339,9 +341,23 @@ export class FairChainComponent implements OnInit {
     }
     // Defines edge onClick actions
     //TODO: With new edge dataset, define custom events for changing labels/color
+    if (this.isClickingOnNodeInAddEdgeMode(params)) {this.interruptAddingEdge();}
     if (this.isClickingOnEdgeInEdgeEditMode(params) && params.nodes.length == 0) this.editEdgeInDataset(params.edges);
     if (this.isClickingOnNodeInAddNodeMode(params)) this.stopAddMode();
     if (this.isClickingOnCanvasInAddNodeMode(params)) this.enableAddNodeMode();
+    if (this.isClickingOnCanvasInAddEdgeMode(params)) this.enableAddEdgeMode();
+  }
+
+  private interruptAddingEdge() {
+    this.stopEditMode();
+    this.enableAddEdgeMode();
+  }
+  private isClickingOnNodeInAddEdgeMode(params: any) : boolean {
+    return this.isAddingEdge() && params.nodes.length > 0;
+  }
+
+  private isClickingOnCanvasInAddEdgeMode(params: any): boolean {
+    return params.nodes.length === 0 && params.edges.length === 0 && this.isAddingEdge();
   }
 
   private isClickingOnCanvasInAddNodeMode(params: any): boolean {
