@@ -12,6 +12,7 @@ import {emojis as flags} from '../../emojis';
 import {RectOnDOM} from 'src/app/interfaces/RectOnDOM';
 import {NodeRelabelInfo} from '../../interfaces/NodeRelabelInfo';
 import {originalLogo} from 'src/assets/originalLogo';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-fairChain',
@@ -66,21 +67,16 @@ export class FairChainComponent implements OnInit {
   public ngOnInit(): void {
     this.network = new Network(this.graph, this.data, this.options);
     this.makeSubscriptions();
+    this.openSnackBar();
   }
 
   constructor(private importExportService: ImportExportService,
               private undoRedoService: UndoRedoService,
               private flagService: FlagService,
-              private relabelPopUpGeometryService: RelabelPopUpGeometryService) {
+              private relabelPopUpGeometryService: RelabelPopUpGeometryService,
+              private snackBar: MatSnackBar) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges);
     this.emojis = flags;
-    this.nodes.add({id: "Logo",
-      label: "Double click to change label",
-      image: originalLogo,
-      shape: "image",
-      x: 59,
-      y: 59});
-    this.makeSnapshot();
   }
 
   private makeSubscriptions(): void {
@@ -470,12 +466,36 @@ export class FairChainComponent implements OnInit {
   }
 
   public async importLogo(files:FileList){
+    if (this.nodes.get("Logo") == null){
+      this.nodes.add({id: "Logo",
+      label: "",
+      image: originalLogo,
+      shape: "image",
+      x: 59,
+      y: 59});
+    }
     var firstNode = this.nodes.get("Logo"); 
     firstNode.image =  await this.importExportService.uploadLogo(files[0]);
     this.nodes.update(firstNode);
     this.makeSnapshot();
   }
 
+  private addOriginalLogo(){
+    if (this.nodes.get("Logo") == null){
+    this.nodes.add({id: "Logo",
+    label: "",
+    image: originalLogo,
+    shape: "image",
+    x: 59,
+    y: 59});
+    this.makeSnapshot();
+    }
+  }
+
+  private openSnackBar() {
+    var snackBarRef = this.snackBar.open("Do you want to add a Logo?", "Yes, please", {duration: 7000});
+    snackBarRef.onAction().subscribe(()=> this.addOriginalLogo() );
+  }
 
   public updateData(data) {
     this.nodes = new DataSet();
