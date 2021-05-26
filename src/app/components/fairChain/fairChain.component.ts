@@ -78,10 +78,6 @@ export class FairChainComponent implements OnInit {
     return this.changesEdge === ChangingEdge.EdgeLabel;
   }
 
-  public isChangingColor(): boolean {
-    return this.changesNode === ChangingNode.NodeColor;
-  }
-
   public isInNodeEditMode(): boolean {
     return this.changesNode !== ChangingNode.None;
   }
@@ -114,7 +110,6 @@ export class FairChainComponent implements OnInit {
   private closeNodeRelabelPopUp(): void {
     assert(this.isShowingRelabelPopUp, 'There is no pop up menu to close');
     assert(this.nodeToRelableId, 'There is no node to apply the change to');
-    //ToDo: Update makes the implementation group color + change color + poUp change label buggy
     this.nodes.update({id: this.nodeToRelableId, label: this.nodeEdgeLabel});
     this.isShowingRelabelPopUp = false;
     this.nodeToRelableId = '';
@@ -251,21 +246,14 @@ export class FairChainComponent implements OnInit {
     if (this.isChangingNodeLabel()) {
       nodeData.label = this.nodeEdgeLabel;
     }
-    if (this.isChangingColor()) {
-      nodeData.color = this.nodeEdgeColor;
-    }
     if (this.changesNode === ChangingNode.NodeGroup) {
       this.updateNodeGroup(nodeData);
     }
   }
 
-
   private editEdgeBasedOnCurrentEdgeOption(edgeData: Edge) {
     if (this.isChangingEdgeLabel()) {
       edgeData.label = this.nodeEdgeLabel;
-    }
-    if (this.isChangingColor()) {
-      edgeData.color = this.nodeEdgeColor;
     }
   }
 
@@ -450,30 +438,6 @@ export class FairChainComponent implements OnInit {
     this.data = {nodes: this.nodes, edges: this.edges};
     this.network = new Network(this.graph, this.data, this.options);
     this.makeSubscriptions();
-  }
-
-  /**
-   * Declaration of the change Color method for nodes
-   */
-  public changeNodeColor() {
-    this.makeToolIdle();
-    if (this.isChangingColor()) {
-      this.changesNode = ChangingNode.None;
-    } else {
-      this.changesNode = ChangingNode.NodeColor;
-    }
-  }
-
-  /**
-   * Declaration of the change Color method for edges
-   */
-  public changeEdgeColor() {
-    this.makeToolIdle();
-    if (this.isChangingColor()) {
-      this.changesEdge = ChangingEdge.None;
-    } else {
-      this.changesEdge = ChangingEdge.EdgeColor;
-    }
   }
 
   private makeSnapshot() {

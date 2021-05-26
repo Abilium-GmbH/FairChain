@@ -52,20 +52,9 @@
     </button>
     <hr>
     <div>
-      <!-- Implements the color toolbar and button to change node/edge colors -->
-      <p class="option-label">color</p>
-      <input matInput class="option-colorInput" type="color" [(ngModel)]="nodeEdgeColor">
-      <br>
-      <button mat-button
-              class="option-button"
-              [class.active]="isChangingColor()"
-              (click)="changeNodeColor(); changeEdgeColor()">Change color
-      </button>
-      <hr>
-    </div>
-    <div>
       <div>
         <!-- ToDo: comment -->
+        <p class="option-label">Groups</p>
         <select class="option-groupList" (change)="change($event.target.value)">
           <option *ngFor="let nameOfGroup of listOfGroups"
                   [value]="nameOfGroup">{{nameOfGroup}}</option>
