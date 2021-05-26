@@ -1,3 +1,4 @@
+
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {fromEvent, Subscription} from 'rxjs';
 import {ImportExportService} from '../../importExport.service';
@@ -13,6 +14,7 @@ import {RectOnDOM} from 'src/app/interfaces/RectOnDOM';
 import {NodeRelabelInfo} from '../../interfaces/NodeRelabelInfo';
 import {originalLogo} from 'src/assets/originalLogo';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {toPng} from 'html-to-image';
 
 @Component({
   selector: 'app-fairChain',
@@ -22,8 +24,9 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 })
 
 /**
- * This Component has many responsibilities. So far, it holds the basic Implementations of theProject,
- * such like addNode, addEdge, deleteSelection, edit NodeLabel and edge Label
+ * This Component has many responsibilities. It takes all the user inputs and sends them to the services.
+ * It saves the Network with all it's manipulations and data.
+ * It enables and disables the edit modes, when it receives a new user input.
  */
 export class FairChainComponent implements OnInit {
 
@@ -31,7 +34,9 @@ export class FairChainComponent implements OnInit {
   public nodeEdgeColor = '#002AFF';
   public nodeToRelableId: IdType;
   public isShowingRelabelPopUp = false;
-
+  public metadata = ""
+  public isMetadataVisible = false;
+  
   private relabelPopUpInfo: NodeRelabelInfo = {
     nodeId: '',
     active: false,
@@ -75,10 +80,13 @@ export class FairChainComponent implements OnInit {
               private flagService: FlagService,
               private relabelPopUpGeometryService: RelabelPopUpGeometryService,
               private snackBar: MatSnackBar) {
-    this.undoRedoService.addSnapshot(this.nodes, this.edges);
+    this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
     this.emojis = flags;
   }
 
+  /**
+   * creates subscriptions which define what to do with which user input
+   */
   private makeSubscriptions(): void {
     this.subscriptions = new Subscription();
     this.subscriptions.add(
@@ -195,7 +203,9 @@ export class FairChainComponent implements OnInit {
     this.makeSnapshot();
   }
 
-  // A handy debug buttom for any
+  /**
+   * A handy debug buttom for any
+   */ 
   public isDebugging = true;
 
   public __debug__() {
@@ -258,13 +268,14 @@ export class FairChainComponent implements OnInit {
         this.network.addEdgeMode();
         this.makeSnapshot();
       },
-      // Responsible for the Edit Node Label
+      // Responsible for the Edit Node with currently selected option
       editNode: (nodeData: Node, callback) => {
         assert(this.isInNodeEditMode(), 'The edge should not be edited when no option is selected');
         this.editNodeBasedOnCurrentNodeOption(nodeData);
         callback(nodeData);
         this.makeSnapshot();
       },
+      // Responsible for the Edit Edge with currently selected option
       editEdge: (edgeData: Edge, callback) => {
         assert(this.isInEdgeEditMode(), 'The edge should not be edited when no option is selected');
         this.editEdgeBasedOnCurrentEdgeOption(edgeData);
@@ -277,6 +288,11 @@ export class FairChainComponent implements OnInit {
     }
   };
 
+  /**
+   * Checks which boolean is true to call the right method and edit the node correctly.
+   * 
+   * @param nodeData is needed to know which node is being edited
+   */
   private editNodeBasedOnCurrentNodeOption(nodeData: Node) {
     if (this.isChangingColor()) {
       nodeData.color = this.nodeEdgeColor;
@@ -295,6 +311,11 @@ export class FairChainComponent implements OnInit {
     ;
   }
 
+  /**
+   * Checks which boolean is true to call the right method and edit the edge correctly.
+   * 
+   * @param edgeData is needed to know which edge is being edited
+   */
   private editEdgeBasedOnCurrentEdgeOption(edgeData: Edge) {
     if (this.isChangingEdgeLabel()) {
       edgeData.label = this.nodeEdgeLabel;
@@ -349,10 +370,9 @@ export class FairChainComponent implements OnInit {
   }
 
   /**
-   * Defines dynamic actions when clickig on certain objects in the network
+   * Defines dynamic actions when clicking on certain objects in the network
    *
    * @param params needed to distinguish the different clicked elements from each other (node or edge)
-   * @private
    */
   private onClick(params) {
     if (this.relabelPopUpInfo.active) {
@@ -383,6 +403,11 @@ export class FairChainComponent implements OnInit {
     return params.nodes.length > 0 && this.isAddingNode();
   }
 
+  /**
+   * Updates the edited edges in the dataset and then ends the editmode.
+   * 
+   * @param edges all the edges with the done changes.
+   */
   private editEdgeInDataset(edges: IdType[]) {
     edges.forEach((id) => {
       let edgeData: Edge = this.edges.get(id);
@@ -405,12 +430,22 @@ export class FairChainComponent implements OnInit {
       && this.isInEdgeEditMode();
   }
 
+  /**
+   * Defines dynamic actions when stop draging certain objects in the network
+   *
+   * @param params needed to distinguish the different dragged node
+   */
   private onDragEnd(params) {
     if (params.nodes && params.nodes.length >= 1) {
       this.makeSnapshot();
     }
   }
 
+  /**
+   * Defines dynamic actions when doubleclicking on certain objects in the network
+   *
+   * @param params needed to distinguish the different doubleclicked elements from each other (node or edge)
+   */
   private onDoubleClick(pointer) {
     this.network.disableEditMode();
     if (pointer.nodes.length === 1) {
@@ -418,7 +453,7 @@ export class FairChainComponent implements OnInit {
     }
   }
 
-  // Boolean switch value if someone wants to change the nodeLabel name for button color
+  // Boolean switch value if someone wants to change the node label
   public changeNodeName() {
     this.makeToolIdle();
     if (this.isChangingNodeLabel()) {
@@ -428,6 +463,7 @@ export class FairChainComponent implements OnInit {
     }
   };
 
+  // Boolean switch value if someone wants to change the edge label
   public changeEdgeName() {
     this.makeToolIdle();
     if (this.isChangingEdgeLabel()) {
@@ -441,21 +477,20 @@ export class FairChainComponent implements OnInit {
   private get graph(): HTMLElement {
     return this.graphRef.nativeElement;
   }
-
+  
   /**
    * Puts current nodes and edges variables into json syntax and stores it in a string.
    * Downloads the file as Graph.json with the method in importExport.service.
    */
-  public exportGraph() {
-    var text = this.importExportService.convertNetworkToJSON(this.nodes, this.edges);
-    var filename = 'Graph.json';
+  public exportGraph(){
+    var text = this.importExportService.convertNetworkToJSON(this.nodes, this.edges, this.metadata);
+    var filename = "Graph.json";
     this.importExportService.download(filename, text);
   }
 
   /**
-   * Reads the text from an imported json file and parses it, so that it can overwrite current variables.
-   * Needs delay because of the asynchronous nature of the onload function.
-   * Creates a new network with the imported data.
+   * Sends the received file to a method in importExport.service where the data gets parsed from the file.
+   * Remakes the subscriptions and a snapshot to be fully functional again.
    *
    * @param files is the file selected to import.
    */
@@ -504,13 +539,16 @@ export class FairChainComponent implements OnInit {
     this.edges = new DataSet();
     this.edges.add(data.edges);
 
+    this.metadata = data.metadata;
+
     this.data = {nodes: this.nodes, edges: this.edges};
     this.network = new Network(this.graph, this.data, this.options);
     this.makeSubscriptions();
   }
 
   /**
-   * Declaration of the change Color method for nodes
+   * Responsible to switch the node color functionality
+   * on or off if the button is pressed.
    */
   public changeNodeColor() {
     this.network.disableEditMode();
@@ -523,7 +561,8 @@ export class FairChainComponent implements OnInit {
   }
 
   /**
-   * Declaration of the change Color method for edges
+   * Responsible to switch the edge color functionality
+   * on or off if the button is pressed.
    */
   public changeEdgeColor() {
     this.network.disableEditMode();
@@ -536,7 +575,8 @@ export class FairChainComponent implements OnInit {
   }
 
   /**
-   * Declaration of the change Flag method for nodes
+   * Responsible to switch the change flag of a node functionality
+   * on or off if the button is pressed.
    */
   public changeFlag() {
     this.network.disableEditMode();
@@ -548,7 +588,11 @@ export class FairChainComponent implements OnInit {
     }
   }
 
-  public deleteFlag() {
+  /**
+   * Responsible to switch the delete flag of a node functionality
+   * on or off if the button is pressed.
+   */
+  public deleteFlag(){
     this.network.disableEditMode();
     this.makeToolIdle();
     if (this.isDeletingFlag()) {
@@ -558,8 +602,8 @@ export class FairChainComponent implements OnInit {
     }
   }
 
-  private makeSnapshot() {
-    this.undoRedoService.addSnapshot(this.nodes, this.edges);
+  private makeSnapshot(){
+    this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
   }
 
   public undo() {
@@ -596,6 +640,20 @@ export class FairChainComponent implements OnInit {
     return this.relabelPopUpGeometryService.getRelabelPopUpRect(rect, min_x, min_y, max_x, max_y);
   }
 
+  /**
+   * Converts the HTML class networkContainer to a jpeg and
+   * downloads it as Fairchain.jpeg
+   */
+  downloadGraphAsJpeg(){
+    toPng(document.getElementById("networkContainer"))
+    .then(function (dataUrl) {
+      var link = document.createElement('a');
+      link.download = 'FairChain.png';
+      link.href = dataUrl;
+      link.click();
+    });
+  }
+
   public getChangesNode() {
     return this.changesNode
   }
@@ -611,4 +669,5 @@ export class FairChainComponent implements OnInit {
   public getNetwork() {
     return this.network
   }
+
 }
