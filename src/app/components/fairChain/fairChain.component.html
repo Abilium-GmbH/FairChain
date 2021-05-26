@@ -70,11 +70,11 @@
         <p class="option-label">Color</p>
         <input matInput class = "option-colorInput" type="color" [(ngModel)]="nodeEdgeColor">
       <br>
-      <!-- Alternate change Node name mode -->
+      <!-- Alternate change Node color mode -->
       <button mat-button
               class="option-button"
-              [class.active]="isChangingNodeLabel()"
-              (click)="changeNodeName(); changeEdgeName()">Change Name
+              [class.active]="isChangingColor()"
+              (click)="changeNodeColor(); changeEdgeColor()">Change Color
       </button>
       <hr>
     </div>
