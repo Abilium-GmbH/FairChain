@@ -46,13 +46,9 @@ export class ImportExportService{
   private checkDataNodesAndEdgesAddUp(data: ImportData) {
     let nodeList = data.nodes.map((node) => {return node.id});
     data.edges.forEach((edge) => {
-      if (!nodeList.includes(edge.from)) {
-        throw new Error();
-      }
-      if (!nodeList.includes(edge.to)) {
-        throw new Error();
-      }
-    });
+      if (!nodeList.includes(edge.from)) throw new Error();
+      if (!nodeList.includes(edge.to)) throw new Error();
+    })
   }
 
   /**
@@ -62,30 +58,13 @@ export class ImportExportService{
    * @param data is the json that we got from the user
    */
   private checkDataHasCorrectFormat(data: any): void {
-
-    if (!data.nodes) {
-      throw new Error();
-    }
-    if (!data.edges) {
-      throw new Error();
-    }
-    for (let key in data) {
-      if (!['nodes', 'edges', 'metadata'].includes(key)) {
-        throw Error();
-      }
-    }
-    if (!Array.isArray(data.nodes)) {
-      throw new Error();
-    }
-    if (!Array.isArray(data.edges)) {
-      throw new Error();
-    }
-    for (let entry of data.nodes) {
-      this.checkNodesHasCorrectFormat(entry);
-    }
-    for (let entry of data.edges) {
-      this.checkEdgesHasCorrectFormat(entry);
-    }
+    if (!data.nodes) throw new Error();
+    if (!data.edges) throw new Error();
+    for (let key in data) if (!['nodes','edges','metadata'].includes(key)) throw Error();
+    if (!Array.isArray(data.nodes)) throw new Error();
+    if (!Array.isArray(data.edges)) throw new Error();
+    for (let entry of data.nodes) {this.checkNodesHasCorrectFormat(entry);}
+    for (let entry of data.edges) {this.checkEdgesHasCorrectFormat(entry);}
   }
 
   /**
@@ -94,18 +73,10 @@ export class ImportExportService{
    * @param entry is the individual node that the method is checking
    */
   private checkNodesHasCorrectFormat(entry): void {
-    if (!entry.id && typeof entry.id !== 'string') {
-      throw new Error();
-    }
-    if (!entry.label && typeof entry.id !== 'string') {
-      throw new Error();
-    }
-    if (!entry.x && typeof entry.x !== 'number') {
-      throw new Error();
-    }
-    if (!entry.y && typeof entry.y !== 'number') {
-      throw new Error();
-    }
+    if (!entry.id && typeof entry.id !== 'string') throw new Error();
+    if (!entry.label && typeof entry.id !== 'string') throw new Error();
+    if (!entry.x && typeof entry.x !== 'number') throw new Error();
+    if (!entry.y && typeof entry.y !== 'number') throw new Error();
   }
 
   /**
@@ -114,15 +85,9 @@ export class ImportExportService{
    * @param entry is the individual edge that the method is checking
    */
   private checkEdgesHasCorrectFormat(entry): void {
-    if (!entry.id && typeof entry.id !== 'string') {
-      throw new Error();
-    }
-    if (!entry.from && typeof entry.from !== 'string') {
-      throw new Error();
-    }
-    if (!entry.to && typeof entry.to !== 'string') {
-      throw new Error();
-    }
+    if (!entry.id && typeof entry.id !== 'string') throw new Error();
+    if (!entry.from && typeof entry.from !== 'string') throw new Error();
+    if (!entry.to && typeof entry.to !== 'string') throw new Error();
   }
 
  /**
@@ -139,13 +104,9 @@ export class ImportExportService{
   * @returns a promise with a reader that resolves promise
   */
   public async upload(file: File) {
-    return new Promise((resolve, reject) => {
-      if (file.type != 'application/json') {
-        reject('The file type is not JSON');
-      }
-      if (file['Size'] > 1e5) {
-        reject('The file size is too large');
-      }
+    return new Promise ((resolve, reject) => {
+      if (file.type != 'application/json') reject('The file type is not JSON');
+      if (file['Size']> 1e5) reject('The file size is too large');
       const reader = new FileReader();
       var importedJson;
       var service = new ImportExportService;
@@ -157,8 +118,8 @@ export class ImportExportService{
         const parsedImportedJson = JSON.parse(result);
         service.checkThatImportDataIsValid(parsedImportedJson);
         resolve(parsedImportedJson);
-      };
-    });
+      }
+    })
   }
 
   /**
