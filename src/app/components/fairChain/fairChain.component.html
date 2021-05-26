@@ -4,7 +4,7 @@
   <button mat-button class="buttonsToolbarAbove" (click)= "undo()"> Undo </button>
   <button mat-button class="buttonsToolbarAbove" (click)= "redo()"> Redo </button>
   <button mat-button class="buttonsToolbarAbove" (click)="__debug__()" *ngIf="isDebugging"> Debug </button>
-  <button mat-button class="option-button" (click)= "downloadGraphAsJpeg()">Download Jpeg</button>
+  <button mat-button class="option-button" (click)= "downloadGraphAsJpeg()">Download As Jpeg</button>
 
   <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" #hiddenfileinput>
 </mat-card>
@@ -70,10 +70,12 @@
         <p class="option-label">Color</p>
         <input matInput class = "option-colorInput" type="color" [(ngModel)]="nodeEdgeColor">
       <br>
-      <button mat-button 
-        class="option-button" 
-        [class.active] = "isChangingColor()"
-        (click)="changeNodeColor(); changeEdgeColor()">Change Color</button>
+      <!-- Alternate change Node name mode -->
+      <button mat-button
+              class="option-button"
+              [class.active]="isChangingNodeLabel()"
+              (click)="changeNodeName(); changeEdgeName()">Change Name
+      </button>
       <hr>
     </div>
     <div>
@@ -81,15 +83,15 @@
 
         <mat-drawer #drawer class="drawer" mode="over" position="end">
           <mat-radio-group
-              [(ngModel)]="nodeFlag">
-              <mat-radio-button class="radio-flags" *ngFor="let emoji of emojis" [value]="emoji" (click)="drawer.close()">
-                {{emoji}}
-              </mat-radio-button>
-            </mat-radio-group>
+            [(ngModel)]="nodeFlag">
+            <mat-radio-button class="radio-flags" *ngFor="let emoji of emojis" [value]="emoji" (click)="drawer.close()">
+              {{emoji}}
+            </mat-radio-button>
+          </mat-radio-group>
         </mat-drawer>
-          <button mat-button class="option-button" (click)="drawer.toggle()">
-            Choose Flag
-          </button>      
+        <button mat-button class="option-button" (click)="drawer.toggle()">
+          Choose Flag
+        </button>
 
       <br>
       <button mat-button class="option-button" [class.active] = "isChangingFlag()" (click)= "changeFlag()">Apply Flag</button>
@@ -107,7 +109,7 @@
 
 </mat-card>
 
-<relabel-pop-up *ngIf="isRelabelPopUpVisible()" 
-  [info]='relabelPopUpInfo.rect'
-  [(label)]="relabelPopUpInfo.label"
-  (closeRelabelPopUp)="closeNodeRelabelPopUp()"></relabel-pop-up>
+<relabel-pop-up *ngIf="isRelabelPopUpVisible()"
+                [info]='relabelPopUpInfo.rect'
+                [(label)]="relabelPopUpInfo.label"
+                (closeRelabelPopUp)="closeNodeRelabelPopUp()"></relabel-pop-up>

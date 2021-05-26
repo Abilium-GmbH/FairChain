@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { DataSetNodes, DataSetEdges} from "vis-network/peer/esm/vis-network";
-import { ImportExportService } from './importExport.service';
+import {Injectable} from '@angular/core';
+import {DataSetNodes, DataSetEdges} from 'vis-network/peer/esm/vis-network';
+import {ImportExportService} from './importExport.service';
 
 @Injectable({
-    providedIn: 'root'
-  })
+  providedIn: 'root'
+})
 
 /**
  * Handles everything with the snapshots
@@ -43,6 +43,7 @@ export class UndoRedoService{
         if (this.counter < this.snapshots.length - 1) this.counter++;
         return JSON.parse(this.snapshots[this.counter]);
     }
+
 
     /**
      * Is called every time the user has changed something in the graph

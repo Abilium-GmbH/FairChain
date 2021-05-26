@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { emojis as flags } from './emojis'
+import {Injectable} from '@angular/core';
+import {emojis as flags} from './emojis';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 
 /**
@@ -11,7 +11,7 @@ import { emojis as flags } from './emojis'
  */
 export class FlagService{
 
-    public currentFlag = "";
+  public currentFlag = '';
 
     /**
      * Main method for FlagService
@@ -22,10 +22,11 @@ export class FlagService{
      * @returns the nodeFlag and nodeLabel as a string separated with an enter 
      */
     public addOrChangeFlag(nodeLabel: string, nodeFlag: string){
-        if (nodeFlag === ""){ return nodeLabel };
-        nodeLabel = this.removeFlagFromLabel(nodeLabel)
-        return nodeFlag +"\n" + nodeLabel;
+      if (nodeFlag === ""){ return nodeLabel };
+      nodeLabel = this.removeFlagFromLabel(nodeLabel)
+      return nodeFlag +"\n" + nodeLabel;
     }
+
 
     /**
      * Helper method for addOrChangeFlag
@@ -35,11 +36,11 @@ export class FlagService{
      * @returns the label without the flag
      */
     public removeFlagFromLabel(label: string){
-        if (label === undefined){ return label; }
-        if (flags.some(v => label.includes(v))){
-            label = label.slice(5);
-        }
-        return label;
+      if (label === undefined) return label;
+      if (flags.some(v => label.includes(v))){
+        label = label.slice(5);
+      }
+      return label;
     }
 
     /**
@@ -52,12 +53,12 @@ export class FlagService{
      * @returns the new label with the old flag emoji
      */
     public changeLabelWithoutChangingFlag(originalLabel: string, newLabel: string){
-        if (originalLabel === undefined){ return newLabel; }
-        if (flags.some(v => originalLabel.includes(v))){
-                newLabel = originalLabel.slice(0,5) + newLabel;
-        }
-        return newLabel;
-    }
+      if (originalLabel === undefined){ return newLabel; }
+      if (flags.some(v => originalLabel.includes(v))){
+        newLabel = originalLabel.slice(0,5) + newLabel;
+      }
+      return newLabel;
+      }
 
     /**
      * Checks if there is a flag in the param and extracts it
@@ -66,10 +67,11 @@ export class FlagService{
      * @param label is the string where we want to extract the flag emoji
      */
     public saveFlagFromLabel(label: string){
-        if (label === undefined){ this.currentFlag = ""; } 
-        else {
-            if (flags.some(v => label.includes(v))){ this.currentFlag =  label.slice(0,4); } 
-            else { this.currentFlag = ""; }  
-        }
+      if (label === undefined){ this.currentFlag = ""; } 
+      else {
+        if (flags.some(v => label.includes(v))){ this.currentFlag =  label.slice(0,4); } 
+        else { this.currentFlag = ""; }  
+      }
     }
+  
 }

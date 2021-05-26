@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { RelabelPopUpGeometryServiceService } from './relabel-pop-up-geometry-service.service';
+import {RelabelPopUpGeometryServiceService} from './relabel-pop-up-geometry-service.service';
 
 describe('RelabelPopUpGeometryServiceService', () => {
   let service: RelabelPopUpGeometryServiceService;
