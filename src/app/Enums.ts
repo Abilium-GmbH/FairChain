@@ -3,9 +3,9 @@ export enum Tools {
 }
 
 export enum ChangingNode {
-  NodeLabel, NodeGroup, None
+  NodeLabel, NodeGroup, NodeFlag, DeleteNodeFlag, None
 }
 
 export enum ChangingEdge {
-  EdgeLabel,  None
+  EdgeLabel, None
 }

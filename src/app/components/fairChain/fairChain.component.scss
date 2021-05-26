@@ -46,11 +46,10 @@
     }
   }
 
-  // Gives the network proportions and GUI
   .canvas {
     background-color: #f0fcfc;
     height: 100%;
-    width: 83%;
+    width: 80%;
     float: left;
     margin: 0px;
     padding: 0px;
@@ -67,7 +66,7 @@
 
   .toolbar-options {
     height: 100%;
-    width: 6%;
+    width: 10%;
     float: left;
     margin: 0px;
     padding: 0px;
@@ -85,7 +84,12 @@
       width: 95%;
     }
 
-    // Gives the layout of buttons
+    // Gives the correct proportions of the drop down list of group and add group text box
+    .option-groupList {
+      font-size: 11px;
+      width: 101%;
+    }
+
     .option-button {
       width: 100%;
       padding-left: 5px;
@@ -99,13 +103,18 @@
     // Gives the correct proportions of the edit color bar
     .option-colorInput {
       font-size: 16px;
-      width: 101%;
+      width: 95%;
     }
+  }
+}
 
-    // Gives the correct proportions of the drop down list of group and add group text box
-    .option-groupList {
-      font-size: 11px;
-      width: 101%;
-    }
+.drawer-container {
+  height: 100%;
+  background-color: white;
+
+  .radio-flags {
+    width: 50%;
+    display: inline-block;
+    vertical-align: top;
   }
 }

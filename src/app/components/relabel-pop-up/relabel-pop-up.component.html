@@ -4,12 +4,10 @@
     [style.width.px]='info.width' 
     [style.height.px]='info.height'>
 
-    <p #relabelTextArea style="width: 100%; height: 100%;" contenteditable="true" (input)=updateLabel()>
-        {{label}}
-    </p>
-<!--
-    <textarea #relabelTextArea (keyup)="updateLabel();" name="newNodeLabel" 
-    class='boxsizingBorder'></textarea>
--->
-
+    <textarea #relabelTextArea
+        class = "relabel-text-area"
+        [style.width.px]='info.width'
+        [style.height.px]='info.height'
+        (input)=updateLabel()
+        [(ngModel)]='label'></textarea>
 </mat-card>
