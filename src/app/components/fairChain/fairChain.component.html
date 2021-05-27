@@ -73,12 +73,10 @@
         <p class="option-label">Color</p>
         <input matInput class = "option-colorInput" type="color" [(ngModel)]="nodeEdgeColor">
       <br>
-      <!-- Alternate change Node color mode -->
-      <button mat-button
-              class="option-button"
-              [class.active]="isChangingColor()"
-              (click)="changeNodeColor(); changeEdgeColor()">Change Color
-      </button>
+      <button mat-button 
+        class="option-button" 
+        [class.active] = "isChangingColor()"
+        (click)="changeNodeColor(); changeEdgeColor()">Change Color</button>
       <hr>
     </div>
     <div>
@@ -86,15 +84,15 @@
 
         <mat-drawer #drawer class="drawer" mode="over" position="end">
           <mat-radio-group
-            [(ngModel)]="nodeFlag">
-            <mat-radio-button class="radio-flags" *ngFor="let emoji of emojis" [value]="emoji" (click)="drawer.close()">
-              {{emoji}}
-            </mat-radio-button>
-          </mat-radio-group>
+              [(ngModel)]="nodeFlag">
+              <mat-radio-button class="radio-flags" *ngFor="let emoji of emojis" [value]="emoji" (click)="drawer.close()">
+                {{emoji}}
+              </mat-radio-button>
+            </mat-radio-group>
         </mat-drawer>
-        <button mat-button class="option-button" (click)="drawer.toggle()">
-          Choose Flag
-        </button>
+          <button mat-button class="option-button" (click)="drawer.toggle()">
+            Choose Flag
+          </button>      
 
       <br>
       <button mat-button class="option-button" [class.active] = "isChangingFlag()" (click)= "changeFlag()">Apply Flag</button>
@@ -112,7 +110,7 @@
 
 </mat-card>
 
-<relabel-pop-up *ngIf="isRelabelPopUpVisible()"
-                [info]='relabelPopUpInfo.rect'
-                [(label)]="relabelPopUpInfo.label"
-                (closeRelabelPopUp)="closeNodeRelabelPopUp()"></relabel-pop-up>
+<relabel-pop-up *ngIf="isRelabelPopUpVisible()" 
+  [info]='relabelPopUpInfo.rect'
+  [(label)]="relabelPopUpInfo.label"
+  (closeRelabelPopUp)="closeNodeRelabelPopUp()"></relabel-pop-up>
