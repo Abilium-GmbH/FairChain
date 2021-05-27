@@ -11,9 +11,9 @@ export class RelabelPopUpGeometryService {
   private minWidth: number = 150;
   private minHeight: number = 90;
 
-  public getRelabelPopUpRect(rect: RectOnDOM, min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
+  public getNodeRelabelPopUpRect(rect: RectOnDOM, min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
     rect = this.blowUpRect(rect);
-    rect = this.moveRectOverNode(rect, min_x, min_y);
+    rect = this.offsetRect(rect, min_x, min_y);
     rect = this.rescaleRect(rect, min_x, min_y, max_x, max_y);
     rect = this.cropRectToFitCanvas(rect, min_x, min_y, max_x, max_y)
     rect = this.moveRectLeftToFitCanvas(rect, min_x);
@@ -22,6 +22,32 @@ export class RelabelPopUpGeometryService {
     rect = this.moveRectUpToFitCanvas(rect, max_y);
 
     return rect;
+  }
+
+  public getEdgeRelabelPopUpRect(node1_x: number, node1_y: number, node2_x: number, node2_y: number, 
+                                 min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
+    let rect = this.createRectBetweenNodes(node1_x, node1_y, node2_x, node2_y);
+    rect = this.blowUpRect(rect);
+    rect = this.offsetRect(rect, min_x, min_y);
+    rect = this.rescaleRect(rect, min_x, min_y, max_x, max_y);
+    rect = this.cropRectToFitCanvas(rect, min_x, min_y, max_x, max_y)
+    rect = this.moveRectLeftToFitCanvas(rect, min_x);
+    rect = this.moveRectRightToFitCanvas(rect, max_x);
+    rect = this.moveRectDownToFitCanvas(rect, min_y);
+    rect = this.moveRectUpToFitCanvas(rect, max_y);
+
+    return rect;
+  }
+
+  private createRectBetweenNodes(node1_x: number, node1_y: number, node2_x: number, node2_y: number): RectOnDOM {
+    const center_x = (node1_x + node2_x) / 2;
+    const center_y = (node1_y + node2_y) / 2;
+    return {
+      x: center_x - this.minWidth / 2,
+      y: center_y - this.minHeight / 2,
+      width: this.minWidth,
+      height: this.minHeight
+    };
   }
 
   private blowUpRect(rect: RectOnDOM): RectOnDOM {
@@ -47,7 +73,7 @@ export class RelabelPopUpGeometryService {
     }
   }
 
-  private moveRectOverNode(rect: RectOnDOM, min_x: number, min_y: number): RectOnDOM {
+  private offsetRect(rect: RectOnDOM, min_x: number, min_y: number): RectOnDOM {
     rect.x += min_x;
     rect.y += min_y;
     return rect;
