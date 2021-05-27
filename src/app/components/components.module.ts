@@ -11,6 +11,7 @@ import { ImportExportService } from '../importExport.service';
 import { UndoRedoService } from '../undoRedo.service';
 import { MatRadioModule } from '@angular/material/radio'; 
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
@@ -27,6 +28,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     FormsModule,
     MatRadioModule,
     MatSidenavModule,
+    MatSnackBarModule,
     MatSlideToggleModule
   ],
   exports: [

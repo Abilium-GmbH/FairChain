@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
-import { strict as assert } from 'assert';
+//import { strict as assert } from 'assert';
 import { fromEvent, Subscription } from 'rxjs';
 import { map, bufferCount, filter } from 'rxjs/operators';
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
