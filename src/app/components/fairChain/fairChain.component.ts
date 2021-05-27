@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {fromEvent, Subscription} from 'rxjs';
 import {ImportExportService} from '../../importExport.service';
 import {UndoRedoService} from 'src/app/undoRedo.service';
-import {RelabelPopUpGeometryService} from 'src/app/relabel-pop-up-geometry-service.service';
+import {PopUpGeometryService} from 'src/app/pop-up-geometry-service.service';
 import {FlagService} from '../../flag.service';
 import {strict as assert} from 'assert';
 import {Tools, ChangingEdge, ChangingNode} from '../../Enums';
@@ -97,7 +97,7 @@ export class FairChainComponent implements OnInit {
   constructor(private importExportService:ImportExportService, 
               private undoRedoService:UndoRedoService,
               private flagService:FlagService,
-              private relabelPopUpGeometryService:RelabelPopUpGeometryService) {
+              private popUpGeometryService:PopUpGeometryService) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
     this.emojis = flags;
   }
@@ -623,7 +623,7 @@ export class FairChainComponent implements OnInit {
     const max_x = this.graph.getBoundingClientRect().right;
     const max_y = this.graph.getBoundingClientRect().bottom;
 
-    return this.relabelPopUpGeometryService.getHoverOptionBoundingBox(corner1, corner2, min_x, min_y, max_x, max_y)  
+    return this.popUpGeometryService.getHoverOptionBoundingBox(corner1, corner2, min_x, min_y, max_x, max_y)  
   }
 
   private hoverOptionInfo(nodeId: IdType): HoverOptionOnDOM {
@@ -635,7 +635,7 @@ export class FairChainComponent implements OnInit {
     const max_x = this.graph.getBoundingClientRect().right;
     const max_y = this.graph.getBoundingClientRect().bottom;
 
-    return this.relabelPopUpGeometryService.getHoverOptionInfo(center, min_x, min_y, max_x, max_y);
+    return this.popUpGeometryService.getHoverOptionInfo(center, min_x, min_y, max_x, max_y);
   }
 
   private getEdgeRelabelPopUpRect(edgeId: IdType): RectOnDOM {
@@ -653,7 +653,7 @@ export class FairChainComponent implements OnInit {
     const max_x = this.graph.getBoundingClientRect().right;
     const max_y = this.graph.getBoundingClientRect().bottom;
 
-    return this.relabelPopUpGeometryService.getEdgeRelabelPopUpRect(pos1.x, pos1.y, pos2.x, pos2.y, min_x, min_y, max_x, max_y);
+    return this.popUpGeometryService.getEdgeRelabelPopUpRect(pos1.x, pos1.y, pos2.x, pos2.y, min_x, min_y, max_x, max_y);
   }
 
   moveRectUpToFitCanvas(rect: RectOnDOM, max_y: number): RectOnDOM {
@@ -676,7 +676,7 @@ export class FairChainComponent implements OnInit {
     const max_x = this.graph.getBoundingClientRect().right;
     const max_y = this.graph.getBoundingClientRect().bottom;
 
-    return this.relabelPopUpGeometryService.getNodeRelabelPopUpRect(rect, min_x, min_y, max_x, max_y);
+    return this.popUpGeometryService.getNodeRelabelPopUpRect(rect, min_x, min_y, max_x, max_y);
   }
 
   /**
