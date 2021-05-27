@@ -12,8 +12,9 @@ import { DataSet } from "vis-data/peer/esm/vis-data"
 import { emojis as flags } from '../../emojis'
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
 import { NodeRelabelInfo } from '../../interfaces/NodeRelabelInfo'
-import {originalLogo} from 'src/assets/originalLogo';
+import { originalLogo } from 'src/assets/originalLogo';
 import { toPng } from 'html-to-image';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-fairChain',
@@ -589,7 +590,7 @@ export class FairChainComponent implements OnInit {
    * Converts the HTML class networkContainer to a jpeg and
    * downloads it as Fairchain.jpeg
    */
-  downloadGraphAsJpeg(){
+  downloadGraphAsPng(){
     toPng(document.getElementById("networkContainer"))
     .then(function (dataUrl) {
       var link = document.createElement('a');
