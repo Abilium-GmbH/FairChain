@@ -193,11 +193,10 @@ export class FairChainComponent implements OnInit {
   public addChildNodeToHoveredNode() {
     const newNodeId = this.makeNewId();
     const newEdgeId = this.makeNewId();
-    this.nodes.add({id:newNodeId, label:'New'})
-    this.updateNodePositions();
-    let pos: Position = this.network.getPosition(newNodeId);
-    this.nodes.update({id:newNodeId, x:pos.x, y: pos.y});
-    this.edges.add({id:newEdgeId, from:this.hoverOptionAddChildInfo.nodeId, to:newNodeId});
+    let node: Node = this.nodes.get(this.hoverOptionAddChildInfo.nodeId)
+    node.x += 100;
+    this.nodes.add({id:newNodeId, label:'New', x: node.x, y:node.y})
+    this.edges.add({id:newEdgeId, to:this.hoverOptionAddChildInfo.nodeId, from:newNodeId});
     this.makeSnapshot();
   }
 

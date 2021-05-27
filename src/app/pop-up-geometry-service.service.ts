@@ -15,19 +15,22 @@ export class PopUpGeometryService {
   private padding: number = 40
 
   public getHoverOptionBoundingBox(corner1: Position, corner2: Position, min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
-    corner1 = {x:corner1.x + min_x, y:corner1.y + min_y};
-    corner2 = {x:corner2.x + min_x, y:corner2.y + min_y};
-
-    return {
-      x: corner1.x - this.padding,
-      y: corner1.y - this.padding,
-      width: corner2.x - corner1.x + 2 * this.padding,
-      height: corner2.y - corner1.y + 2 * this.padding};
+    let bb: RectOnDOM = {
+      x: corner1.x,
+      y: corner1.y,
+      width: corner2.x - corner1.x,
+      height: corner2.y - corner1.y
+    }
+    bb = this.offsetRect(bb, min_x, min_y);
+    bb = this.rescaleRect(bb, min_x, min_y, max_x, max_y)
+    bb = this.padRect(bb);
+    bb = this.cutRectToFitCanvas(bb, min_x, min_y, max_x, max_y);
+    return bb;
   }
 
   public getHoverOptionInfo(center: Position, min_x: number, min_y: number, max_x: number, max_y: number): HoverOptionOnDOM {
     let dx: number = -15;
-    let dy: number = -50;
+    let dy: number = -70;
 
     return {
       x: center.x + min_x + dx,
@@ -62,6 +65,23 @@ export class PopUpGeometryService {
     rect = this.moveRectUpToFitCanvas(rect, max_y);
 
     return rect;
+  }
+
+  private cutRectToFitCanvas(rect: RectOnDOM, min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
+    rect.x = Math.max(rect.x, min_x);
+    rect.y = Math.max(rect.y, min_y);
+    rect.width = Math.min(rect.width, max_x - rect.x);
+    rect.height = Math.min(rect.height, max_y - rect.y);
+    return rect
+  }
+
+  private padRect(rect: RectOnDOM): RectOnDOM {
+    return {
+      x: rect.x - this.padding,
+      y: rect.y - this.padding,
+      width: rect.width + 2 * this.padding,
+      height: rect.height + 2 * this.padding
+    };
   }
 
   private createRectBetweenNodes(node1_x: number, node1_y: number, node2_x: number, node2_y: number): RectOnDOM {

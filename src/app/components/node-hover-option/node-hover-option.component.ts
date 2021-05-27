@@ -31,6 +31,7 @@ export class NodeHoverOptionComponent implements OnInit {
 
   @Input() info: HoverOptionOnDOM;
   @Input() boundingBox: RectOnDOM;
+  @Input() img: string;
   @Output() onOptionClicked: EventEmitter<any> = new EventEmitter();
   @Output() onLeaveBoundingBox: EventEmitter<any> = new EventEmitter();
 
