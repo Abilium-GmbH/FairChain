@@ -11,6 +11,7 @@ import { ImportExportService } from '../importExport.service';
 import { UndoRedoService } from '../undoRedo.service';
 import { MatRadioModule } from '@angular/material/radio'; 
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { NodeHoverOptionComponent } from './node-hover-option/node-hover-option.component';
 
@@ -29,6 +30,7 @@ import { NodeHoverOptionComponent } from './node-hover-option/node-hover-option.
     FormsModule,
     MatRadioModule,
     MatSidenavModule,
+    MatSnackBarModule,
     MatSlideToggleModule
   ],
   exports: [

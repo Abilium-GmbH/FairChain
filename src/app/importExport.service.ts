@@ -122,6 +122,17 @@ export class ImportExportService{
     })
   }
 
+  public async uploadLogo(file: File) {
+    return new Promise ((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      
+      reader.onload = function(e) {
+        resolve(e.target.result);
+      }
+    })
+  }
+
   /**
    * This method is called from the fairchain component when the user clicks on export
    * Takes the relevant variables, converts them to JSON substrings and then adds them together

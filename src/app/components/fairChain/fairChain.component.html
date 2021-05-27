@@ -1,11 +1,13 @@
 <mat-card class="application-head">
   <button mat-button class="buttonsToolbarAbove" (click)="exportGraph()">Export</button>
-  <button mat-button class="buttonsToolbarAbove" (click)= "hiddenfileinput.click()"> Import </button>
-  <button mat-button class="buttonsToolbarAbove" (click)= "undo()"> Undo </button>
-  <button mat-button class="buttonsToolbarAbove" (click)= "redo()"> Redo </button>
-  <button mat-button class="buttonsToolbarAbove" (click)="__debug__()" *ngIf="isDebugging"> Debug </button>
-  <button mat-button class="option-button" (click)= "downloadGraphAsJpeg()">Download Jpeg</button>
+  <button mat-button class="buttonsToolbarAbove" (click)="hiddenfileinput.click()"> Import</button>
+  <button mat-button class="buttonsToolbarAbove" (click)="undo()"> Undo</button>
+  <button mat-button class="buttonsToolbarAbove" (click)="redo()"> Redo</button>
+  <button mat-button class="buttonsToolbarAbove" (click)="__debug__()" *ngIf="isDebugging"> Debug</button>
+  <button mat-button class="option-button" (click)= "downloadGraphAsPng()">Download As PNG</button>
+  <button mat-button class="buttonsToolbarAbove" (click)= "hiddenlogoinput.click()"> Import Logo</button>
 
+  <input type="file" id=fileToImport class="file-upload" accept="image/*" (change)="importLogo($event.target.files)" #hiddenlogoinput>
   <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" #hiddenfileinput>
 </mat-card>
 
@@ -41,6 +43,7 @@
         <mat-label></mat-label>
         <textarea matInput class="description" 
           [(ngModel)]="metadata" 
+          (change)="makeSnapshot()"
           placeholder="Enter Description" 
           cdkTextareaAutosize
           cdkAutosizeMinRows="1" 

@@ -14,7 +14,8 @@ import { NodeRelabelInfo } from '../../interfaces/NodeRelabelInfo';
 import { EdgeRelabelInfo } from 'src/app/interfaces/EdgeRelabelInfo';
 import { HoverOptionInfo } from 'src/app/interfaces/HoverOptionInfo';
 import { toPng } from 'html-to-image';
-import { HoverOptionOnDOM } from 'src/app/interfaces/HoverOptionOnDOM';
+import { originalLogo } from 'src/assets/originalLogo';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-fairChain',
@@ -91,12 +92,14 @@ export class FairChainComponent implements OnInit {
   public ngOnInit(): void {
     this.network = new Network(this.graph, this.data, this.options);
     this.makeSubscriptions();
+    this.openSnackBar();
   }
 
-  constructor(private importExportService:ImportExportService, 
-              private undoRedoService:UndoRedoService,
-              private flagService:FlagService,
-              private popUpGeometryService:PopUpGeometryService) {
+  constructor(private importExportService: ImportExportService,
+              private undoRedoService: UndoRedoService,
+              private flagService: FlagService,
+              private relabelPopUpGeometryService: RelabelPopUpGeometryService,
+              private snackBar: MatSnackBar) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
     this.emojis = flags;
   }
@@ -270,28 +273,30 @@ export class FairChainComponent implements OnInit {
     manipulation: {
       // Defines logic for Add Node functionality
       addNode: (data: Node, callback) => {
-        assert(this.isAddingNode(), 'The current tool should be adding a node');
-        callback(data);
-        this.network.addNodeMode();
-        this.makeSnapshot();
+        if (this.isAddingNode()) {
+          //assert(this.isAddingNode(), 'The current tool should be adding a node');
+          callback(data);
+          this.network.addNodeMode();
+          this.makeSnapshot();
+        }
       },
       // Defines logic for Add Edge functionality
       addEdge: (data: Edge, callback) => {
-        assert(this.isAddingEdge(), 'The current tool should be adding an edge');
+        //assert(this.isAddingEdge(), 'The current tool should be adding an edge');
         callback(data);
         this.network.addEdgeMode();
         this.makeSnapshot();
       },
       // Responsible for the Edit Node with currently selected option
       editNode: (nodeData: Node, callback) => {
-        assert(this.isInNodeEditMode(), 'The edge should not be edited when no option is selected');
+        //assert(this.isInNodeEditMode(), 'The node should not be edited when no option is selected');
         this.editNodeBasedOnCurrentNodeOption(nodeData);
         callback(nodeData);
         this.makeSnapshot();
       },
       // Responsible for the Edit Edge with currently selected option
       editEdge: (edgeData: Edge, callback) => {
-        assert(this.isInEdgeEditMode(), 'The edge should not be edited when no option is selected');
+       // assert(this.isInEdgeEditMode(), 'The edge should not be edited when no option is selected');
         this.editEdgeBasedOnCurrentEdgeOption(edgeData);
         callback(edgeData);
         this.makeSnapshot();
@@ -507,7 +512,39 @@ export class FairChainComponent implements OnInit {
     this.makeSnapshot();
   }
 
-  public updateData(data){
+  public async importLogo(files:FileList){
+    if (this.nodes.get("Logo") == null){
+      this.nodes.add({id: "Logo",
+      label: "",
+      image: originalLogo,
+      shape: "image",
+      x: 59,
+      y: 59});
+    }
+    var firstNode = this.nodes.get("Logo"); 
+    firstNode.image =  await this.importExportService.uploadLogo(files[0]);
+    this.nodes.update(firstNode);
+    this.makeSnapshot();
+  }
+
+  private addOriginalLogo(){
+    if (this.nodes.get("Logo") == null){
+    this.nodes.add({id: "Logo",
+    label: "",
+    image: originalLogo,
+    shape: "image",
+    x: 59,
+    y: 59});
+    this.makeSnapshot();
+    }
+  }
+
+  private openSnackBar() {
+    var snackBarRef = this.snackBar.open("Do you want to add a Logo?", "Yes, please", {duration: 7000});
+    snackBarRef.onAction().subscribe(()=> this.addOriginalLogo() );
+  }
+
+  public updateData(data) {
     this.nodes = new DataSet();
     this.nodes.add(data.nodes);
 
@@ -572,7 +609,7 @@ export class FairChainComponent implements OnInit {
     else this.changesNode = ChangingNode.DeleteNodeFlag;
   }
 
-  private makeSnapshot(){
+  public makeSnapshot(){
     this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
   }
 
@@ -681,7 +718,7 @@ export class FairChainComponent implements OnInit {
    * Converts the HTML class networkContainer to a jpeg and
    * downloads it as Fairchain.jpeg
    */
-  downloadGraphAsJpeg(){
+  downloadGraphAsPng(){
     toPng(document.getElementById("networkContainer"))
     .then(function (dataUrl) {
       var link = document.createElement('a');
