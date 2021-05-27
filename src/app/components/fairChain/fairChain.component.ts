@@ -1,6 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {fromEvent, Subscription} from 'rxjs';
-import { filter } from 'rxjs/operators';
 import {ImportExportService} from '../../importExport.service';
 import {UndoRedoService} from 'src/app/undoRedo.service';
 import {RelabelPopUpGeometryService} from 'src/app/relabel-pop-up-geometry-service.service';
@@ -11,12 +10,12 @@ import {Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges, 
 import {DataSet} from 'vis-data/peer/esm/vis-data';
 import {emojis as flags} from '../../emojis';
 import {RectOnDOM} from 'src/app/interfaces/RectOnDOM';
-import { HoverOptionOnDOM } from 'src/app/interfaces/HoverOptionOnDOM';
 import { DOMBoundingBox } from 'src/app/interfaces/DOMBoundingBox';
 import {NodeRelabelInfo} from '../../interfaces/NodeRelabelInfo';
 import { EdgeRelabelInfo } from 'src/app/interfaces/EdgeRelabelInfo';
 import { HoverOptionInfo } from 'src/app/interfaces/HoverOptionInfo';
 import { toPng } from 'html-to-image';
+import { HoverOptionOnDOM } from 'src/app/interfaces/HoverOptionOnDOM';
 
 @Component({
   selector: 'app-fairChain',
@@ -156,9 +155,7 @@ export class FairChainComponent implements OnInit {
 
   private onHoverNode(params): void {
     if (this.isAddingNode()) this.stopAddMode();
-    if (this.isHoverOptionAddNodeVisible()) return;
-    this.hoverOptionAddChildInfo.boundingBox = this.showAddChildNodeOptions(params);
-    this.hoverOptionAddChildInfo.active = true;
+    if (!this.isHoverOptionAddNodeVisible()) this.showAddChildNodeOptions(params.node);
   }
 
   public isHoverOptionAddNodeVisible() : boolean {return this.hoverOptionAddChildInfo.active;}
@@ -609,42 +606,36 @@ export class FairChainComponent implements OnInit {
     this.hoverOptionAddChildInfo.active = false;
   }
 
-  private showAddChildNodeOptions(params): DOMBoundingBox {
-    this.hoverOptionAddChildInfo.nodeId = params.node;
-    let node: Node = this.nodes.get(this.hoverOptionAddChildInfo.nodeId);
-    
-    let centerx: number = node.x;
-    let centery: number = node.y;
-    let center: Position = {x: centerx, y:centery};
-    center = this.network.canvasToDOM(center);
-    
-    //Minor offset details
-    let offsetx: number = this.graph.getBoundingClientRect().left;
-    let offsety: number = this.graph.getBoundingClientRect().top;
+  private showAddChildNodeOptions(nodeId: IdType) {
+    this.hoverOptionAddChildInfo.nodeId = nodeId;
+    this.hoverOptionAddChildInfo.addChildNodeInfo = this.hoverOptionInfo(nodeId);
+    this.hoverOptionAddChildInfo.boundingBox = this.getHoverOptionBoundingBox(nodeId);
+    this.hoverOptionAddChildInfo.active = true;
+  }
 
-    let dx: number = -15;
-    let dy: number = -50;
-
-    this.hoverOptionAddChildInfo.addChildNodeInfo = {
-      x: center.x + offsetx + dx,
-      y: center.y + offsety + dy,
-      scale: 2
-    };
-
-    let bb = this.network.getBoundingBox(this.hoverOptionAddChildInfo.nodeId);
+  private getHoverOptionBoundingBox(nodeId: IdType): DOMBoundingBox {
+    let bb = this.network.getBoundingBox(nodeId);
     let corner1 = this.network.canvasToDOM({x: bb.left, y: bb.top});
     let corner2 = this.network.canvasToDOM({x: bb.right, y: bb.bottom});
 
-    corner1 = {x:corner1.x + offsetx, y:corner1.y + offsety};
-    corner2 = {x:corner2.x + offsetx, y:corner2.y + offsety};
+    const min_x = this.graph.getBoundingClientRect().left;
+    const min_y = this.graph.getBoundingClientRect().top;
+    const max_x = this.graph.getBoundingClientRect().right;
+    const max_y = this.graph.getBoundingClientRect().bottom;
 
-    let padding: number = 40;
+    return this.relabelPopUpGeometryService.getHoverOptionBoundingBox(corner1, corner2, min_x, min_y, max_x, max_y)  
+  }
 
-    return {
-      left: corner1.x - padding,
-      right: corner2.x + padding,
-      bottom: corner1.y - padding,
-      top: corner2.y + padding};
+  private hoverOptionInfo(nodeId: IdType): HoverOptionOnDOM {
+    let center: Position = this.network.getPosition(nodeId);
+    center = this.network.canvasToDOM(center);
+
+    const min_x = this.graph.getBoundingClientRect().left;
+    const min_y = this.graph.getBoundingClientRect().top;
+    const max_x = this.graph.getBoundingClientRect().right;
+    const max_y = this.graph.getBoundingClientRect().bottom;
+
+    return this.relabelPopUpGeometryService.getHoverOptionInfo(center, min_x, min_y, max_x, max_y);
   }
 
   private getEdgeRelabelPopUpRect(edgeId: IdType): RectOnDOM {

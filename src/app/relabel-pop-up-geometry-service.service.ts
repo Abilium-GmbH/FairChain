@@ -1,15 +1,40 @@
 import { Injectable } from '@angular/core';
+import { Position } from 'vis-network/declarations/entry-esnext';
+import { DOMBoundingBox } from './interfaces/DOMBoundingBox';
+import { HoverOptionOnDOM } from './interfaces/HoverOptionOnDOM';
 import { RectOnDOM } from './interfaces/RectOnDOM';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RelabelPopUpGeometryService {
-
   constructor() { }
 
   private minWidth: number = 150;
   private minHeight: number = 90;
+  private padding: number = 40
+
+  public getHoverOptionBoundingBox(corner1: Position, corner2: Position, min_x: number, min_y: number, max_x: number, max_y: number): DOMBoundingBox {
+    corner1 = {x:corner1.x + min_x, y:corner1.y + min_y};
+    corner2 = {x:corner2.x + min_x, y:corner2.y + min_y};
+
+    return {
+      left: corner1.x - this.padding,
+      right: corner2.x + this.padding,
+      bottom: corner1.y - this.padding,
+      top: corner2.y + this.padding};
+  }
+
+  public getHoverOptionInfo(center: Position, min_x: number, min_y: number, max_x: number, max_y: number): HoverOptionOnDOM {
+    let dx: number = -15;
+    let dy: number = -50;
+
+    return {
+      x: center.x + min_x + dx,
+      y: center.y + min_y + dy,
+      scale: 2
+    };
+  }
 
   public getNodeRelabelPopUpRect(rect: RectOnDOM, min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
     rect = this.blowUpRect(rect);
