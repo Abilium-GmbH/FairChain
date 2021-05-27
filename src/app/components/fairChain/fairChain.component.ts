@@ -1,17 +1,16 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {fromEvent, Subscription} from 'rxjs';
-import {ImportExportService} from '../../importExport.service';
-import {UndoRedoService} from 'src/app/undoRedo.service';
-import {PopUpGeometryService} from 'src/app/pop-up-geometry-service.service';
-import {FlagService} from '../../flag.service';
-import {strict as assert} from 'assert';
-import {Tools, ChangingEdge, ChangingNode} from '../../Enums';
-import {Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges, Position} from 'vis-network/peer/esm/vis-network';
-import {DataSet} from 'vis-data/peer/esm/vis-data';
-import {emojis as flags} from '../../emojis';
-import {RectOnDOM} from 'src/app/interfaces/RectOnDOM';
-import { DOMBoundingBox } from 'src/app/interfaces/DOMBoundingBox';
-import {NodeRelabelInfo} from '../../interfaces/NodeRelabelInfo';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { fromEvent, Subscription } from 'rxjs';
+import { ImportExportService } from '../../importExport.service';
+import { UndoRedoService } from 'src/app/undoRedo.service';
+import { PopUpGeometryService } from 'src/app/pop-up-geometry-service.service';
+import { FlagService } from '../../flag.service';
+import { strict as assert } from 'assert';
+import { Tools, ChangingEdge, ChangingNode } from '../../Enums';
+import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges, Position } from 'vis-network/peer/esm/vis-network';
+import { DataSet } from 'vis-data/peer/esm/vis-data';
+import { emojis as flags } from '../../emojis';
+import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
+import { NodeRelabelInfo } from '../../interfaces/NodeRelabelInfo';
 import { EdgeRelabelInfo } from 'src/app/interfaces/EdgeRelabelInfo';
 import { HoverOptionInfo } from 'src/app/interfaces/HoverOptionInfo';
 import { toPng } from 'html-to-image';
@@ -613,7 +612,7 @@ export class FairChainComponent implements OnInit {
     this.hoverOptionAddChildInfo.active = true;
   }
 
-  private getHoverOptionBoundingBox(nodeId: IdType): DOMBoundingBox {
+  private getHoverOptionBoundingBox(nodeId: IdType): RectOnDOM {
     let bb = this.network.getBoundingBox(nodeId);
     let corner1 = this.network.canvasToDOM({x: bb.left, y: bb.top});
     let corner2 = this.network.canvasToDOM({x: bb.right, y: bb.bottom});

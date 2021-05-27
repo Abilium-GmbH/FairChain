@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Position } from 'vis-network/declarations/entry-esnext';
-import { DOMBoundingBox } from './interfaces/DOMBoundingBox';
 import { HoverOptionOnDOM } from './interfaces/HoverOptionOnDOM';
 import { RectOnDOM } from './interfaces/RectOnDOM';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class PopUpGeometryService {
   constructor() { }
 
@@ -14,15 +14,15 @@ export class PopUpGeometryService {
   private minHeight: number = 90;
   private padding: number = 40
 
-  public getHoverOptionBoundingBox(corner1: Position, corner2: Position, min_x: number, min_y: number, max_x: number, max_y: number): DOMBoundingBox {
+  public getHoverOptionBoundingBox(corner1: Position, corner2: Position, min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
     corner1 = {x:corner1.x + min_x, y:corner1.y + min_y};
     corner2 = {x:corner2.x + min_x, y:corner2.y + min_y};
 
     return {
-      left: corner1.x - this.padding,
-      right: corner2.x + this.padding,
-      bottom: corner1.y - this.padding,
-      top: corner2.y + this.padding};
+      x: corner1.x - this.padding,
+      y: corner1.y - this.padding,
+      width: corner2.x - corner1.x + 2 * this.padding,
+      height: corner2.y - corner1.y + 2 * this.padding};
   }
 
   public getHoverOptionInfo(center: Position, min_x: number, min_y: number, max_x: number, max_y: number): HoverOptionOnDOM {

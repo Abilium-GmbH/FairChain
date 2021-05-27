@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { HoverOptionOnDOM } from 'src/app/interfaces/HoverOptionOnDOM';
 import { fromEvent, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { DOMBoundingBox } from 'src/app/interfaces/DOMBoundingBox';
+import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
 
 @Component({
   selector: 'nodeHoverOption',
@@ -18,10 +18,10 @@ export class NodeHoverOptionComponent implements OnInit {
   ngOnInit(): void {
     this.nodeHoverSubscription = fromEvent(document, 'mousemove').pipe(
       filter((pointer: MouseEvent) => {
-        if (!(this.boundingBox.left <= pointer.clientX
-          && pointer.clientX <= this.boundingBox.right 
-          && this.boundingBox.bottom <= pointer.clientY
-          && pointer.clientY <= this.boundingBox.top))
+        if (!(this.boundingBox.x <= pointer.clientX
+          && pointer.clientX <= this.boundingBox.x + this.boundingBox.width
+          && this.boundingBox.y <= pointer.clientY
+          && pointer.clientY <= this.boundingBox.y + this.boundingBox.height))
           return true;
       })
     ).subscribe(params => {
@@ -30,7 +30,7 @@ export class NodeHoverOptionComponent implements OnInit {
   }
 
   @Input() info: HoverOptionOnDOM;
-  @Input() boundingBox: DOMBoundingBox;
+  @Input() boundingBox: RectOnDOM;
   @Output() onOptionClicked: EventEmitter<any> = new EventEmitter();
   @Output() onLeaveBoundingBox: EventEmitter<any> = new EventEmitter();
 
