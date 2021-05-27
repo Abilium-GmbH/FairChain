@@ -35,7 +35,7 @@ export class FairChainComponent implements OnInit {
   public metadata = ""
   public isMetadataVisible = false;
   
-  private relabelPopUpInfo: NodeRelabelInfo = {
+  private nodeRelabelPopUpInfo: NodeRelabelInfo = {
     nodeId: '',
     active: false,
     label: '',
@@ -289,15 +289,6 @@ export class FairChainComponent implements OnInit {
     if (this.isChangingColor()) {
       edgeData.color = this.nodeEdgeColor;
     }
-  }
-
-
-  private applyLabelInRelabelPopUpToSelectedNode() {
-    this.network.unselectAll();
-    this.network.selectNodes([this.nodeToRelableId]);
-    this.network.editNode();
-    if (this.isChangingEdgeLabel()) edgeData.label = this.nodeEdgeLabel;
-    if (this.isChangingColor()) edgeData.color = this.nodeEdgeColor;
   }
 
   /**
