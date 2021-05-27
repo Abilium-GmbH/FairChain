@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { RelabelPopUpGeometryService } from './relabel-pop-up-geometry-service.service';
+import { PopUpGeometryService } from './pop-up-geometry-service.service';
 
-describe('RelabelPopUpGeometryServiceService', () => {
-  let service: RelabelPopUpGeometryService;
+describe('PopUpGeometryServiceService', () => {
+  let service: PopUpGeometryService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(RelabelPopUpGeometryService);
+    service = TestBed.inject(PopUpGeometryService);
   });
 
   it('should be created', () => {

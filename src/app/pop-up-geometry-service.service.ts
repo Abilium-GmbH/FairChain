@@ -7,7 +7,7 @@ import { RectOnDOM } from './interfaces/RectOnDOM';
 @Injectable({
   providedIn: 'root'
 })
-export class RelabelPopUpGeometryService {
+export class PopUpGeometryService {
   constructor() { }
 
   private minWidth: number = 150;
