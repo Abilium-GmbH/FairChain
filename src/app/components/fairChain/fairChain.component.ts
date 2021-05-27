@@ -15,6 +15,7 @@ import { HoverOptionOnDOM } from 'src/app/interfaces/HoverOptionOnDOM';
 import { DOMBoundingBox } from 'src/app/interfaces/DOMBoundingBox';
 import {NodeRelabelInfo} from '../../interfaces/NodeRelabelInfo';
 import { EdgeRelabelInfo } from 'src/app/interfaces/EdgeRelabelInfo';
+import { HoverOptionInfo } from 'src/app/interfaces/HoverOptionInfo';
 import { toPng } from 'html-to-image';
 
 @Component({
@@ -51,7 +52,12 @@ export class FairChainComponent implements OnInit {
     rect: undefined
   }
 
-  public boundingBox: DOMBoundingBox;
+  public hoverOptionAddChildInfo: HoverOptionInfo = {
+    active: false,
+    nodeId: '',
+    addChildNodeInfo: undefined,
+    boundingBox: undefined
+  }
 
   public edgeToRelableId: IdType;
   public isShowingEdgeRelabelPopUp = false;
@@ -150,13 +156,12 @@ export class FairChainComponent implements OnInit {
 
   private onHoverNode(params): void {
     if (this.isAddingNode()) this.stopAddMode();
-    if (this.isAddNodeOptionVisible()) return;
-    this.boundingBox = this.showAddChildNodeOptions(params);
-    this.isShowingAddChildNodeInfo = true;
+    if (this.isHoverOptionAddNodeVisible()) return;
+    this.hoverOptionAddChildInfo.boundingBox = this.showAddChildNodeOptions(params);
+    this.hoverOptionAddChildInfo.active = true;
   }
 
-  public isAddNodeOptionVisible() : boolean {return this.isShowingAddChildNodeInfo;}
-
+  public isHoverOptionAddNodeVisible() : boolean {return this.hoverOptionAddChildInfo.active;}
   public isNodeRelabelPopUpVisible() : boolean {return this.nodeRelabelPopUpInfo.active;}
   public isEdgeRelabelPopUpVisible() : boolean {return this.edgeRelabelPopUpInfo.active; }
   public isAddingNode() : boolean {return this.currentTool === Tools.AddingNode;}
@@ -196,7 +201,7 @@ export class FairChainComponent implements OnInit {
     this.updateNodePositions();
     let pos: Position = this.network.getPosition(newNodeId);
     this.nodes.update({id:newNodeId, x:pos.x, y: pos.y});
-    this.edges.add({id:newEdgeId, from:this.hoveredNode, to:newNodeId});
+    this.edges.add({id:newEdgeId, from:this.hoverOptionAddChildInfo.nodeId, to:newNodeId});
     this.makeSnapshot();
   }
 
@@ -225,10 +230,6 @@ export class FairChainComponent implements OnInit {
   {
     this.nodes.add({ id: 3, font: { face: 'Flags' }, label: '🇦🇱 \n Wood', x: 40, y: 40 })  
   }
-
-  public hoveredNode: IdType;
-  public isShowingAddChildNodeInfo = false;
-  public addChildNodeInfo: HoverOptionOnDOM;
 
   /**
    * Initializes Node and Edge Properties
@@ -604,13 +605,13 @@ export class FairChainComponent implements OnInit {
     this.edgeRelabelPopUpInfo.active = true;
   }
 
-  cancelMouseHoveringNodeSubscription() {
-    this.isShowingAddChildNodeInfo = false;
+  public stopShowingNodeHoverOption() {
+    this.hoverOptionAddChildInfo.active = false;
   }
 
   private showAddChildNodeOptions(params): DOMBoundingBox {
-    this.hoveredNode = params.node;
-    let node: Node = this.nodes.get(this.hoveredNode);
+    this.hoverOptionAddChildInfo.nodeId = params.node;
+    let node: Node = this.nodes.get(this.hoverOptionAddChildInfo.nodeId);
     
     let centerx: number = node.x;
     let centery: number = node.y;
@@ -624,13 +625,13 @@ export class FairChainComponent implements OnInit {
     let dx: number = -15;
     let dy: number = -50;
 
-    this.addChildNodeInfo = {
+    this.hoverOptionAddChildInfo.addChildNodeInfo = {
       x: center.x + offsetx + dx,
       y: center.y + offsety + dy,
       scale: 2
     };
 
-    let bb = this.network.getBoundingBox(this.hoveredNode);
+    let bb = this.network.getBoundingBox(this.hoverOptionAddChildInfo.nodeId);
     let corner1 = this.network.canvasToDOM({x: bb.left, y: bb.top});
     let corner2 = this.network.canvasToDOM({x: bb.right, y: bb.bottom});
 
