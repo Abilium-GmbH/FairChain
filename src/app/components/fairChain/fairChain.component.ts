@@ -5,7 +5,7 @@ import {ImportExportService} from '../../importExport.service';
 import {UndoRedoService} from 'src/app/undoRedo.service';
 import {RelabelPopUpGeometryService} from 'src/app/relabel-pop-up-geometry-service.service';
 import {FlagService} from '../../flag.service';
-import {strict as assert} from 'assert';
+//import {strict as assert} from 'assert';
 import {Tools, ChangingEdge, ChangingNode} from '../../Enums';
 import {Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges} from 'vis-network/peer/esm/vis-network';
 import {DataSet} from 'vis-data/peer/esm/vis-data';
@@ -192,8 +192,8 @@ export class FairChainComponent implements OnInit {
   }
 
   private closeNodeRelabelPopUp(): void {
-    assert(this.relabelPopUpInfo.active, 'There is no pop up menu to close');
-    assert(this.relabelPopUpInfo.nodeId, 'There is no node to apply the change to');
+    //assert(this.relabelPopUpInfo.active, 'There is no pop up menu to close');
+    //assert(this.relabelPopUpInfo.nodeId, 'There is no node to apply the change to');
     this.nodes.update({
       id: this.relabelPopUpInfo.nodeId,
       label: this.flagService.addOrChangeFlag(this.relabelPopUpInfo.label, this.flagService.currentFlag)
@@ -256,28 +256,30 @@ export class FairChainComponent implements OnInit {
     manipulation: {
       // Defines logic for Add Node functionality
       addNode: (data: Node, callback) => {
-        assert(this.isAddingNode(), 'The current tool should be adding a node');
-        callback(data);
-        this.network.addNodeMode();
-        this.makeSnapshot();
+        if (this.isAddingNode()) {
+          //assert(this.isAddingNode(), 'The current tool should be adding a node');
+          callback(data);
+          this.network.addNodeMode();
+          this.makeSnapshot();
+        }
       },
       // Defines logic for Add Edge functionality
       addEdge: (data: Edge, callback) => {
-        assert(this.isAddingEdge(), 'The current tool should be adding an edge');
+        //assert(this.isAddingEdge(), 'The current tool should be adding an edge');
         callback(data);
         this.network.addEdgeMode();
         this.makeSnapshot();
       },
       // Responsible for the Edit Node with currently selected option
       editNode: (nodeData: Node, callback) => {
-        assert(this.isInNodeEditMode(), 'The edge should not be edited when no option is selected');
+        //assert(this.isInNodeEditMode(), 'The node should not be edited when no option is selected');
         this.editNodeBasedOnCurrentNodeOption(nodeData);
         callback(nodeData);
         this.makeSnapshot();
       },
       // Responsible for the Edit Edge with currently selected option
       editEdge: (edgeData: Edge, callback) => {
-        assert(this.isInEdgeEditMode(), 'The edge should not be edited when no option is selected');
+       // assert(this.isInEdgeEditMode(), 'The edge should not be edited when no option is selected');
         this.editEdgeBasedOnCurrentEdgeOption(edgeData);
         callback(edgeData);
         this.makeSnapshot();
