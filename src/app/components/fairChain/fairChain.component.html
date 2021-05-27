@@ -43,6 +43,7 @@
         <mat-label></mat-label>
         <textarea matInput class="description" 
           [(ngModel)]="metadata" 
+          (change)="makeSnapshot()"
           placeholder="Enter Description" 
           cdkTextareaAutosize
           cdkAutosizeMinRows="1" 

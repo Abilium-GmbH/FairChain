@@ -604,7 +604,7 @@ export class FairChainComponent implements OnInit {
     }
   }
 
-  private makeSnapshot(){
+  public makeSnapshot(){
     this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
   }
 
