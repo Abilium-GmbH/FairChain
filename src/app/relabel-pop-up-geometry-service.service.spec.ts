@@ -1,4 +1,4 @@
-import {TestBed} from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { RelabelPopUpGeometryService } from './relabel-pop-up-geometry-service.service';
 
