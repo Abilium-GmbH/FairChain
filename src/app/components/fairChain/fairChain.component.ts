@@ -30,8 +30,6 @@ import { toPng } from 'html-to-image';
  * It enables and disables the edit modes, when it receives a new user input.
  */
 export class FairChainComponent implements OnInit {
-
-  private nodeHoverSubscription: Subscription;
   public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
   public nodeToRelableId: IdType;
@@ -52,6 +50,8 @@ export class FairChainComponent implements OnInit {
     edgeId: '',
     rect: undefined
   }
+
+  public boundingBox: DOMBoundingBox;
 
   public edgeToRelableId: IdType;
   public isShowingEdgeRelabelPopUp = false;
@@ -151,8 +151,7 @@ export class FairChainComponent implements OnInit {
   private onHoverNode(params): void {
     if (this.isAddingNode()) this.stopAddMode();
     if (this.isAddNodeOptionVisible()) return;
-    let boundingBox: DOMBoundingBox = this.showAddChildNodeOptions(params);
-    this.makeMouseHoveringNodeSubscription(boundingBox);
+    this.boundingBox = this.showAddChildNodeOptions(params);
     this.isShowingAddChildNodeInfo = true;
   }
 
@@ -199,22 +198,6 @@ export class FairChainComponent implements OnInit {
     this.nodes.update({id:newNodeId, x:pos.x, y: pos.y});
     this.edges.add({id:newEdgeId, from:this.hoveredNode, to:newNodeId});
     this.makeSnapshot();
-  }
-
-  makeMouseHoveringNodeSubscription(boundingBox: DOMBoundingBox) {
-    this.nodeHoverSubscription = fromEvent(document, 'mousemove').pipe(
-      filter((pointer: MouseEvent) => {
-        if (!(boundingBox.left <= pointer.clientX
-          && pointer.clientX <= boundingBox.right 
-          && boundingBox.bottom <= pointer.clientY
-          && pointer.clientY <= boundingBox.top))
-          return true;
-      })
-    ).subscribe(params => {
-      this.cancelMouseHoveringNodeSubscription();
-    });
-
-    this.subscriptions.add(this.nodeHoverSubscription);
   }
 
   private makeNewId() {
@@ -622,7 +605,6 @@ export class FairChainComponent implements OnInit {
   }
 
   cancelMouseHoveringNodeSubscription() {
-    this.nodeHoverSubscription.unsubscribe();
     this.isShowingAddChildNodeInfo = false;
   }
 

@@ -119,4 +119,6 @@
 
   <nodeHoverOption *ngIf="isAddNodeOptionVisible()"
     [info]='addChildNodeInfo'
-    (onOptionClicked)='addChildNodeToHoveredNode()'></nodeHoverOption>
+    [boundingBox]='boundingBox'
+    (onOptionClicked)='addChildNodeToHoveredNode()'
+    (onLeaveBoundingBox)='cancelMouseHoveringNodeSubscription()'></nodeHoverOption>
