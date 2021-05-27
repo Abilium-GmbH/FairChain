@@ -12,11 +12,13 @@ import { UndoRedoService } from '../undoRedo.service';
 import { MatRadioModule } from '@angular/material/radio'; 
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { NodeHoverOptionComponent } from './node-hover-option/node-hover-option.component';
 
 @NgModule({
   declarations: [
     FairChainComponent,
-    RelabelPopUpComponent
+    RelabelPopUpComponent,
+    NodeHoverOptionComponent
   ],
   imports: [
     BrowserModule,

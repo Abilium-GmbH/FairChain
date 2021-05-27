@@ -1,5 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {fromEvent, Subscription} from 'rxjs';
+import { filter } from 'rxjs/operators';
 import {ImportExportService} from '../../importExport.service';
 import {UndoRedoService} from 'src/app/undoRedo.service';
 import {RelabelPopUpGeometryService} from 'src/app/relabel-pop-up-geometry-service.service';
@@ -10,6 +11,8 @@ import {Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges, 
 import {DataSet} from 'vis-data/peer/esm/vis-data';
 import {emojis as flags} from '../../emojis';
 import {RectOnDOM} from 'src/app/interfaces/RectOnDOM';
+import { HoverOptionOnDOM } from 'src/app/interfaces/HoverOptionOnDOM';
+import { DOMBoundingBox } from 'src/app/interfaces/DOMBoundingBox';
 import {NodeRelabelInfo} from '../../interfaces/NodeRelabelInfo';
 import { EdgeRelabelInfo } from 'src/app/interfaces/EdgeRelabelInfo';
 import { toPng } from 'html-to-image';
@@ -28,7 +31,8 @@ import { toPng } from 'html-to-image';
  */
 export class FairChainComponent implements OnInit {
 
-    public nodeEdgeLabel = "";
+  private nodeHoverSubscription: Subscription;
+  public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
   public nodeToRelableId: IdType;
   public isShowingRelabelPopUp = false;
@@ -121,7 +125,7 @@ export class FairChainComponent implements OnInit {
     );
     this.subscriptions.add(
       fromEvent(this.network, 'hoverNode').subscribe(params => {
-        if (this.isAddingNode()) this.stopAddMode();
+        this.onHoverNode(params)
       })
     );
     this.subscriptions.add(
@@ -143,6 +147,16 @@ export class FairChainComponent implements OnInit {
       })
     );
   }
+
+  private onHoverNode(params): void {
+    if (this.isAddingNode()) this.stopAddMode();
+    if (this.isAddNodeOptionVisible()) return;
+    let boundingBox: DOMBoundingBox = this.showAddChildNodeOptions(params);
+    this.makeMouseHoveringNodeSubscription(boundingBox);
+    this.isShowingAddChildNodeInfo = true;
+  }
+
+  public isAddNodeOptionVisible() : boolean {return this.isShowingAddChildNodeInfo;}
 
   public isNodeRelabelPopUpVisible() : boolean {return this.nodeRelabelPopUpInfo.active;}
   public isEdgeRelabelPopUpVisible() : boolean {return this.edgeRelabelPopUpInfo.active; }
@@ -176,6 +190,50 @@ export class FairChainComponent implements OnInit {
     this.edgeRelabelPopUpInfo.edgeId = undefined;
   }
 
+  public addChildNodeToHoveredNode() {
+    const newNodeId = this.makeNewId();
+    const newEdgeId = this.makeNewId();
+    this.nodes.add({id:newNodeId, label:'New'})
+    this.updateNodePositions();
+    let pos: Position = this.network.getPosition(newNodeId);
+    this.nodes.update({id:newNodeId, x:pos.x, y: pos.y});
+    this.edges.add({id:newEdgeId, from:this.hoveredNode, to:newNodeId});
+    this.makeSnapshot();
+  }
+
+  makeMouseHoveringNodeSubscription(boundingBox: DOMBoundingBox) {
+    this.nodeHoverSubscription = fromEvent(document, 'mousemove').pipe(
+      filter((pointer: MouseEvent) => {
+        if (!(boundingBox.left <= pointer.clientX
+          && pointer.clientX <= boundingBox.right 
+          && boundingBox.bottom <= pointer.clientY
+          && pointer.clientY <= boundingBox.top))
+          return true;
+      })
+    ).subscribe(params => {
+      this.cancelMouseHoveringNodeSubscription();
+    });
+
+    this.subscriptions.add(this.nodeHoverSubscription);
+  }
+
+  private makeNewId() {
+    return this.genHexString(8) + '-' +
+      this.genHexString(4) + '-' +
+      this.genHexString(4) + '-' +
+      this.genHexString(4) + '-' +
+      this.genHexString(12);
+  }
+
+  private genHexString(len) {
+    const hex = '0123456789abcdef';
+    let output = '';
+    for (let i = 0; i < len; ++i) {
+        output += hex.charAt(Math.floor(Math.random() * hex.length));
+    }
+    return output;
+  }
+
   /**
    * A handy debug buttom for any
    */ 
@@ -184,6 +242,10 @@ export class FairChainComponent implements OnInit {
   {
     this.nodes.add({ id: 3, font: { face: 'Flags' }, label: '🇦🇱 \n Wood', x: 40, y: 40 })  
   }
+
+  public hoveredNode: IdType;
+  public isShowingAddChildNodeInfo = false;
+  public addChildNodeInfo: HoverOptionOnDOM;
 
   /**
    * Initializes Node and Edge Properties
@@ -557,6 +619,49 @@ export class FairChainComponent implements OnInit {
     this.edgeRelabelPopUpInfo.rect   = this.getEdgeRelabelPopUpRect(edgeId);
     this.edgeRelabelPopUpInfo.label  = this.edges.get(edgeId).label;
     this.edgeRelabelPopUpInfo.active = true;
+  }
+
+  cancelMouseHoveringNodeSubscription() {
+    this.nodeHoverSubscription.unsubscribe();
+    this.isShowingAddChildNodeInfo = false;
+  }
+
+  private showAddChildNodeOptions(params): DOMBoundingBox {
+    this.hoveredNode = params.node;
+    let node: Node = this.nodes.get(this.hoveredNode);
+    
+    let centerx: number = node.x;
+    let centery: number = node.y;
+    let center: Position = {x: centerx, y:centery};
+    center = this.network.canvasToDOM(center);
+    
+    //Minor offset details
+    let offsetx: number = this.graph.getBoundingClientRect().left;
+    let offsety: number = this.graph.getBoundingClientRect().top;
+
+    let dx: number = -15;
+    let dy: number = -50;
+
+    this.addChildNodeInfo = {
+      x: center.x + offsetx + dx,
+      y: center.y + offsety + dy,
+      scale: 2
+    };
+
+    let bb = this.network.getBoundingBox(this.hoveredNode);
+    let corner1 = this.network.canvasToDOM({x: bb.left, y: bb.top});
+    let corner2 = this.network.canvasToDOM({x: bb.right, y: bb.bottom});
+
+    corner1 = {x:corner1.x + offsetx, y:corner1.y + offsety};
+    corner2 = {x:corner2.x + offsetx, y:corner2.y + offsety};
+
+    let padding: number = 40;
+
+    return {
+      left: corner1.x - padding,
+      right: corner2.x + padding,
+      bottom: corner1.y - padding,
+      top: corner2.y + padding};
   }
 
   private getEdgeRelabelPopUpRect(edgeId: IdType): RectOnDOM {
