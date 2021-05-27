@@ -87,10 +87,6 @@
       <button mat-button class="option-button" [class.active] = "isChangingFlag()" (click)= "changeFlag()">Apply Flag</button>
       <button mat-button class="option-button" [class.active] = "isDeletingFlag()" (click)= "deleteFlag()">Delete Flag</button>
       <hr>
-      <p class="option-label-metadata">Show Metadata</p>
-      <div class="option-toggle" >
-        <mat-slide-toggle [(ngModel)]="isMetadataVisible" color="primary"></mat-slide-toggle>
-      </div>
       <div>
         <div>
           <!-- ToDo: comment -->
@@ -122,6 +118,11 @@
               class="option-button"
               (click)="addGroup()">add group
       </button>
+      <hr>
+      <p class="option-label-metadata">Show Metadata</p>
+      <div class="option-toggle" >
+        <mat-slide-toggle [(ngModel)]="isMetadataVisible" color="primary"></mat-slide-toggle>
+      </div>
       <hr>
     </div>
     </mat-drawer-content>
