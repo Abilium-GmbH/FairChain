@@ -69,17 +69,6 @@
       (click)="changeNodeName(); changeEdgeName()">Change Name</button>
     <hr>
     <div>
-      <!-- Implements te color toolbar and button to change node/edge colors -->
-        <p class="option-label">Color</p>
-        <input matInput class = "option-colorInput" type="color" [(ngModel)]="nodeEdgeColor">
-      <br>
-      <button mat-button 
-        class="option-button" 
-        [class.active] = "isChangingColor()"
-        (click)="changeNodeColor(); changeEdgeColor()">Change Color</button>
-      <hr>
-    </div>
-    <div>
       <p class="option-label">Flag</p>
 
         <mat-drawer #drawer class="drawer" mode="over" position="end">

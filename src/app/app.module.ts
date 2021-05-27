@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { ComponentsModule } from './components/components.module';
 import { AppRoutingModule } from './app-routing.module';
@@ -30,7 +29,6 @@ import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
     MatCardModule,
     MatButtonModule,
     MatInputModule,
-    NgbModule,
     FormsModule,
     MatSnackBarModule
   ],

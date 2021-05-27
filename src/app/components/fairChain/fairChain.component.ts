@@ -152,10 +152,10 @@ export class FairChainComponent implements OnInit {
     );
   }
 
-  public isRelabelPopUpVisible(): boolean {
-
-    return this.relabelPopUpInfo.active;
-  }
+  public isNodeRelabelPopUpVisible() : boolean {return this.nodeRelabelPopUpInfo.active;}
+  public isEdgeRelabelPopUpVisible() : boolean {return this.edgeRelabelPopUpInfo.active; }
+  private stopAddMode() : void {this.network.disableEditMode(); }
+  private enableAddEdgeMode() : void {this.network.addEdgeMode(); }
 
   public isAddingNode(): boolean {
     return this.currentTool === Tools.AddingNode;
@@ -594,7 +594,7 @@ export class FairChainComponent implements OnInit {
     this.makeSubscriptions();
   }
 
-  private makeSnapshot() {
+  public makeSnapshot() {
     this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
   }
 
