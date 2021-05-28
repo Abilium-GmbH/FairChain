@@ -201,7 +201,13 @@ export class FairChainComponent implements OnInit {
       shape: 'box',
       physics: true,
       font: { face: 'Flags', size: 30},
-      labelHighlightBold: false
+      labelHighlightBold: false,
+      margin: { 
+        top: 10, 
+        bottom: 10,
+        left: 10,
+        right: 10
+    }
     },
     edges: {
       color: {
