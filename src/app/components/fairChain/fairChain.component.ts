@@ -4,7 +4,6 @@ import {ImportExportService} from '../../importExport.service';
 import {UndoRedoService} from 'src/app/undoRedo.service';
 import {RelabelPopUpGeometryService} from 'src/app/relabel-pop-up-geometry-service.service';
 import {FlagService} from '../../flag.service';
-//import {strict as assert} from 'assert';
 import {Tools, ChangingEdge, ChangingNode} from '../../Enums';
 import {Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges, Position} from 'vis-network/peer/esm/vis-network';
 import {DataSet} from 'vis-data/peer/esm/vis-data';
@@ -238,8 +237,8 @@ export class FairChainComponent implements OnInit {
   }
 
   private closeNodeRelabelPopUp(): void {
-    //assert(this.nodeRelabelPopUpInfo.active, 'There is no pop up menu to close');
-    //assert(this.nodeRelabelPopUpInfo.nodeId, 'There is no node to apply the change to'); 
+    console.assert(this.nodeRelabelPopUpInfo.active, 'There is no pop up menu to close');
+    console.assert(this.nodeRelabelPopUpInfo.nodeId=='', 'There is no node to apply the change to'); 
     this.nodes.update({id: this.nodeRelabelPopUpInfo.nodeId, label: this.flagService.addOrChangeFlag(this.nodeRelabelPopUpInfo.label, this.flagService.currentFlag)});
     this.nodeRelabelPopUpInfo.active = false;
     this.nodeRelabelPopUpInfo.nodeId = '';
@@ -247,8 +246,8 @@ export class FairChainComponent implements OnInit {
   }
 
   private closeEdgeRelabelPopUp() : void {
-    //assert(this.edgeRelabelPopUpInfo.active, 'There is no pop up menu to close');
-    //assert(this.edgeRelabelPopUpInfo.edgeId, 'There is no edge to apply the change to'); 
+    console.assert(this.edgeRelabelPopUpInfo.active, 'There is no pop up menu to close');
+    console.assert(this.edgeRelabelPopUpInfo.edgeId=='', 'There is no edge to apply the change to'); 
     this.edges.update({id:this.edgeRelabelPopUpInfo.edgeId, label: this.edgeRelabelPopUpInfo.label});
     this.edgeRelabelPopUpInfo.active = false;
     this.edgeRelabelPopUpInfo.edgeId = undefined;
@@ -309,7 +308,7 @@ export class FairChainComponent implements OnInit {
       // Defines logic for Add Node functionality
       addNode: (data: Node, callback) => {
         if (this.isAddingNode()) {
-          //assert(this.isAddingNode(), 'The current tool should be adding a node');
+          console.assert(this.isAddingNode(), 'The current tool should be adding a node');
           callback(data);
           this.network.addNodeMode();
           this.makeSnapshot();
@@ -317,21 +316,21 @@ export class FairChainComponent implements OnInit {
       },
       // Defines logic for Add Edge functionality
       addEdge: (data: Edge, callback) => {
-        //assert(this.isAddingEdge(), 'The current tool should be adding an edge');
+        console.assert(this.isAddingEdge(), 'The current tool should be adding an edge');
         callback(data);
         this.network.addEdgeMode();
         this.makeSnapshot();
       },
       // Responsible for the Edit Node with currently selected option
       editNode: (nodeData: Node, callback) => {
-        //assert(this.isInNodeEditMode(), 'The node should not be edited when no option is selected');
+        console.assert(this.isInNodeEditMode(), 'The node should not be edited when no option is selected');
         this.editNodeBasedOnCurrentNodeOption(nodeData);
         callback(nodeData);
         this.makeSnapshot();
       },
       // Responsible for the Edit Edge with currently selected option
       editEdge: (edgeData: Edge, callback) => {
-       // assert(this.isInEdgeEditMode(), 'The edge should not be edited when no option is selected');
+        console.assert(this.isInEdgeEditMode(), 'The edge should not be edited when no option is selected');
         this.editEdgeBasedOnCurrentEdgeOption(edgeData);
         callback(edgeData);
         this.makeSnapshot();
