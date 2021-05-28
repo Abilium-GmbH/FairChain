@@ -4,7 +4,7 @@ import {ImportExportService} from '../../importExport.service';
 import {UndoRedoService} from 'src/app/undoRedo.service';
 import {RelabelPopUpGeometryService} from 'src/app/relabel-pop-up-geometry-service.service';
 import {FlagService} from '../../flag.service';
-import {strict as assert} from 'assert';
+//import {strict as assert} from 'assert';
 import {Tools, ChangingEdge, ChangingNode} from '../../Enums';
 import {Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges, Position} from 'vis-network/peer/esm/vis-network';
 import {DataSet} from 'vis-data/peer/esm/vis-data';
@@ -238,8 +238,8 @@ export class FairChainComponent implements OnInit {
   }
 
   private closeNodeRelabelPopUp(): void {
-    assert(this.nodeRelabelPopUpInfo.active, 'There is no pop up menu to close');
-    assert(this.nodeRelabelPopUpInfo.nodeId, 'There is no node to apply the change to'); 
+    //assert(this.nodeRelabelPopUpInfo.active, 'There is no pop up menu to close');
+    //assert(this.nodeRelabelPopUpInfo.nodeId, 'There is no node to apply the change to'); 
     this.nodes.update({id: this.nodeRelabelPopUpInfo.nodeId, label: this.flagService.addOrChangeFlag(this.nodeRelabelPopUpInfo.label, this.flagService.currentFlag)});
     this.nodeRelabelPopUpInfo.active = false;
     this.nodeRelabelPopUpInfo.nodeId = '';
@@ -247,8 +247,8 @@ export class FairChainComponent implements OnInit {
   }
 
   private closeEdgeRelabelPopUp() : void {
-    assert(this.edgeRelabelPopUpInfo.active, 'There is no pop up menu to close');
-    assert(this.edgeRelabelPopUpInfo.edgeId, 'There is no edge to apply the change to'); 
+    //assert(this.edgeRelabelPopUpInfo.active, 'There is no pop up menu to close');
+    //assert(this.edgeRelabelPopUpInfo.edgeId, 'There is no edge to apply the change to'); 
     this.edges.update({id:this.edgeRelabelPopUpInfo.edgeId, label: this.edgeRelabelPopUpInfo.label});
     this.edgeRelabelPopUpInfo.active = false;
     this.edgeRelabelPopUpInfo.edgeId = undefined;
