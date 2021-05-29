@@ -9,8 +9,10 @@ import { EditorPage } from './pages/editor/editor.page';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
-//import { RelabelPopUpComponent } from './components/relabel-pop-up/relabel-pop-up.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatSelectModule} from '@angular/material/select';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+
 
 @NgModule({
   declarations: [
@@ -18,6 +20,8 @@ import { FormsModule } from '@angular/forms';
     EditorPage
   ],
   imports: [
+    BrowserModule,BrowserAnimationsModule, FormsModule, ReactiveFormsModule, MatSelectModule,
+
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
@@ -26,6 +30,7 @@ import { FormsModule } from '@angular/forms';
     MatButtonModule,
     MatInputModule,
     FormsModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]
