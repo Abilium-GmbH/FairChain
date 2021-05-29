@@ -7,6 +7,8 @@ import {FlagService} from '../../flag.service';
 import {Tools, ChangingEdge, ChangingNode} from '../../Enums';
 import {Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges, Position} from 'vis-network/peer/esm/vis-network';
 import {DataSet} from 'vis-data/peer/esm/vis-data';
+import {group, GroupsService} from 'src/app/groups.service';
+import {CustomSnackbarService} from 'src/app/custom-snackbar.service';
 import {emojis as flags} from '../../emojis';
 import {RectOnDOM} from 'src/app/interfaces/RectOnDOM';
 import {NodeRelabelInfo} from '../../interfaces/NodeRelabelInfo';
@@ -90,8 +92,10 @@ export class FairChainComponent implements OnInit {
   constructor(private importExportService: ImportExportService,
               private undoRedoService: UndoRedoService,
               private flagService: FlagService,
+              private groupsServices: GroupsService,
+              private snackBar: CustomSnackbarService,
               private relabelPopUpGeometryService: RelabelPopUpGeometryService,
-              private snackBar: MatSnackBar) {
+              private matSnackBar: MatSnackBar) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
     this.emojis = flags;
   }
@@ -149,17 +153,7 @@ export class FairChainComponent implements OnInit {
 
   public isNodeRelabelPopUpVisible() : boolean {return this.nodeRelabelPopUpInfo.active;}
   public isEdgeRelabelPopUpVisible() : boolean {return this.edgeRelabelPopUpInfo.active; }
-  public isAddingNode() : boolean {return this.currentTool === Tools.AddingNode;}
-  public isAddingEdge() : boolean {return this.currentTool === Tools.AddingEdge;}
-  public isChangingNodeLabel() : boolean {return this.changesNode === ChangingNode.NodeLabel;}
-  public isChangingEdgeLabel() : boolean {return this.changesEdge === ChangingEdge.EdgeLabel;}
-  public isChangingColor() : boolean {return this.changesNode === ChangingNode.NodeColor;}
-  public isChangingFlag() : boolean {return this.changesNode === ChangingNode.NodeFlag;}
-  public isDeletingFlag() : boolean {return this.changesNode === ChangingNode.DeleteNodeFlag;}
-  public isInNodeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
-  public isInEdgeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
   private stopAddMode() : void {this.network.disableEditMode(); }
-  private enableAddNodeMode() : void {this.network.addNodeMode(); }
   private enableAddEdgeMode() : void {this.network.addEdgeMode(); }
   private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
   private makeToolIdle() : void {this.currentTool = Tools.Idle;}
@@ -171,6 +165,7 @@ export class FairChainComponent implements OnInit {
     this.nodeRelabelPopUpInfo.nodeId = '';
     this.makeSnapshot();
   }
+
   private closeEdgeRelabelPopUp() : void {
     console.assert(this.edgeRelabelPopUpInfo.active, 'There is no pop up menu to close');
     console.assert(this.edgeRelabelPopUpInfo.edgeId !== '', 'There is no edge to apply the change to'); 
@@ -226,6 +221,7 @@ export class FairChainComponent implements OnInit {
       maxVelocity: 10,
       minVelocity: 10,
     },
+    groups: this.nodeGroups,
     interaction: {
       hover:true
     },
@@ -260,9 +256,6 @@ export class FairChainComponent implements OnInit {
         callback(edgeData);
         this.makeSnapshot();
       },
-    },
-    groups: {
-      myGroup: {color:{background:'red'}, borderWidth:3}
     }
   };
 
@@ -272,9 +265,15 @@ export class FairChainComponent implements OnInit {
    * @param nodeData is needed to know which node is being edited
    */
   private editNodeBasedOnCurrentNodeOption(nodeData: Node) {
-    if (this.isChangingColor()) nodeData.color = this.nodeEdgeColor;
-    if (this.isDeletingFlag()) nodeData.label = this.flagService.removeFlagFromLabel(nodeData.label);
-    if (this.isChangingFlag()) nodeData.label = this.flagService.addOrChangeFlag(nodeData.label, this.nodeFlag);
+    if (this.changesNode === ChangingNode.NodeGroup) {
+      this.updateNodeGroup(nodeData);
+    }
+    if (this.isDeletingFlag()) {
+      nodeData.label = this.flagService.removeFlagFromLabel(nodeData.label);
+    }
+    if (this.isChangingFlag()) {
+      nodeData.label = this.flagService.addOrChangeFlag(nodeData.label, this.nodeFlag);
+    }
     if (this.isChangingNodeLabel()) {
       this.flagService.saveFlagFromLabel(nodeData.label);
       this.nodeEdgeLabel = this.flagService.removeFlagFromLabel(this.nodeEdgeLabel);
@@ -291,9 +290,6 @@ export class FairChainComponent implements OnInit {
     if (this.isChangingEdgeLabel()) {
       edgeData.label = this.nodeEdgeLabel;
     }
-    if (this.isChangingColor()) {
-      edgeData.color = this.nodeEdgeColor;
-    }
   }
 
   /**
@@ -301,6 +297,7 @@ export class FairChainComponent implements OnInit {
    * on or off if the button is pressed
    */
   public addNodeInNetwork() {
+
     this.stopEditMode();
     if (this.isAddingNode()) {
       this.currentTool = Tools.Idle;
@@ -499,7 +496,7 @@ export class FairChainComponent implements OnInit {
   }
 
   private openSnackBar() {
-    var snackBarRef = this.snackBar.open("Do you want to add a Logo?", "Yes, please", {duration: 7000});
+    var snackBarRef = this.matSnackBar.open("Do you want to add a Logo?", "Yes, please", {duration: 7000});
     snackBarRef.onAction().subscribe(()=> this.addOriginalLogo() );
   }
 
@@ -517,6 +514,35 @@ export class FairChainComponent implements OnInit {
     this.makeSubscriptions();
   }
 
+  public makeSnapshot() {
+    this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
+  }
+
+  public undo() {
+    this.updateData(this.undoRedoService.getPredecessorSnapshot());
+  }
+
+  public redo() {
+    this.updateData(this.undoRedoService.getSuccessorSnapshot());
+  }
+
+  public changeNodeGroup() {
+    this.makeToolIdle();
+    if (this.isChangingGroup()) {
+      this.changesNode = ChangingNode.None;
+      this.network.disableEditMode();
+    } else {
+      this.changesNode = ChangingNode.NodeGroup;
+    }
+  }
+
+  public updateNodeGroup(node: Node) {
+    node.group = this.groupsServices.findVisJsName(this.selectedGroup);
+    if (this.groupsServices.findVisJsName(this.selectedGroup) != 'none') {
+      eval('node.color = this.options.groups.' + this.groupsServices.findVisJsName(this.selectedGroup) + '.color');
+    }
+  }
+
   private updateNodePositions() {
     this.nodes.getIds().forEach((id: IdType) => {
       const pos: Position = this.network.getPosition(id);
@@ -524,27 +550,20 @@ export class FairChainComponent implements OnInit {
     })
   }
 
-  /**
-   * Responsible to switch the node color functionality
-   * on or off if the button is pressed.
-   */
-  public changeNodeColor(){
-    this.network.disableEditMode();
-    this.makeToolIdle();
-    if (this.isChangingColor()) this.changesNode = ChangingNode.None;
-    else this.changesNode = ChangingNode.NodeColor;
-  }
 
-  /**
-   * Responsible to switch the edge color functionality
-   * on or off if the button is pressed.
-   */
-  public changeEdgeColor(){
-    this.network.disableEditMode();
-    this.makeToolIdle();
-    if (this.isChangingColor()) this.changesEdge = ChangingEdge.None;
-    else this.changesEdge = ChangingEdge.EdgeColor;
-  }
+  // ToDo: comment
+  public addGroup() {
+
+    if (this.groupsServices.checkGroupName(this.nameOfNewGroup)) {
+      this.snackBar.open('Group name already exists');
+    } else {
+      this.groupsServices.addGroup(this.nameOfNewGroup, this.nodeGroupColor);
+      var temp = this.groupsServices.getGroups();
+      this.options.groups = temp;
+      this.network.setOptions(this.options);
+      this.listOfGroups = this.groupsServices.getGroupsName();
+    }
+  };
 
   /**
    * Responsible to switch the change flag of a node functionality
@@ -567,17 +586,23 @@ export class FairChainComponent implements OnInit {
     if (this.isDeletingFlag()) this.changesNode = ChangingNode.None;
     else this.changesNode = ChangingNode.DeleteNodeFlag;
   }
-
-  public makeSnapshot(){
-    this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
-  }
-
-  public undo(){
-    this.updateData(this.undoRedoService.getPredecessorSnapshot())
-  }
-
-  public redo(){
-    this.updateData(this.undoRedoService.getSuccessorSnapshot())
+  // ToDo: comment
+  public changeNodeGroupColor() {
+    var selectedGroup = this.groupsServices.findVisJsName(this.selectedGroup);
+    var loopActivated = false;
+    eval('this.options.groups.' + selectedGroup + '.color = ' + '\'' + this.nodeGroupColor + '\'');
+    this.network.setOptions(this.options);
+    this.nodes.forEach(node => {
+      if (node.group == selectedGroup) {
+        loopActivated = true;
+        node.color = this.nodeGroupColor;
+        this.network.updateClusteredNode(node.id, {group: selectedGroup});
+      }
+    });
+    if (loopActivated) {
+      this.makeSnapshot();
+    }
+    this.network.disableEditMode();
   }
 
   private showRelabelPopUp(nodeId: IdType) {
@@ -633,7 +658,6 @@ export class FairChainComponent implements OnInit {
     const min_y = this.graph.getBoundingClientRect().top;
     const max_x = this.graph.getBoundingClientRect().right;
     const max_y = this.graph.getBoundingClientRect().bottom;
-
     return this.relabelPopUpGeometryService.getNodeRelabelPopUpRect(rect, min_x, min_y, max_x, max_y);
   }
 
@@ -651,8 +675,19 @@ export class FairChainComponent implements OnInit {
     });
   }
 
-  public getChangesNode(){return this.changesNode}
-  public getChangesEdge(){return this.changesEdge}
-  public getCurrentTool(){return this.currentTool}
-  public getNetwork(){return this.network}
+  public getChangesNode() {
+    return this.changesNode;
+  }
+
+  public getChangesEdge() {
+    return this.changesEdge;
+  }
+
+  public getCurrentTool() {
+    return this.currentTool;
+  }
+
+  public getNetwork() {
+    return this.network;
+  }
 }

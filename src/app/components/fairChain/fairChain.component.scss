@@ -15,6 +15,33 @@
     }
 }
 
+    .tool.active {
+      background-color: #00c3ff;
+    }
+    
+  .canvas {
+    background-color: #f0fcfc;
+    height: 100%;
+    width: 80%;
+    float: left;
+    margin: 0px;
+    padding: 0px;
+
+    // Initializes the interaction area properties
+    .graph {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .toolbar-options {
+    height: 100%;
+    width: 10%;
+    float: left;
+  }
 .application-body {
     height: 94%;
     width: 100%;
@@ -43,6 +70,25 @@
         .tool.active {
             background-color: #00c3ff;
         }
+    }
+
+    // Gives the layout of the text Area of Label
+    .option-textArea {
+      font-size: 16px;
+      height: 50px;
+      width: 95%;
+    }
+
+    // Gives the correct proportions of the drop down list of group and add group text box
+    .option-groupList {
+      font-size: 11px;
+      width: 101%;
+    }
+
+    .option-button {
+      width: 100%;
+      padding-left: 5px;
+      background-color: #ffffff;
     }
 
     ::ng-deep .mat-form-field-underline {
