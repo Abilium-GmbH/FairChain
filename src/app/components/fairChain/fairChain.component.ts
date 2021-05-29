@@ -4,7 +4,7 @@ import { ImportExportService } from '../../importExport.service';
 import { UndoRedoService } from 'src/app/undoRedo.service';
 import { PopUpGeometryService } from 'src/app/pop-up-geometry-service.service';
 import { FlagService } from '../../flag.service';
-import { strict as assert } from 'assert';
+//import { strict as assert } from 'assert';
 import { Tools, ChangingEdge, ChangingNode } from '../../Enums';
 import { Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges, Position } from 'vis-network/peer/esm/vis-network';
 import { DataSet } from 'vis-data/peer/esm/vis-data';
@@ -16,6 +16,7 @@ import { HoverOptionInfo } from 'src/app/interfaces/HoverOptionInfo';
 import { toPng } from 'html-to-image';
 import { originalLogo } from 'src/assets/originalLogo';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { HoverOptionOnDOM } from './../../interfaces/HoverOptionOnDOM'
 
 @Component({
   selector: 'app-fairChain',
@@ -98,7 +99,7 @@ export class FairChainComponent implements OnInit {
   constructor(private importExportService: ImportExportService,
               private undoRedoService: UndoRedoService,
               private flagService: FlagService,
-              private relabelPopUpGeometryService: RelabelPopUpGeometryService,
+              private popUpGeometryService: PopUpGeometryService,
               private snackBar: MatSnackBar) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
     this.emojis = flags;
@@ -178,16 +179,16 @@ export class FairChainComponent implements OnInit {
   private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
   private makeToolIdle() : void {this.currentTool = Tools.Idle;}
   private closeNodeRelabelPopUp() : void {
-    assert(this.nodeRelabelPopUpInfo.active, 'There is no pop up menu to close');
-    assert(this.nodeRelabelPopUpInfo.nodeId, 'There is no node to apply the change to'); 
+    //assert(this.nodeRelabelPopUpInfo.active, 'There is no pop up menu to close');
+    //assert(this.nodeRelabelPopUpInfo.nodeId, 'There is no node to apply the change to'); 
     this.nodes.update({id: this.nodeRelabelPopUpInfo.nodeId, label: this.flagService.addOrChangeFlag(this.nodeRelabelPopUpInfo.label, this.flagService.currentFlag)});
     this.nodeRelabelPopUpInfo.active = false;
     this.nodeRelabelPopUpInfo.nodeId = '';
     this.makeSnapshot();
   }
   private closeEdgeRelabelPopUp() : void {
-    assert(this.edgeRelabelPopUpInfo.active, 'There is no pop up menu to close');
-    assert(this.edgeRelabelPopUpInfo.edgeId, 'There is no edge to apply the change to'); 
+    //assert(this.edgeRelabelPopUpInfo.active, 'There is no pop up menu to close');
+    //assert(this.edgeRelabelPopUpInfo.edgeId, 'There is no edge to apply the change to'); 
     this.edges.update({id:this.edgeRelabelPopUpInfo.edgeId, label: this.edgeRelabelPopUpInfo.label});
     this.edgeRelabelPopUpInfo.active = false;
     this.edgeRelabelPopUpInfo.edgeId = undefined;
