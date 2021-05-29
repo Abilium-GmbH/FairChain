@@ -69,17 +69,6 @@
       (click)="changeNodeName(); changeEdgeName()">Change Name</button>
     <hr>
     <div>
-      <!-- Implements te color toolbar and button to change node/edge colors -->
-        <p class="option-label">Color</p>
-        <input matInput class = "option-colorInput" type="color" [(ngModel)]="nodeEdgeColor">
-      <br>
-      <button mat-button 
-        class="option-button" 
-        [class.active] = "isChangingColor()"
-        (click)="changeNodeColor(); changeEdgeColor()">Change Color</button>
-      <hr>
-    </div>
-    <div>
       <p class="option-label">Flag</p>
 
         <mat-drawer #drawer class="drawer" mode="over" position="end">
@@ -98,18 +87,49 @@
       <button mat-button class="option-button" [class.active] = "isChangingFlag()" (click)= "changeFlag()">Apply Flag</button>
       <button mat-button class="option-button" [class.active] = "isDeletingFlag()" (click)= "deleteFlag()">Delete Flag</button>
       <hr>
+      <div>
+        <div>
+          <!-- ToDo: comment -->
+          <p class="option-label">Groups</p>
+          <select class="option-groupList" (change)="change($event.target.value)">
+            <option *ngFor="let nameOfGroup of listOfGroups"
+                    [value]="nameOfGroup">{{nameOfGroup}}</option>
+          </select>
+        </div>
+        <button mat-button
+                class="option-button"
+                [class.active]="isChangingGroup()"
+                (click)="changeNodeGroup()">Change Group
+        </button>
+        <hr>
+        <!-- Implements the color toolbar and button to change node/edge colors -->
+        <p class="option-label">group's color</p>
+        <input matInput class="option-colorInput" type="color" [(ngModel)]="nodeGroupColor">
+        <br>
+        <button mat-button
+                class="option-button"
+                (click)="changeNodeGroupColor()">Change
+        </button>
+        <hr>
+      </div>
+      <!-- ToDo: comment -->
+      <input matInput class="option-groupList" type="text" [(ngModel)]="nameOfNewGroup">
+      <button mat-button
+              class="option-button"
+              (click)="addGroup()">add group
+      </button>
+      <hr>
       <p class="option-label-metadata">Show Metadata</p>
       <div class="option-toggle" >
         <mat-slide-toggle [(ngModel)]="isMetadataVisible" color="primary"></mat-slide-toggle>
       </div>
       <hr>
     </div>
-  </mat-drawer-content>
-  </mat-drawer-container>  
+    </mat-drawer-content>
+    </mat-drawer-container>
   </mat-card>
 
 </mat-card>
-
 <relabel-pop-up *ngIf="isNodeRelabelPopUpVisible()" 
   [info]='nodeRelabelPopUpInfo.rect'
   [(label)]="nodeRelabelPopUpInfo.label"
@@ -119,3 +139,4 @@
   [info]='edgeRelabelPopUpInfo.rect'
   [(label)]="edgeRelabelPopUpInfo.label"
   (closeRelabelPopUp)="closeEdgeRelabelPopUp()"></relabel-pop-up>
+

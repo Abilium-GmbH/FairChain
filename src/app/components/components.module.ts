@@ -9,6 +9,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { ImportExportService } from '../importExport.service';
 import { UndoRedoService } from '../undoRedo.service';
+import {MatOptionModule} from '@angular/material/core';
 import { MatRadioModule } from '@angular/material/radio'; 
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -26,6 +27,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatDialogModule,
     MatInputModule,
     FormsModule,
+    MatOptionModule,
     MatRadioModule,
     MatSidenavModule,
     MatSnackBarModule,
