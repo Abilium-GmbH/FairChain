@@ -4,6 +4,7 @@ import { FairChainComponent } from './fairChain.component';
 import { UndoRedoService } from './../../undoRedo.service';
 import { ImportExportService } from './../../importExport.service';
 import { Tools,ChangingNode,ChangingEdge} from '../../Enums';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 describe('FairChainComponent', () => {
   let component: FairChainComponent;
@@ -16,7 +17,8 @@ describe('FairChainComponent', () => {
       declarations: [ FairChainComponent ],
       providers: [
         {provide: ImportExportService, useValue: importExportServiceStub},
-        {provide: UndoRedoService, useValue: undoRedoServiceStub}]
+        {provide: UndoRedoService, useValue: undoRedoServiceStub}],
+      imports: [ MatSnackBarModule ],
     })
     .compileComponents();
   });
@@ -31,18 +33,6 @@ describe('FairChainComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should change changesNode to NodeColor', ()=>{
-    component.changeNodeColor();
-    var changesNode = component.getChangesNode();
-    expect(changesNode).toBe(ChangingNode.NodeColor)
-  })
-
-  it('should switch changesNode again to None after calling changeNodeColor 2 times', ()=>{
-    component.changeNodeColor();
-    component.changeNodeColor();
-    var changesNode = component.getChangesNode();
-    expect(changesNode).toBe(ChangingNode.None)
-  })
   
   it('should change changesNode to NodeColor', ()=>{
     component.changeNodeName();
@@ -55,18 +45,6 @@ describe('FairChainComponent', () => {
     component.changeNodeName();
     var changesNode = component.getChangesNode();
     expect(changesNode).toBe(ChangingNode.None)
-  })
-
-  it('should change changesEdge to EdgeColor', ()=>{
-    component.changeEdgeColor();
-    var changesEdge = component.getChangesEdge();
-    expect(changesEdge).toBe(ChangingEdge.EdgeColor)
-  })
-  
-  it('should change changesEdge to EdgeColor', ()=>{
-    component.changeEdgeColor();
-    var changesEdge = component.getChangesEdge();
-    expect(changesEdge).toBe(ChangingEdge.EdgeColor)
   })
 
   it('should change changesEdge to EdgeColor', ()=>{
@@ -122,41 +100,7 @@ describe('FairChainComponent', () => {
     expect(currentTool).toBe(Tools.AddingNode)
   })
 
-  it('should change currentTool to Idle and changesNode to NodeColor if you first call addEdgeInNetwork and then changeNodeColor', ()=>{
-    component.addEdgeInNetwork();
-    component.changeNodeColor();
-    var currentTool = component.getCurrentTool();
-    var changesNode = component.getChangesNode()
-    expect(currentTool).toBe(Tools.Idle, 'currentTool is wrong')
-    expect(changesNode).toBe(ChangingNode.NodeColor, 'changesNode is wrong')
-  })
-
-  it('should change currentTool to AddingEdge and changesNode to None if you first call changeNodeColor and then addEdgeInNetwork', ()=>{
-    component.changeNodeColor();
-    component.addEdgeInNetwork();
-    var currentTool = component.getCurrentTool();
-    var changesNode = component.getChangesNode()
-    expect(currentTool).toBe(Tools.AddingEdge, 'currentTool is wrong')
-    expect(changesNode).toBe(ChangingNode.None, 'changesNode is wrong')
-  })
-
-  it('should change currentTool to Idle and changesNode to NodeColor if you first call addNodeInNetwork and then changeNodeColor', ()=>{
-    component.addNodeInNetwork();
-    component.changeNodeColor();
-    var currentTool = component.getCurrentTool();
-    var changesNode = component.getChangesNode()
-    expect(currentTool).toBe(Tools.Idle, 'currentTool is wrong')
-    expect(changesNode).toBe(ChangingNode.NodeColor, 'changesNode is wrong')
-  })
-
-  it('should change currentTool to AddingEdge and changesNode to None if you first call changeNodeColor and then addNodeInNetwork', ()=>{
-    component.changeNodeColor();
-    component.addNodeInNetwork();
-    var currentTool = component.getCurrentTool();
-    var changesNode = component.getChangesNode()
-    expect(currentTool).toBe(Tools.AddingNode, 'currentTool is wrong')
-    expect(changesNode).toBe(ChangingNode.None, 'changesNode is wrong')
-  })
+ 
 
   it('should change currentTool to AddingEdge and changesNode to None if you first call changeNodeName and then addNodeInNetwork', ()=>{
     component.changeNodeName();

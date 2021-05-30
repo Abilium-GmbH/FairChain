@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { ComponentsModule } from './components/components.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { EditorPage } from './pages/editor/editor.page';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,8 +20,8 @@ import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
     EditorPage
   ],
   imports: [
-    BrowserModule,BrowserAnimationsModule, FormsModule, ReactiveFormsModule, MatSelectModule,
-
+    BrowserModule, FormsModule, ReactiveFormsModule, MatSelectModule,
+    NoopAnimationsModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
