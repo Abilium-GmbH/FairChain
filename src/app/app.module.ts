@@ -11,7 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatSelectModule} from '@angular/material/select';
-import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 
 @NgModule({
@@ -20,7 +20,10 @@ import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
     EditorPage
   ],
   imports: [
-    BrowserModule, FormsModule, ReactiveFormsModule, MatSelectModule,
+    BrowserModule, 
+    FormsModule, 
+    ReactiveFormsModule, 
+    MatSelectModule,
     NoopAnimationsModule,
     BrowserModule,
     AppRoutingModule,

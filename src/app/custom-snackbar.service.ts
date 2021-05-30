@@ -1,5 +1,5 @@
-import {Injectable, NgZone} from '@angular/core';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import { Injectable, NgZone } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 /**
  * Implements the Snackbar service, a small pop up that advertice when something happens.
@@ -16,13 +16,13 @@ export class CustomSnackbarService {
   constructor(
     private snackBar: MatSnackBar,
     private zone: NgZone
-  ) {
+  ) {}
 
-  }
 
   public open(message: string, action = '', duration = 4000): void {
     this.zone.run(() => {
-      this.snackBar.open(message, action, {duration});
+      this.snackBar.open(message, action, { duration });
     });
   }
+
 }

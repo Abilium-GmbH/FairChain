@@ -10,22 +10,21 @@ import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
 })
 export class RelabelPopUpComponent implements OnInit {
 
-  constructor() { }
-
   private subscriptions: Subscription;
 
-  @Input() info: RectOnDOM;
-  
-  @Input()  label: string;
-  @Output() labelChange = new EventEmitter<string>();
-  @Output() closeRelabelPopUp = new EventEmitter();
-  @ViewChild('relabelTextArea') relabelTextAreaRef: ElementRef;
+  @Output() public closeRelabelPopUp = new EventEmitter();
+  @Input() public info: RectOnDOM;
+  @Input()  public label: string;
+  @Output() public labelChange = new EventEmitter<string>();
+  @ViewChild('relabelTextArea') public relabelTextAreaRef: ElementRef;
 
-  ngOnInit(): void {
-    this.subscriptions = new Subscription();
+
+  constructor() { }
+  public isClosingPopUp() {
+    this.closeRelabelPopUp.emit();
   }
 
-  ngAfterViewInit(): void {
+  public ngAfterViewInit(): void {
     this.subscriptions.add(
       fromEvent(this.relabelTextAreaRef.nativeElement, 'click').pipe(
         map(() => new Date().getTime()),
@@ -39,16 +38,15 @@ export class RelabelPopUpComponent implements OnInit {
     )
   }
 
-  public updateLabel() {
-    this.labelChange.emit(this.convertToMultiline(this.label));
+  public ngOnInit(): void {
+    this.subscriptions = new Subscription();
   }
 
-  public isClosingPopUp() {
-    this.closeRelabelPopUp.emit();
+  public updateLabel() {
+    this.labelChange.emit(this.convertToMultiline(this.label));
   }
 
   private convertToMultiline(text: string) {
     return text.replace('\n', '\n');
   }
-  
 }

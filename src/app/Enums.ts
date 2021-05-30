@@ -1,5 +1,5 @@
 
-export  enum Tools {
+export enum Tools {
   AddingNode, AddingEdge, Idle
 }
 export enum ChangingNode {
