@@ -143,6 +143,8 @@ export class FairChainComponent implements OnInit {
         if (this.edgeRelabelPopUpInfo.active) this.closeEdgeRelabelPopUp();
         if (this.isAddingEdge()) this.enableAddEdgeMode();
         if (this.isAddingNode()) this.enableAddNodeMode();
+        if(this.network.getScale() <= 0.3) this.network.moveTo({position: {x:0,y:0},scale:0.3});
+        if(this.network.getScale() > 3) this.network.moveTo({scale:3});
       })
     );
   }
@@ -480,10 +482,10 @@ export class FairChainComponent implements OnInit {
   public async importLogo(files:FileList){
     if (this.nodes.get("Logo") == null){
       this.nodes.add({id: "Logo",
-      size:50,
       label: "",
       x: 59,
-      y: 59});
+      y: 59,
+      size:50});
     }
     var firstNode = this.nodes.get("Logo"); 
     firstNode.shape = "image";
@@ -494,7 +496,6 @@ export class FairChainComponent implements OnInit {
 
   private addLogoFromSnackbar(){
     document.getElementById("logoToImport").click();
-    this.makeSnapshot();
   }
 
   private openSnackBar() {
