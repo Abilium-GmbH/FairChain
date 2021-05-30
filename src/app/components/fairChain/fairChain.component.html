@@ -7,7 +7,7 @@
   <button mat-button class="buttonsToolbarAbove" (click)= "downloadGraphAsPng()">Download As PNG</button>
   <button mat-button class="buttonsToolbarAbove" (click)= "hiddenlogoinput.click()"> Import Logo</button>
 
-  <input type="file" id=fileToImport class="file-upload" accept="image/*" (change)="importLogo($event.target.files)" #hiddenlogoinput>
+  <input type="file" id=logoToImport class="file-upload" accept="image/*" (change)="importLogo($event.target.files)" #hiddenlogoinput>
   <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" #hiddenfileinput>
 </mat-card>
 

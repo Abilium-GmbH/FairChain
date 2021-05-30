@@ -12,7 +12,6 @@ import {emojis as flags} from '../../emojis';
 import {RectOnDOM} from 'src/app/interfaces/RectOnDOM';
 import {NodeRelabelInfo} from '../../interfaces/NodeRelabelInfo';
 import { EdgeRelabelInfo } from 'src/app/interfaces/EdgeRelabelInfo';
-import { originalLogo } from 'src/assets/originalLogo';
 import { toPng } from 'html-to-image';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -481,33 +480,26 @@ export class FairChainComponent implements OnInit {
   public async importLogo(files:FileList){
     if (this.nodes.get("Logo") == null){
       this.nodes.add({id: "Logo",
+      size:50,
       label: "",
-      image: originalLogo,
-      shape: "image",
       x: 59,
       y: 59});
     }
     var firstNode = this.nodes.get("Logo"); 
+    firstNode.shape = "image";
     firstNode.image =  await this.importExportService.uploadLogo(files[0]);
     this.nodes.update(firstNode);
     this.makeSnapshot();
   }
 
-  private addOriginalLogo(){
-    if (this.nodes.get("Logo") == null){
-    this.nodes.add({id: "Logo",
-    label: "",
-    image: originalLogo,
-    shape: "image",
-    x: 59,
-    y: 59});
+  private addLogoFromSnackbar(){
+    document.getElementById("logoToImport").click();
     this.makeSnapshot();
-    }
   }
 
   private openSnackBar() {
     var snackBarRef = this.snackBar.open("Do you want to add a Logo?", "Yes, please", {duration: 7000});
-    snackBarRef.onAction().subscribe(()=> this.addOriginalLogo() );
+    snackBarRef.onAction().subscribe(()=> this.addLogoFromSnackbar() );
   }
 
   public updateData(data) {

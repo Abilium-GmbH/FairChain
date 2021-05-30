@@ -9,10 +9,13 @@
         font-size:20px;
         color: black;
         padding-left: 7px;
-
       }
       
     #fileToImport{
+        display: none;
+    }
+
+    #logoToImport{
         display: none;
     }
 }
@@ -32,19 +35,21 @@
     
         .tool {
             padding: 5px;
-            background-color: #ffffff;
             margin-top: 1rem;
-            margin-left: 1.5rem;
             height: 3rem;
     
             .icon-link{
-                margin-top: 1rem;
-                height: 3rem;
+                height: 4rem;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
             }
+            
         }
         .tool.active {
             background-color: #00c3ff;
         }
+
     }
 
     ::ng-deep .mat-form-field-underline {
@@ -63,6 +68,7 @@
             z-index: 2;
             width: 50%;
             background-color: #ffffff;
+            font: 20px "Flags",  sans-serif;
         }
 
         .description {
