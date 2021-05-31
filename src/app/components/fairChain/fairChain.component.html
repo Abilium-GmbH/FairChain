@@ -97,24 +97,21 @@
                 [class.active]="isChangingGroup()"
                 (click)="changeNodeGroup()">Change Group
         </button>
-        <hr>
         <!-- Implements the color toolbar and button to change node/edge colors -->
-        <p class="option-label">group's color</p>
         <input matInput class="option-colorInput" type="color" [(ngModel)]="nodeGroupColor">
         <br>
         <button mat-button
                 class="option-button"
-                (click)="changeNodeGroupColor()">Change
+                (click)="changeNodeGroupColor()">Change Color
         </button>
-        <hr>
       <!-- ToDo: comment -->
-      <input matInput class="option-groupList" type="text" [(ngModel)]="nameOfNewGroup">
+      <input matInput class="option-groupInput" type="text" [(ngModel)]="nameOfNewGroup">
       <button mat-button
               class="option-button"
-              (click)="addGroup()">add group
+              (click)="addGroup()">Add Group
       </button>
       <hr>
-      <p class="option-label-metadata">Show Metadata</p>
+      <p class="option-label">Show Metadata</p>
       <div class="option-toggle" >
         <mat-slide-toggle [(ngModel)]="isMetadataVisible" color="primary"></mat-slide-toggle>
       </div>

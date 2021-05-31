@@ -30,7 +30,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
  */
 export class FairChainComponent implements OnInit {
 
-    public nodeEdgeLabel = "";
+  public nodeEdgeLabel = "";
   public nodeEdgeColor = "#002AFF";
   public nodeToRelableId: IdType;
   public isShowingRelabelPopUp = false;
@@ -148,7 +148,7 @@ export class FairChainComponent implements OnInit {
         if (this.edgeRelabelPopUpInfo.active) this.closeEdgeRelabelPopUp();
         if (this.isAddingEdge()) this.enableAddEdgeMode();
         if (this.isAddingNode()) this.enableAddNodeMode();
-        if(this.network.getScale() <= 0.3) this.network.moveTo({position: {x:0,y:0},scale:0.3});
+        if(this.network.getScale() <= 0.5) this.network.moveTo({position: {x:0,y:0},scale:0.5});
         if(this.network.getScale() > 3) this.network.moveTo({scale:3});
       })
     );

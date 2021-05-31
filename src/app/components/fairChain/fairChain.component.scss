@@ -48,7 +48,7 @@
             
         }
         .tool.active {
-            background-color: #00c3ff;
+            background-color: #b4e2ff;
         }
 
     }
@@ -77,7 +77,7 @@
     }
     
     .canvas {
-        background-color: #f0fcfc;
+        background-color: #eeeeee;
         height: 100%;
         width: 80%;
         float:left;
@@ -88,7 +88,7 @@
             z-index: 2;
             width: 50%;
             background-color: #ffffff;
-            font: 20px "Flags",  sans-serif;
+            font-size: 16px;
         }
 
         .description {
@@ -122,6 +122,7 @@
 
             .drawer-content {
                 overflow: hidden;
+                padding-top: 10px;
                 padding-right: 10px;
                 padding-left: 10px;
 
@@ -132,43 +133,45 @@
                 }
             
                 .option-label {
+                    display: flex;
+                    justify-content: center;
                     font-size:20px;
-                    color: black;
-                    padding-left: 7px;
                 }
             
                 .option-textArea {
                     font-size:20px;
                     height: 50px;
-                    width: 95%;
                 }
             
                 .option-button {
-                    width: 100%;
-                    padding-left: 5px;
                     background-color: #ffffff;
                     font-size:20px;
                 }
+
                 .option-button.active {
-                    background-color: #00ccff;
+                    background-color: #b4e2ff;
+                }
+
+                .option-groupList {
+                    font-size:20px;
                 }
             
                 // Gives the correct proportions of the edit color bar
                 .option-colorInput {
                     font-size:20px;
-                    width: 95%;
+                    margin-top: 1rem;
+                }
+
+                .option-groupInput {
+                    font-size: 20px;
+                    border: 1px solid #000000;
+                    margin-top: 1rem;
                 }
 
                 .option-toggle {
                     display: flex;
                     justify-content: center;
                     margin-top: -0.5em;
-                }
-
-                .option-label-metadata {
-                    display: flex;
-                    justify-content: center;
-                    font-size:20px;
                 }
             }
         }
@@ -181,4 +184,3 @@
         }
     }
 }
-
