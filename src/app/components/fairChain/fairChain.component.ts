@@ -2,12 +2,12 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {fromEvent, Subscription} from 'rxjs';
 import {ImportExportService} from '../../importExport.service';
 import {UndoRedoService} from 'src/app/undoRedo.service';
-import {RelabelPopUpGeometryService} from 'src/app/relabel-pop-up-geometry-service.service';
+import { PopUpGeometryService} from 'src/app/pop-up-geometry-service.service';
 import {FlagService} from '../../flag.service';
 import {Tools, ChangingEdge, ChangingNode} from '../../Enums';
 import {Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges, Position} from 'vis-network/peer/esm/vis-network';
 import {DataSet} from 'vis-data/peer/esm/vis-data';
-import {group, GroupsService} from 'src/app/groups.service';
+import { GroupsService} from 'src/app/groups.service';
 import {CustomSnackbarService} from 'src/app/custom-snackbar.service';
 import {emojis as flags} from '../../emojis';
 import {RectOnDOM} from 'src/app/interfaces/RectOnDOM';
@@ -38,6 +38,33 @@ export class FairChainComponent implements OnInit {
   public isShowingRelabelPopUp = false;
   public metadata = ""
   public isMetadataVisible = false;
+
+  // A handy debug buttom for any
+  nameOfNewGroup: string = '';
+  listOfGroups = ['none', 'ethical', 'unethical', 'sustainable', 'unsustainable'];
+
+  public nodeGroupColor = '#002AFF';
+  public selectedGroup = 'none';
+
+
+  change(value: string) {
+    this.selectedGroup = value;
+  }
+
+  private nodeGroups = {
+    group1: {
+      color: 'blue'
+    },
+    group2: {
+      color: 'orange'
+    },
+    group3: {
+      color: 'green'
+    },
+    group4: {
+      color: 'red'
+    }
+  };
   
   private nodeRelabelPopUpInfo: NodeRelabelInfo = {
     nodeId: '',
@@ -164,10 +191,21 @@ export class FairChainComponent implements OnInit {
     if (!this.isHoverOptionAddNodeVisible()) this.showAddChildNodeOptions(params.node);
   }
 
+  public isChangingGroup() : boolean {return this.changesNode === ChangingNode.NodeColor;}
   public isHoverOptionAddNodeVisible() : boolean {return this.hoverOptionAddChildInfo.active;}
   public isNodeRelabelPopUpVisible() : boolean {return this.nodeRelabelPopUpInfo.active;}
   public isEdgeRelabelPopUpVisible() : boolean {return this.edgeRelabelPopUpInfo.active; }
+  public isAddingNode() : boolean {return this.currentTool === Tools.AddingNode;}
+  public isAddingEdge() : boolean {return this.currentTool === Tools.AddingEdge;}
+  public isChangingNodeLabel() : boolean {return this.changesNode === ChangingNode.NodeLabel;}
+  public isChangingEdgeLabel() : boolean {return this.changesEdge === ChangingEdge.EdgeLabel;}
+  public isChangingColor() : boolean {return this.changesNode === ChangingNode.NodeColor;}
+  public isChangingFlag() : boolean {return this.changesNode === ChangingNode.NodeFlag;}
+  public isDeletingFlag() : boolean {return this.changesNode === ChangingNode.DeleteNodeFlag;}
+  public isInNodeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
+  public isInEdgeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
   private stopAddMode() : void {this.network.disableEditMode(); }
+  private enableAddNodeMode() : void {this.network.addNodeMode(); }
   private enableAddEdgeMode() : void {this.network.addEdgeMode(); }
   private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
   private makeToolIdle() : void {this.currentTool = Tools.Idle;}
@@ -179,7 +217,6 @@ export class FairChainComponent implements OnInit {
     this.nodeRelabelPopUpInfo.nodeId = '';
     this.makeSnapshot();
   }
-
   private closeEdgeRelabelPopUp() : void {
     console.assert(this.edgeRelabelPopUpInfo.active, 'There is no pop up menu to close');
     console.assert(this.edgeRelabelPopUpInfo.edgeId !== '', 'There is no edge to apply the change to'); 
