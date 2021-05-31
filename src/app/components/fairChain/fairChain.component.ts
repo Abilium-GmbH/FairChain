@@ -233,9 +233,10 @@ export class FairChainComponent implements OnInit {
     const newNodeId = this.makeNewId();
     const newEdgeId = this.makeNewId();
     let node: Node = this.nodes.get(this.hoverOptionAddChildInfo.nodeId)
-    node.x += 100;
-    this.nodes.add({id:newNodeId, label:'New', x: node.x, y:node.y})
-    this.edges.add({id:newEdgeId, to:this.hoverOptionAddChildInfo.nodeId, from:newNodeId});
+    node.x += 250;
+    this.nodes.add({id:newNodeId, label:'double click\nto change', x: node.x, y:node.y})
+    const edgeLabel = (this.edges.length <= 0) ? 'double click\nto change' : '';
+    this.edges.add({id:newEdgeId, to:this.hoverOptionAddChildInfo.nodeId, from:newNodeId, label:edgeLabel});
     this.makeSnapshot();
   }
 
@@ -327,6 +328,7 @@ export class FairChainComponent implements OnInit {
       // Defines logic for Add Edge functionality
       addEdge: (data: Edge, callback) => {
         console.assert(this.isAddingEdge(), 'The current tool should be adding an edge');
+        if (this.edges.length <= 0) data.label = 'double click\nto change';
         callback(data);
         this.network.addEdgeMode();
         this.makeSnapshot();
