@@ -195,7 +195,7 @@ export class FairChainComponent implements OnInit {
   nameOfNewGroup: string = '';
   listOfGroups = ['none', 'ethical', 'unethical', 'sustainable', 'unsustainable'];
 
-  public nodeGroupColor = '#002AFF';
+  public nodeGroupColor = '#97a2d4';
   public selectedGroup = 'none';
 
 
