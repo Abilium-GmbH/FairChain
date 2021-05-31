@@ -235,7 +235,7 @@ export class FairChainComponent implements OnInit {
     const newNodeId = this.makeNewId();
     const newEdgeId = this.makeNewId();
     let node: Node = this.nodes.get(this.hoverOptionAddChildInfo.nodeId)
-    node.x += 250;
+    node.x += 400;
     this.nodes.add({id:newNodeId, label:'double click\nto change', x: node.x, y:node.y})
     const edgeLabel = (this.edges.length <= 0) ? 'double click\nto change' : '';
     this.edges.add({id:newEdgeId, to:this.hoverOptionAddChildInfo.nodeId, from:newNodeId, label:edgeLabel});
