@@ -318,6 +318,7 @@ export class FairChainComponent implements OnInit {
       addNode: (data: Node, callback) => {
         if (this.isAddingNode()) {
           console.assert(this.isAddingNode(), 'The current tool should be adding a node');
+          data.label = 'double click\nto change';
           callback(data);
           this.network.addNodeMode();
           this.makeSnapshot();
