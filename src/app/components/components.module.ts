@@ -14,11 +14,13 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { NodeHoverOptionComponent } from './node-hover-option/node-hover-option.component';
 
 @NgModule({
   declarations: [
     FairChainComponent,
-    RelabelPopUpComponent
+    RelabelPopUpComponent,
+    NodeHoverOptionComponent
   ],
   imports: [
     BrowserModule,
