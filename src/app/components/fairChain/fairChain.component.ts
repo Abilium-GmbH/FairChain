@@ -155,90 +155,11 @@ export class FairChainComponent implements OnInit {
   public isEdgeRelabelPopUpVisible() : boolean {return this.edgeRelabelPopUpInfo.active; }
   private stopAddMode() : void {this.network.disableEditMode(); }
   private enableAddEdgeMode() : void {this.network.addEdgeMode(); }
-
-  public isAddingNode(): boolean {
-    return this.currentTool === Tools.AddingNode;
-  }
-
-  public isAddingEdge(): boolean {
-    return this.currentTool === Tools.AddingEdge;
-  }
-
-  public isChangingNodeLabel(): boolean {
-    return this.changesNode === ChangingNode.NodeLabel;
-  }
-
-  public isChangingEdgeLabel(): boolean {
-    return this.changesEdge === ChangingEdge.EdgeLabel;
-  }
-
-  public isChangingFlag(): boolean {
-    return this.changesNode === ChangingNode.NodeFlag;
-  }
-
-  public isDeletingFlag(): boolean {
-    return this.changesNode === ChangingNode.DeleteNodeFlag;
-  }
-
-  public isInNodeEditMode(): boolean {
-    return this.changesNode !== ChangingNode.None;
-  }
-
-  public isChangingGroup(): boolean {
-    return this.changesNode === ChangingNode.NodeGroup;
-  }
-
-  // A handy debug buttom for any
-  nameOfNewGroup: string = '';
-  listOfGroups = ['none', 'ethical', 'unethical', 'sustainable', 'unsustainable'];
-
-  public nodeGroupColor = '#002AFF';
-  public selectedGroup = 'none';
-
-
-  change(value: string) {
-    this.selectedGroup = value;
-  }
-
-  private nodeGroups = {
-    group1: {
-      color: 'blue'
-    },
-    group2: {
-      color: 'orange'
-    },
-    group3: {
-      color: 'green'
-    },
-    group4: {
-      color: 'red'
-    }
-  };
-
-  public isInEdgeEditMode(): boolean {
-    return this.changesNode !== ChangingNode.None;
-  }
-
-  private stopAddNodeMode(): void {
-    this.network.disableEditMode();
-  }
-
-  private enableAddNodeMode(): void {
-    this.network.addNodeMode();
-  }
-
-  private stopEditMode(): void {
-    this.changesNode = ChangingNode.None;
-    this.changesEdge = ChangingEdge.None;
-  }
-
-  private makeToolIdle(): void {
-    this.currentTool = Tools.Idle;
-  }
-
-  private closeNodeRelabelPopUp(): void {
+  private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
+  private makeToolIdle() : void {this.currentTool = Tools.Idle;}
+  private closeNodeRelabelPopUp() : void {
     console.assert(this.nodeRelabelPopUpInfo.active, 'There is no pop up menu to close');
-    console.assert(this.nodeRelabelPopUpInfo.nodeId=='', 'There is no node to apply the change to'); 
+    console.assert(this.nodeRelabelPopUpInfo.nodeId !== '', 'There is no node to apply the change to'); 
     this.nodes.update({id: this.nodeRelabelPopUpInfo.nodeId, label: this.flagService.addOrChangeFlag(this.nodeRelabelPopUpInfo.label, this.flagService.currentFlag)});
     this.nodeRelabelPopUpInfo.active = false;
     this.nodeRelabelPopUpInfo.nodeId = '';
@@ -247,7 +168,7 @@ export class FairChainComponent implements OnInit {
 
   private closeEdgeRelabelPopUp() : void {
     console.assert(this.edgeRelabelPopUpInfo.active, 'There is no pop up menu to close');
-    console.assert(this.edgeRelabelPopUpInfo.edgeId=='', 'There is no edge to apply the change to'); 
+    console.assert(this.edgeRelabelPopUpInfo.edgeId !== '', 'There is no edge to apply the change to'); 
     this.edges.update({id:this.edgeRelabelPopUpInfo.edgeId, label: this.edgeRelabelPopUpInfo.label});
     this.edgeRelabelPopUpInfo.active = false;
     this.edgeRelabelPopUpInfo.edgeId = undefined;
