@@ -4,27 +4,28 @@
   <button mat-button class="buttonsToolbarAbove" (click)="undo()"> Undo</button>
   <button mat-button class="buttonsToolbarAbove" (click)="redo()"> Redo</button>
   <button mat-button class="buttonsToolbarAbove" (click)="__debug__()" *ngIf="isDebugging"> Debug</button>
-  <button mat-button class="buttonsToolbarAbove" (click)= "downloadGraphAsPng()">Download As PNG</button>
-  <button mat-button class="buttonsToolbarAbove" (click)= "hiddenlogoinput.click()"> Import Logo</button>
+  <button mat-button class="buttonsToolbarAbove" (click)="downloadGraphAsPng()">Download As PNG</button>
+  <button mat-button class="buttonsToolbarAbove" (click)="hiddenlogoinput.click()"> Import Logo</button>
 
-  <input type="file" id=logoToImport class="file-upload" accept="image/*" (change)="importLogo($event.target.files)" #hiddenlogoinput>
+  <input type="file" id=logoToImport class="file-upload" accept="image/*" (change)="importLogo($event.target.files)"
+    #hiddenlogoinput>
   <input type="file" id=fileToImport class="file-upload" (change)="importGraph($event.target.files)" #hiddenfileinput>
 </mat-card>
 
 <mat-card class="application-body">
   <!-- Holds primary tools of the application -->
   <mat-card #toolbar class="toolbar">
-      <div #addNodeButton (click)="addNodeInNetwork()" [class.active]="isAddingNode()" class="tool">
-        <img class="icon-link" src="assets/icons/addnodeicon.png">
-      </div>
+    <div #addNodeButton (click)="addNodeInNetwork()" [class.active]="isAddingNode()" class="tool">
+      <img class="icon-link" src="assets/icons/addnodeicon.png">
+    </div>
     <hr>
-      <div #addEdgeButton (click)="addEdgeInNetwork()" [class.active]="isAddingEdge()" class="tool">
-        <img class="icon-link" src="assets/icons/addedgeicon.png">
-      </div>
+    <div #addEdgeButton (click)="addEdgeInNetwork()" [class.active]="isAddingEdge()" class="tool">
+      <img class="icon-link" src="assets/icons/addedgeicon.png">
+    </div>
     <hr>
-      <div #deleteSelectionButton (click)="deleteNodeOrEdgeInNetwork()" class="tool">
-        <img class="icon-link" src="assets/icons/deleteselectionicon.png">
-      </div>
+    <div #deleteSelectionButton (click)="deleteNodeOrEdgeInNetwork()" class="tool">
+      <img class="icon-link" src="assets/icons/deleteselectionicon.png">
+    </div>
     <hr>
   </mat-card>
 
@@ -33,13 +34,8 @@
     <div [hidden]="!isMetadataVisible">
       <mat-form-field class="metadataField">
         <mat-label></mat-label>
-        <textarea matInput class="description" 
-          [(ngModel)]="metadata" 
-          (change)="makeSnapshot()"
-          placeholder="Enter Description" 
-          cdkTextareaAutosize
-          cdkAutosizeMinRows="1" 
-          cdkAutosizeMaxRows="5">
+        <textarea matInput class="description" [(ngModel)]="metadata" (change)="makeSnapshot()"
+          placeholder="Enter Description" cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5">
         </textarea>
       </mat-form-field>
     </div>
@@ -50,82 +46,68 @@
   <mat-card #toolbar_options class="toolbar-options">
     <mat-drawer-container class="drawer-container" [hasBackdrop]="false">
       <mat-drawer-content class="drawer-content">
-    <!-- Text Area for Node Label -->
-    <p class="option-label">Label</p>
-    <textarea class="option-textArea" [(ngModel)]="nodeEdgeLabel"></textarea>
-    <br>
-    <!-- Alternate change Node name mode -->
-    <button mat-button 
-      class = "option-button"
-      [class.active] = "isChangingNodeLabel()" 
-      (click)="changeNodeName(); changeEdgeName()">Change Name</button>
-    <hr>
-      <p class="option-label">Flag</p>
+        <!-- Text Area for Node Label -->
+        <p class="option-label">Label</p>
+        <textarea class="option-textArea" [(ngModel)]="nodeEdgeLabel"></textarea>
+        <br>
+        <!-- Alternate change Node name mode -->
+        <button mat-button class="option-button" [class.active]="isChangingNodeLabel()"
+          (click)="changeNodeName(); changeEdgeName()">Change Name</button>
+        <hr>
+        <p class="option-label">Flag</p>
 
         <mat-drawer #drawer class="drawer" mode="over" position="end">
-          <mat-radio-group
-              [(ngModel)]="nodeFlag">
-              <mat-radio-button class="radio-flags" *ngFor="let emoji of radioEmojis" [value]="emoji" (click)="drawer.close()">
-                {{emoji}}
-              </mat-radio-button>
-            </mat-radio-group>
+          <mat-radio-group [(ngModel)]="nodeFlag">
+            <mat-radio-button class="radio-flags" *ngFor="let emoji of radioEmojis" [value]="emoji"
+              (click)="drawer.close()">
+              {{emoji}}
+            </mat-radio-button>
+          </mat-radio-group>
         </mat-drawer>
-          <button mat-button class="option-button" (click)="drawer.toggle()">
-            Choose Flag
-          </button>      
+        <button mat-button class="option-button" (click)="drawer.toggle()">
+          Choose Flag
+        </button>
 
-      <br>
-      <button mat-button class="option-button" [class.active] = "isChangingFlag()" (click)= "changeFlag()">Apply Flag</button>
-      <button mat-button class="option-button" [class.active] = "isDeletingFlag()" (click)= "deleteFlag()">Delete Flag</button>
-      <hr>
-          <!-- ToDo: comment -->
-          <p class="option-label">Groups</p>
-          <select class="option-groupList" (change)="change($event.target.value)">
-            <option *ngFor="let nameOfGroup of listOfGroups"
-                    [value]="nameOfGroup">{{nameOfGroup}}</option>
-          </select>
-        <button mat-button
-                class="option-button"
-                [class.active]="isChangingGroup()"
-                (click)="changeNodeGroup()">Change Group
+        <br>
+        <button mat-button class="option-button" [class.active]="isChangingFlag()" (click)="changeFlag()">Apply
+          Flag</button>
+        <button mat-button class="option-button" [class.active]="isDeletingFlag()" (click)="deleteFlag()">Delete
+          Flag</button>
+        <hr>
+        <!-- Drop down list that holds all groups -->
+        <p class="option-label">Groups</p>
+        <select class="option-groupList" (change)="change($event.target.value)">
+          <option *ngFor="let nameOfGroup of listOfGroups" [value]="nameOfGroup">{{nameOfGroup}}</option>
+        </select>
+        <button mat-button class="option-button" [class.active]="isChangingGroup()" (click)="changeNodeGroup()">Change
+          Group
         </button>
         <!-- Implements the color toolbar and button to change node/edge colors -->
         <input matInput class="option-colorInput" type="color" [(ngModel)]="nodeGroupColor">
         <br>
-        <button mat-button
-                class="option-button"
-                (click)="changeNodeGroupColor()">Change Color
+        <button mat-button class="option-button" (click)="changeNodeGroupColor()">Change Color
         </button>
-      <!-- ToDo: comment -->
-      <input matInput class="option-groupInput" type="text" [(ngModel)]="nameOfNewGroup">
-      <button mat-button
-              class="option-button"
-              (click)="addGroup()">Add Group
-      </button>
-      <hr>
-      <p class="option-label">Show Metadata</p>
-      <div class="option-toggle" >
-        <mat-slide-toggle [(ngModel)]="isMetadataVisible" color="primary"></mat-slide-toggle>
-      </div>
-      <hr>
-    </mat-drawer-content>
+        <!-- ToDo: comment -->
+        <input matInput class="option-groupInput" type="text" [(ngModel)]="nameOfNewGroup">
+        <button mat-button class="option-button" (click)="addGroup()">Add Group
+        </button>
+        <hr>
+        <p class="option-label">Show Metadata</p>
+        <div class="option-toggle">
+          <mat-slide-toggle [(ngModel)]="isMetadataVisible" color="primary"></mat-slide-toggle>
+        </div>
+        <hr>
+      </mat-drawer-content>
     </mat-drawer-container>
   </mat-card>
 
 </mat-card>
-<relabel-pop-up *ngIf="isNodeRelabelPopUpVisible()" 
-  [info]='nodeRelabelPopUpInfo.rect'
-  [(label)]="nodeRelabelPopUpInfo.label"
-  (closeRelabelPopUp)="closeNodeRelabelPopUp()"></relabel-pop-up>
+<relabel-pop-up *ngIf="isNodeRelabelPopUpVisible()" [info]='nodeRelabelPopUpInfo.rect'
+  [(label)]="nodeRelabelPopUpInfo.label" (closeRelabelPopUp)="closeNodeRelabelPopUp()"></relabel-pop-up>
 
-<relabel-pop-up *ngIf="isEdgeRelabelPopUpVisible()" 
-  [info]='edgeRelabelPopUpInfo.rect'
-  [(label)]="edgeRelabelPopUpInfo.label"
-  (closeRelabelPopUp)="closeEdgeRelabelPopUp()"></relabel-pop-up>
+<relabel-pop-up *ngIf="isEdgeRelabelPopUpVisible()" [info]='edgeRelabelPopUpInfo.rect'
+  [(label)]="edgeRelabelPopUpInfo.label" (closeRelabelPopUp)="closeEdgeRelabelPopUp()"></relabel-pop-up>
 
-  <nodeHoverOption *ngIf="isHoverOptionAddNodeVisible()"
-    [img]="'assets/icons/hoveroptionaddnode.png'"
-    [info]='hoverOptionAddChildInfo.addChildNodeInfo'
-    [boundingBox]='hoverOptionAddChildInfo.boundingBox'
-    (onOptionClicked)='addChildNodeToHoveredNode()'
-    (onLeaveBoundingBox)='stopShowingNodeHoverOption()'></nodeHoverOption>
+<nodeHoverOption *ngIf="isHoverOptionAddNodeVisible()" [img]="'assets/icons/hoveroptionaddnode.png'"
+  [info]='hoverOptionAddChildInfo.addChildNodeInfo' [boundingBox]='hoverOptionAddChildInfo.boundingBox'
+  (onOptionClicked)='addChildNodeToHoveredNode()' (onLeaveBoundingBox)='stopShowingNodeHoverOption()'></nodeHoverOption>
