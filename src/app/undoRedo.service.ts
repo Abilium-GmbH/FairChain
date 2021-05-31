@@ -12,8 +12,8 @@ import { ImportExportService } from './importExport.service';
  * The counter variable specifies on which version of the graph the user currently is
  */
 export class UndoRedoService{
-    private snapshots=[];
-    private counter = 0;
+    private snapshots:string[]=[];
+    private counter:number = 0;
 
     /**
      * Pushes an empty network into the snapshots array when the object is constructed 
@@ -29,7 +29,7 @@ export class UndoRedoService{
      * If the counter is at zero, this method returns the empty graph
      * @returns the parsed version of the snapshot that is stored before the current network
      */
-    public getPredecessorSnapshot(){
+    public getPredecessorSnapshot():JSON{
         if (this.counter > 0) this.counter--;
         return JSON.parse(this.snapshots[this.counter]);
     }
@@ -39,7 +39,7 @@ export class UndoRedoService{
      * Increases the counter
      * @returns the parsed version of the snapshot that is stored after the current network
      */
-    public getSuccessorSnapshot(){
+    public getSuccessorSnapshot():JSON{
         if (this.counter < this.snapshots.length - 1) this.counter++;
         return JSON.parse(this.snapshots[this.counter]);
     }
@@ -54,7 +54,7 @@ export class UndoRedoService{
      * @param edges are the edges that have to be used as parameters in this snapshot
      * @param metadata is the metadata that has to be used as parameters in this snapshot
      */
-    public addSnapshot(nodes: DataSetNodes, edges: DataSetEdges, metadata:string){
+    public addSnapshot(nodes: DataSetNodes, edges: DataSetEdges, metadata:string):void{
         if (this.counter + 1 < this.snapshots.length) this.snapshots.splice(this.counter + 1, this.snapshots.length);
         this.counter++;
         this.snapshots[this.counter] = this.importExportService.convertNetworkToJSON(nodes, edges, metadata);

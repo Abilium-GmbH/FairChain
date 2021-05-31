@@ -21,7 +21,7 @@ export class FlagService {
      * @param nodeFlag is the flag emoji that should be added to the label or replace the existing flag
      * @returns the nodeFlag and nodeLabel as a string separated with an enter 
      */
-    public addOrChangeFlag(nodeLabel: string, nodeFlag: string) {
+    public addOrChangeFlag(nodeLabel: string, nodeFlag: string):string {
         if (nodeFlag === "") { return nodeLabel };
         nodeLabel = this.removeFlagFromLabel(nodeLabel)
         return nodeFlag + "\n" + nodeLabel;
@@ -34,7 +34,7 @@ export class FlagService {
      * @param label is the label of the node that needs a flag removed
      * @returns the label without the flag
      */
-    public removeFlagFromLabel(label: string) {
+    public removeFlagFromLabel(label: string):string {
         if (label === undefined) { return label; }
         if (flags.some(v => label.includes(v))) {
             label = label.slice(5);
@@ -51,7 +51,7 @@ export class FlagService {
      * @param newLabel is the text part of the label that the node should have
      * @returns the new label with the old flag emoji
      */
-    public changeLabelWithoutChangingFlag(originalLabel: string, newLabel: string) {
+    public changeLabelWithoutChangingFlag(originalLabel: string, newLabel: string):string {
         if (originalLabel === undefined) { return newLabel; }
         if (flags.some(v => originalLabel.includes(v))) {
             newLabel = originalLabel.slice(0, 5) + newLabel;
@@ -65,7 +65,7 @@ export class FlagService {
      * Sets currentFlag to empty string if label is undefined
      * @param label is the string where we want to extract the flag emoji
      */
-    public saveFlagFromLabel(label: string) {
+    public saveFlagFromLabel(label: string):void {
         if (label === undefined) { this.currentFlag = ""; }
         else {
             if (flags.some(v => label.includes(v))) { this.currentFlag = label.slice(0, 4); }

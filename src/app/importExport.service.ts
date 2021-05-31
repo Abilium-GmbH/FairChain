@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ImportData } from './interfaces/importData'
 import { DataSetNodes, DataSetEdges, IdType} from "vis-network/peer/esm/vis-network";
+import { promise } from 'selenium-webdriver';
 
 @Injectable({
     providedIn: 'root'
@@ -17,7 +18,7 @@ export class ImportExportService{
    * @param filename is the name of the file that will be created
    * @param text is the json that goes into the file
    */
-  public download(filename, text) {
+  public download(filename, text):void {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:json/plain;charset=utf-8,' + escape(text));
     element.setAttribute('download', filename);
@@ -43,7 +44,7 @@ export class ImportExportService{
    * Checks that the edges in the data have a from and a to 
    * @param data is the data of the edges and nodes that we want to check 
    */
-  private checkDataNodesAndEdgesAddUp(data: ImportData) {
+  private checkDataNodesAndEdgesAddUp(data: ImportData):void {
     let nodeList = data.nodes.map((node) => {return node.id});
     data.edges.forEach((edge) => {
       if (!nodeList.includes(edge.from)) throw new Error();
@@ -103,7 +104,7 @@ export class ImportExportService{
   * @param file is the file that the user wants to upload
   * @returns a promise with a reader that resolves promise
   */
-  public async upload(file: File) {
+  public async upload(file: File):Promise<any> {
     return new Promise ((resolve, reject) => {
       if (file.type != 'application/json') reject('The file type is not JSON');
       if (file['Size']> 1e5) reject('The file size is too large');
@@ -122,7 +123,7 @@ export class ImportExportService{
     })
   }
 
-  public async uploadLogo(file: File) {
+  public async uploadLogo(file: File):Promise<any> {
     return new Promise ((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);

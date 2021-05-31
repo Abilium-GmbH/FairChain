@@ -15,31 +15,31 @@ export class group {
     this.visJsName = visJsName;
   }
 
-  public getColor() {
+  public getColor():string {
     return this.color;
   }
 
-  public getName() {
+  public getName():string {
     return this.name;
   }
 
-  public getVisJsName() {
+  public getVisJsName():string {
     return this.visJsName;
   }
 
-  public setColor(color: string) {
+  public setColor(color: string):void {
     this.color = color;
   }
 
-  public setName(name: string) {
+  public setName(name: string):void {
     this.name = name;
   }
 
-  public setVisJsName(visJsName: string) {
+  public setVisJsName(visJsName: string):void {
     this.visJsName = visJsName;
   }
 
-  public toString() {
+  public toString():string {
     return '"' + this.visJsName + '" : { "color" : "' + this.color + '" }';
   }
 
@@ -116,7 +116,7 @@ export class GroupsService {
   }
 
   
-  private numberOfGroups() {
+  private numberOfGroups():number {
     return this.nameOfGroups.length;
   }
 }

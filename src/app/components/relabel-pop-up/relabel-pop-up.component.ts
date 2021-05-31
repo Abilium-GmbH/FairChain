@@ -20,7 +20,7 @@ export class RelabelPopUpComponent implements OnInit {
 
 
   constructor() { }
-  public isClosingPopUp() {
+  public isClosingPopUp():void {
     this.closeRelabelPopUp.emit();
   }
 
@@ -42,11 +42,11 @@ export class RelabelPopUpComponent implements OnInit {
     this.subscriptions = new Subscription();
   }
 
-  public updateLabel() {
+  public updateLabel():void {
     this.labelChange.emit(this.convertToMultiline(this.label));
   }
 
-  private convertToMultiline(text: string) {
+  private convertToMultiline(text: string):string {
     return text.replace('\n', '\n');
   }
 }
