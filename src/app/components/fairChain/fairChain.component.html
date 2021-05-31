@@ -73,7 +73,7 @@
         <mat-drawer #drawer class="drawer" mode="over" position="end">
           <mat-radio-group
               [(ngModel)]="nodeFlag">
-              <mat-radio-button class="radio-flags" *ngFor="let emoji of emojis" [value]="emoji" (click)="drawer.close()">
+              <mat-radio-button class="radio-flags" *ngFor="let emoji of radioEmojis" [value]="emoji" (click)="drawer.close()">
                 {{emoji}}
               </mat-radio-button>
             </mat-radio-group>

@@ -24,7 +24,7 @@ export class FlagService{
     public addOrChangeFlag(nodeLabel: string, nodeFlag: string){
         if (nodeFlag === ""){ return nodeLabel };
         nodeLabel = this.removeFlagFromLabel(nodeLabel)
-        return nodeFlag +"\n" + nodeLabel;
+        return nodeFlag.slice(3,7) +"\n" + nodeLabel;
     }
 
     /**
@@ -54,7 +54,7 @@ export class FlagService{
     public changeLabelWithoutChangingFlag(originalLabel: string, newLabel: string){
         if (originalLabel === undefined){ return newLabel; }
         if (flags.some(v => originalLabel.includes(v))){
-                newLabel = originalLabel.slice(0,5) + newLabel;
+                newLabel = originalLabel.slice(0,7) + newLabel;
         }
         return newLabel;
     }
@@ -68,7 +68,7 @@ export class FlagService{
     public saveFlagFromLabel(label: string){
         if (label === undefined){ this.currentFlag = ""; } 
         else {
-            if (flags.some(v => label.includes(v))){ this.currentFlag =  label.slice(0,4); } 
+            if (flags.some(v => label.includes(v))){ this.currentFlag = "abc" + label.slice(0,4); } 
             else { this.currentFlag = ""; }  
         }
     }

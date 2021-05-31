@@ -9,7 +9,7 @@ import {Network, Node, Edge, Data, Options, IdType, DataSetNodes, DataSetEdges, 
 import {DataSet} from 'vis-data/peer/esm/vis-data';
 import {group, GroupsService} from 'src/app/groups.service';
 import {CustomSnackbarService} from 'src/app/custom-snackbar.service';
-import {emojis as flags} from '../../emojis';
+import {emojis as flags, radioEmojis as radioFlags} from '../../emojis';
 import {RectOnDOM} from 'src/app/interfaces/RectOnDOM';
 import {NodeRelabelInfo} from '../../interfaces/NodeRelabelInfo';
 import { EdgeRelabelInfo } from 'src/app/interfaces/EdgeRelabelInfo';
@@ -55,9 +55,10 @@ export class FairChainComponent implements OnInit {
   public isShowingEdgeRelabelPopUp = false;
   //public edgeRelabelPopUpInfo: RectOnDOM;
 
-  public nodeFlag = "🇨🇭";
+  public nodeFlag = "CH 🇨🇭";
 
   public emojis: string[];
+  public radioEmojis: string[];
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
 
@@ -97,6 +98,7 @@ export class FairChainComponent implements OnInit {
               private matSnackBar: MatSnackBar) {
     this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
     this.emojis = flags;
+    this.radioEmojis = radioFlags;
   }
 
   /**
@@ -686,7 +688,15 @@ export class FairChainComponent implements OnInit {
   private showRelabelPopUp(nodeId: IdType) {
     this.nodeRelabelPopUpInfo.nodeId = nodeId;
     this.nodeRelabelPopUpInfo.rect   = this.getNodeRelabelPopUpRect(nodeId);
-    this.nodeRelabelPopUpInfo.label  = this.nodes.get(nodeId).label;
+    if (this.nodes.get(nodeId).label === undefined){ this.nodeRelabelPopUpInfo.label = this.nodes.get(nodeId).label; }
+    else {
+      if (this.emojis.some(v => this.nodes.get(nodeId).label.includes(v))){ 
+        this.flagService.saveFlagFromLabel(this.nodes.get(nodeId).label);
+        this.nodeRelabelPopUpInfo.label = this.nodes.get(nodeId).label.slice(5); }
+      else { 
+        this.flagService.saveFlagFromLabel(this.nodes.get(nodeId).label);
+        this.nodeRelabelPopUpInfo.label = this.nodes.get(nodeId).label; }
+    }
     this.nodeRelabelPopUpInfo.active = true;
   }
 
