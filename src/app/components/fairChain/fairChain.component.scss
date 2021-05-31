@@ -35,15 +35,14 @@
         float: left;
     
         .tool {
-            padding: 5px;
-            margin-top: 1rem;
-            height: 3rem;
+            margin-top: 5px;
     
             .icon-link{
                 height: 4rem;
                 display: block;
-                margin-left: auto;
-                margin-right: auto;
+                margin: auto;
+                margin-top: 10px;
+                margin-bottom: 10px;
             }
             
         }

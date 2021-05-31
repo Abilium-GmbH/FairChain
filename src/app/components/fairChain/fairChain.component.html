@@ -14,25 +14,17 @@
 <mat-card class="application-body">
   <!-- Holds primary tools of the application -->
   <mat-card #toolbar class="toolbar">
-    <div>
-      <a #addNodeButton (click)="addNodeInNetwork()" [class.active]="isAddingNode()" class="tool">
+      <div #addNodeButton (click)="addNodeInNetwork()" [class.active]="isAddingNode()" class="tool">
         <img class="icon-link" src="assets/icons/addnodeicon.png">
-      </a>
-    </div>
-
+      </div>
     <hr>
-    <div>
-      <a #addEdgeButton (click)="addEdgeInNetwork()" [class.active]="isAddingEdge()" class="tool">
+      <div #addEdgeButton (click)="addEdgeInNetwork()" [class.active]="isAddingEdge()" class="tool">
         <img class="icon-link" src="assets/icons/addedgeicon.png">
-      </a>
-    </div>
-
+      </div>
     <hr>
-    <div>
-      <a #deleteSelectionButton (click)="deleteNodeOrEdgeInNetwork()" class="tool">
+      <div #deleteSelectionButton (click)="deleteNodeOrEdgeInNetwork()" class="tool">
         <img class="icon-link" src="assets/icons/deleteselectionicon.png">
-      </a>
-    </div>
+      </div>
     <hr>
   </mat-card>
 
