@@ -223,8 +223,10 @@ export class FairChainComponent implements OnInit {
   }
   private closeEdgeRelabelPopUp() : void {
     console.assert(this.edgeRelabelPopUpInfo.active, 'There is no pop up menu to close');
-    console.assert(this.edgeRelabelPopUpInfo.edgeId !== '', 'There is no edge to apply the change to'); 
-    this.edges.update({id:this.edgeRelabelPopUpInfo.edgeId, label: this.edgeRelabelPopUpInfo.label});
+    console.assert(this.edgeRelabelPopUpInfo.edgeId !== '', 'There is no edge to apply the change to');
+    console.log(this.edgeRelabelPopUpInfo.label);
+    //Will not update edge on empty string
+    this.edges.update({id:this.edgeRelabelPopUpInfo.edgeId, label: this.edgeRelabelPopUpInfo.label + ' '});
     this.edgeRelabelPopUpInfo.active = false;
     this.edgeRelabelPopUpInfo.edgeId = undefined;
   }

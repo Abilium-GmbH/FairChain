@@ -36,7 +36,11 @@ export class RelabelPopUpComponent implements OnInit {
       ).subscribe(() => {
         this.isClosingPopUp();
       })
-    )
+    );
+    if (this.label === 'double click\nto change') {
+      this.label = '';
+      this.updateLabel();
+    }
   }
 
   public updateLabel() {
