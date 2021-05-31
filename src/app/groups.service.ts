@@ -68,6 +68,12 @@ export class GroupsService {
     this.nameOfGroups.push(nameOfGroup);
   }
 
+
+  /**
+   * Checks if there is a group with the given name
+   * @param groupName to search in the list of the current groups
+   * @returns true if it finds a group with the given name, false otherwise
+   */
   public checkGroupName(groupName: string): boolean {
     for (var group of this.groups) {
       if (group.getName() == groupName) {
@@ -77,6 +83,11 @@ export class GroupsService {
     return false;
   }
 
+   /**
+   * Returns the visJsName of a group
+   * @param groupName whose visJsName we are looking fore
+   * @returns the visJsName if he finds it
+   */
   public findVisJsName(groupName: string): string {
     if (groupName === "none") return "none";
     for (var group of this.groups) {
@@ -95,6 +106,10 @@ export class GroupsService {
     return JSON.parse(temp);
   }
 
+  /**
+   * Gives the list of groups
+   * @returns list of the name of the groups
+   */
   public getGroupsName(): string[] {
     return this.nameOfGroups;
   }
