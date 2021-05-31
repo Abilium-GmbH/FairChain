@@ -195,7 +195,7 @@ export class FairChainComponent implements OnInit {
     if (!this.isHoverOptionAddNodeVisible()) this.showAddChildNodeOptions(params.node);
   }
 
-  public isChangingGroup() : boolean {return this.changesNode === ChangingNode.NodeColor;}
+  public isChangingGroup() : boolean {return this.changesNode === ChangingNode.NodeGroup;}
   public isHoverOptionAddNodeVisible() : boolean {return this.hoverOptionAddChildInfo.active;}
   public isNodeRelabelPopUpVisible() : boolean {return this.nodeRelabelPopUpInfo.active;}
   public isEdgeRelabelPopUpVisible() : boolean {return this.edgeRelabelPopUpInfo.active; }
