@@ -1,15 +1,43 @@
 import { Injectable } from '@angular/core';
+import { Position } from 'vis-network/declarations/entry-esnext';
+import { HoverOptionOnDOM } from './interfaces/HoverOptionOnDOM';
 import { RectOnDOM } from './interfaces/RectOnDOM';
 
 @Injectable({
   providedIn: 'root'
 })
-export class RelabelPopUpGeometryService {
 
+export class PopUpGeometryService {
   constructor() { }
 
   private minWidth: number = 150;
   private minHeight: number = 90;
+  private padding: number = 40
+
+  public getHoverOptionBoundingBox(corner1: Position, corner2: Position, min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
+    let bb: RectOnDOM = {
+      x: corner1.x,
+      y: corner1.y,
+      width: corner2.x - corner1.x,
+      height: corner2.y - corner1.y
+    }
+    bb = this.offsetRect(bb, min_x, min_y);
+    bb = this.rescaleRect(bb, min_x, min_y, max_x, max_y)
+    bb = this.padRect(bb);
+    bb = this.cutRectToFitCanvas(bb, min_x, min_y, max_x, max_y);
+    return bb;
+  }
+
+  public getHoverOptionInfo(center: Position, min_x: number, min_y: number, max_x: number, max_y: number): HoverOptionOnDOM {
+    let dx: number = -15;
+    let dy: number = -70;
+
+    return {
+      x: center.x + min_x + dx,
+      y: center.y + min_y + dy,
+      scale: 2
+    };
+  }
 
   public getNodeRelabelPopUpRect(rect: RectOnDOM, min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
     rect = this.blowUpRect(rect);
@@ -37,6 +65,23 @@ export class RelabelPopUpGeometryService {
     rect = this.moveRectUpToFitCanvas(rect, max_y);
 
     return rect;
+  }
+
+  private cutRectToFitCanvas(rect: RectOnDOM, min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
+    rect.x = Math.max(rect.x, min_x);
+    rect.y = Math.max(rect.y, min_y);
+    rect.width = Math.min(rect.width, max_x - rect.x);
+    rect.height = Math.min(rect.height, max_y - rect.y);
+    return rect
+  }
+
+  private padRect(rect: RectOnDOM): RectOnDOM {
+    return {
+      x: rect.x - this.padding,
+      y: rect.y - this.padding,
+      width: rect.width + 2 * this.padding,
+      height: rect.height + 2 * this.padding
+    };
   }
 
   private createRectBetweenNodes(node1_x: number, node1_y: number, node2_x: number, node2_y: number): RectOnDOM {
