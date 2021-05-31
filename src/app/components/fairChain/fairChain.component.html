@@ -140,9 +140,3 @@
   [(label)]="edgeRelabelPopUpInfo.label"
   (closeRelabelPopUp)="closeEdgeRelabelPopUp()"></relabel-pop-up>
 
-  <nodeHoverOption *ngIf="isHoverOptionAddNodeVisible()"
-    [img]="'assets/icons/hoveroptionaddnode.png'"
-    [info]='hoverOptionAddChildInfo.addChildNodeInfo'
-    [boundingBox]='hoverOptionAddChildInfo.boundingBox'
-    (onOptionClicked)='addChildNodeToHoveredNode()'
-    (onLeaveBoundingBox)='stopShowingNodeHoverOption()'></nodeHoverOption>
