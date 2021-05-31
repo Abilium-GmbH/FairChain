@@ -515,20 +515,6 @@ export class FairChainComponent implements OnInit {
     return edges.length === 1 && nodes.length !==1
   }
 
-  // Boolean switch value if someone wants to change the node label
-  public changeNodeName() {
-    this.makeToolIdle();
-    if (this.isChangingNodeLabel()) this.changesNode = ChangingNode.None;
-    else this.changesNode = ChangingNode.NodeLabel;
-  };
-
-  // Boolean switch value if someone wants to change the edge label
-  public changeEdgeName() {
-    this.makeToolIdle();
-    if (this.isChangingEdgeLabel()) this.changesEdge = ChangingEdge.None;
-    else this.changesEdge = ChangingEdge.EdgeLabel;
-  };
-
   // Initialize network properties
   private get graph(): HTMLElement {
     return this.graphRef.nativeElement;
