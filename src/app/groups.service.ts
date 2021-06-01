@@ -24,6 +24,11 @@ export class GroupsService {
     this.groups.push({name: nameOfGroup, color: colorOfGroup, visJsName: 'group' + this.numberOfGroups()});
   }
 
+  /**
+   * Checks if there is a group with the given name
+   * @param groupName to search in the list of the current groups
+   * @returns true if it finds a group with the given name, false otherwise
+   */
   public doesGroupExist(groupName: string) : boolean {
     return this.groups.map((g: Group) => {return g.name}).includes(groupName);
   }
@@ -37,12 +42,21 @@ export class GroupsService {
     return this.groups.length;
   }
 
+  /**
+   * Gives the list of groups
+   * @returns list of the name of the groups
+   */
   public getGroupsName() : string[] {
     let out: string[] = this.groups.map((g:Group) => {return g.name;});
     out.splice(0,0,'none');
     return out;
   }
 
+  /**
+   * Returns the visJsName of a group
+   * @param groupName whose visJsName we are looking fore
+   * @returns the visJsName if he finds it
+   */
   public findVisJsName(groupName: string) {
     if (groupName === "none") return "none";
     return this.groups.find((g:Group) => {return g.name === groupName;}).visJsName;
@@ -56,5 +70,4 @@ export class GroupsService {
   public getRawGroups() : Group[] {
     return this.groups;
   }
-
 }
