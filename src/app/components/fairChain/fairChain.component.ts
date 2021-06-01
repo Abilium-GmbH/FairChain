@@ -229,6 +229,7 @@ export class FairChainComponent implements OnInit {
     this.edges.update({id:this.edgeRelabelPopUpInfo.edgeId, label: this.edgeRelabelPopUpInfo.label + ' '});
     this.edgeRelabelPopUpInfo.active = false;
     this.edgeRelabelPopUpInfo.edgeId = undefined;
+    this.makeSnapshot();
   }
 
   public addChildNodeToHoveredNode() {
