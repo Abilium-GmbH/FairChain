@@ -31,6 +31,43 @@ import { HoverOptionOnDOM } from './../../interfaces/HoverOptionOnDOM'
 })
 export class FairChainComponent implements OnInit {
 
+  private nodeRelabelPopUpInfo: NodeRelabelInfo = {
+    nodeId: '',
+    active: false,
+    label: '',
+    rect: undefined
+  };
+
+  private edgeRelabelPopUpInfo: EdgeRelabelInfo = {
+    active: false,
+    label: '',
+    edgeId: '',
+    rect: undefined
+  }
+
+  private hoverOptionAddChildInfo: HoverOptionInfo = {
+    active: false,
+    nodeId: '',
+    addChildNodeInfo: undefined,
+    boundingBox: undefined
+  }
+
+  @ViewChild('graph', {static: true}) graphRef: ElementRef;
+
+  public isDebugging = false;
+
+  public isMetadataVisible = false;
+  public listOfGroups = ['none', 'ethical', 'unethical', 'sustainable', 'unsustainable'];
+  public metadata = ""
+  public nameOfNewGroup: string = '';
+  public nodeEdgeLabel = "";
+  public nodeFlag = "CH 🇨🇭";
+  public nodeGroupColor = '#002AFF';
+  public selectedGroup = 'none';
+
+  public radioEmojis: string[];
+  public emojis: string[];
+
   private changesEdge: ChangingEdge = ChangingEdge.None;
   private changesNode: ChangingNode = ChangingNode.None;
   private currentTool: Tools = Tools.Idle;
@@ -44,6 +81,7 @@ export class FairChainComponent implements OnInit {
     nodes: this.nodes,
     edges: this.edges,
   };
+
   private network: Network;
   private nodeGroups = {
     group1: {
@@ -59,32 +97,8 @@ export class FairChainComponent implements OnInit {
       color: 'red'
     }
   };
-  private nodeRelabelPopUpInfo: NodeRelabelInfo = {
-    nodeId: '',
-    active: false,
-    label: '',
-    rect: undefined
-  };
 
-  public edgeRelabelPopUpInfo: EdgeRelabelInfo = {
-    active: false,
-    label: '',
-    edgeId: '',
-    rect: undefined
-  }
-
-  public hoverOptionAddChildInfo: HoverOptionInfo = {
-    active: false,
-    nodeId: '',
-    addChildNodeInfo: undefined,
-    boundingBox: undefined
-  }
-
-  public edgeToRelableId: IdType;
-
-  public emojis: string[];
-
-  @ViewChild('graph', {static: true}) graphRef: ElementRef;
+  private subscriptions: Subscription;
 
   /**
    * Initializes Node and Edge Properties
@@ -93,7 +107,7 @@ export class FairChainComponent implements OnInit {
    * The network physics sensibility is also set up in a way that looks more realistic
    * less sensible when nodes are moved.
    */
-  private options: Options = {
+   private options: Options = {
     nodes: {
       shape: 'box',
       physics: true,
@@ -169,24 +183,6 @@ export class FairChainComponent implements OnInit {
       },
     }
   };
-  private subscriptions: Subscription;
-
-  public isDebugging = true;
-  public isMetadataVisible = false;
-  public isShowingEdgeRelabelPopUp = false;
-  public isShowingRelabelPopUp = false;
-  public listOfGroups = ['none', 'ethical', 'unethical', 'sustainable', 'unsustainable'];
-  public metadata = ""
-  // A handy debug buttom for any
-  public nameOfNewGroup: string = '';
-  public nodeEdgeColor = "#002AFF";
-  public nodeEdgeLabel = "";
-  public nodeFlag = "CH 🇨🇭";
-  public nodeGroupColor = '#002AFF';
-  public nodeToRelableId: IdType;
-  public radioEmojis: string[];
-  public selectedGroup = 'none';
-
 
   constructor(private importExportService: ImportExportService,
     private undoRedoService: UndoRedoService,
@@ -199,12 +195,6 @@ export class FairChainComponent implements OnInit {
     this.emojis = flags;
     this.radioEmojis = radioFlags;
   }
-
-  // Initialize network properties
-  private get graph(): HTMLElement {
-    return this.graphRef.nativeElement;
-  }
-
 
   public __debug__() {
     this.nodes.add({ id: 3, font: { face: 'Flags' }, label: '🇦🇱 \n Wood', x: 40, y: 40 })
@@ -300,16 +290,6 @@ export class FairChainComponent implements OnInit {
       this.changesNode = ChangingNode.NodeGroup;
     }
   }
-
-      /*
-  private onDragEnd(params) {
-    if (params.nodes.length > 0 && this.nodes.length >= 2) {
-      this.updateNodePositions();
-      this.makeSnapshot();
-
-    }
-  }
-  */
 
   // ToDo: comment
   public changeNodeGroupColor(): void {
@@ -851,6 +831,11 @@ export class FairChainComponent implements OnInit {
       const pos: Position = this.network.getPosition(id);
       this.nodes.update({ id: id, x: pos.x, y: pos.y });
     })
+  }
+
+  // Initialize network properties
+  private get graph(): HTMLElement {
+    return this.graphRef.nativeElement;
   }
 
 }

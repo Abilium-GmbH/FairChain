@@ -106,12 +106,19 @@
   </mat-card>
 
 </mat-card>
-<relabel-pop-up *ngIf="isNodeRelabelPopUpVisible()" [info]='nodeRelabelPopUpInfo.rect'
-  [(label)]="nodeRelabelPopUpInfo.label" (closeRelabelPopUp)="closeNodeRelabelPopUp()"></relabel-pop-up>
+<relabel-pop-up *ngIf="isNodeRelabelPopUpVisible()" 
+  [info]='nodeRelabelPopUpInfo.rect'
+  [(label)]="nodeRelabelPopUpInfo.label" 
+  (closeRelabelPopUp)="closeNodeRelabelPopUp()"></relabel-pop-up>
 
-<relabel-pop-up *ngIf="isEdgeRelabelPopUpVisible()" [info]='edgeRelabelPopUpInfo.rect'
-  [(label)]="edgeRelabelPopUpInfo.label" (closeRelabelPopUp)="closeEdgeRelabelPopUp()"></relabel-pop-up>
+<relabel-pop-up *ngIf="isEdgeRelabelPopUpVisible()" 
+  [info]='edgeRelabelPopUpInfo.rect'
+  [(label)]="edgeRelabelPopUpInfo.label" 
+  (closeRelabelPopUp)="closeEdgeRelabelPopUp()"></relabel-pop-up>
 
-<nodeHoverOption *ngIf="isHoverOptionAddNodeVisible()" [img]="'assets/icons/hoveroptionaddnode.png'"
-  [info]='hoverOptionAddChildInfo.addChildNodeInfo' [boundingBox]='hoverOptionAddChildInfo.boundingBox'
-  (onOptionClicked)='addChildNodeToHoveredNode()' (onLeaveBoundingBox)='stopShowingNodeHoverOption()'></nodeHoverOption>
+<nodeHoverOption *ngIf="isHoverOptionAddNodeVisible()" 
+  [img]="'assets/icons/hoveroptionaddnode.png'"
+  [info]='hoverOptionAddChildInfo.addChildNodeInfo' 
+  [boundingBox]='hoverOptionAddChildInfo.boundingBox'
+  (onOptionClicked)='addChildNodeToHoveredNode()' 
+  (onLeaveBoundingBox)='stopShowingNodeHoverOption()'></nodeHoverOption>
