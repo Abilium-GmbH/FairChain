@@ -33,8 +33,6 @@ export class FairChainComponent implements OnInit {
 
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
 
-  public isDebugging = false;
-
   public isMetadataVisible = false;
   public listOfGroups = ['none', 'ethical', 'unethical', 'sustainable', 'unsustainable'];
   public metadata = ""
@@ -194,10 +192,6 @@ export class FairChainComponent implements OnInit {
     this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
     this.emojis = flags;
     this.radioEmojis = radioFlags;
-  }
-
-  public __debug__() {
-    this.nodes.add({ id: 3, font: { face: 'Flags' }, label: '🇦🇱 \n Wood', x: 40, y: 40 })
   }
 
   public addChildNodeToHoveredNode(): void {
@@ -389,6 +383,14 @@ export class FairChainComponent implements OnInit {
     this.makeSnapshot();
   }
 
+  /**
+   * Changes the .image value of the Logo node to the base64 string of the imported logo
+   * Adds a Logo node if there is not one already
+   * Makes the Logo node an image node
+   * Sends the file to importExport.service so the file can become a base64 string
+   * 
+   * @param files the FileList containing the uploaded image
+   */
   public async importLogo(files: FileList): Promise<void> {
     if (this.nodes.get("Logo") == null) {
       this.nodes.add({
