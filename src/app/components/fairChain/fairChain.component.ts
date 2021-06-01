@@ -65,6 +65,203 @@ export class FairChainComponent implements OnInit {
     label: '',
     rect: undefined
   };
+
+  public edgeRelabelPopUpInfo: EdgeRelabelInfo = {
+    active: false,
+    label: '',
+    edgeId: '',
+    rect: undefined
+  }
+
+  public hoverOptionAddChildInfo: HoverOptionInfo = {
+    active: false,
+    nodeId: '',
+    addChildNodeInfo: undefined,
+    boundingBox: undefined
+  }
+
+  public edgeToRelableId: IdType;
+  public isShowingEdgeRelabelPopUp = false;
+  //public edgeRelabelPopUpInfo: RectOnDOM;
+
+  public nodeFlag = "CH 🇨🇭";
+
+  public emojis: string[];
+  public radioEmojis: string[];
+
+  @ViewChild('graph', {static: true}) graphRef: ElementRef;
+
+  private network: Network;
+  private subscriptions: Subscription;
+
+  private changesNode: ChangingNode = ChangingNode.None;
+  private changesEdge: ChangingEdge = ChangingEdge.None;
+  private currentTool: Tools = Tools.Idle;
+
+
+  // Create an array with nodes
+  //private nodes: Node[] = [];
+  private nodes: DataSetNodes = new DataSet();
+
+  // Create an array with edges
+  private edges: DataSetEdges = new DataSet();
+
+  // Create a network
+  private data: Data = {
+    nodes: this.nodes,
+    edges: this.edges,
+  };
+
+  public ngOnInit(): void {
+    this.network = new Network(this.graph, this.data, this.options);
+    this.makeSubscriptions();
+    this.openSnackBar();
+  }
+
+  constructor(private importExportService: ImportExportService,
+              private undoRedoService: UndoRedoService,
+              private flagService: FlagService,
+              private groupsServices: GroupsService,
+              private snackBar: CustomSnackbarService,
+              private popUpGeometryService: PopUpGeometryService,
+              private matSnackBar: MatSnackBar) {
+    this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
+    this.emojis = flags;
+    this.radioEmojis = radioFlags;
+  }
+
+  /**
+   * creates subscriptions which define what to do with which user input
+   */
+  private makeSubscriptions(): void {
+    this.subscriptions = new Subscription();
+    this.subscriptions.add(
+      fromEvent(this.network, 'click').subscribe(params => {
+        this.onClick(params);
+      })
+    );
+    this.subscriptions.add(
+      fromEvent(this.network, 'dragEnd').subscribe(params => {
+        this.onDragEnd(params);
+      })
+    );
+    this.subscriptions.add(
+      fromEvent(this.network, 'doubleClick').subscribe(params => {
+        this.onDoubleClick(params);
+      })
+    );
+    this.subscriptions.add(
+      fromEvent(this.network, 'dragging').subscribe(params => {
+        if (this.isNodeRelabelPopUpVisible()) this.closeNodeRelabelPopUp();
+        if (this.isEdgeRelabelPopUpVisible()) this.closeEdgeRelabelPopUp();
+      })
+    );
+    this.subscriptions.add(
+      fromEvent(this.network, 'hoverNode').subscribe(params => {
+        this.onHoverNode(params)
+      })
+    );
+    this.subscriptions.add(
+      fromEvent(this.network, 'blurNode').subscribe(params => {
+        if (this.isAddingNode()) this.enableAddNodeMode();
+      })
+    );
+    this.subscriptions.add(
+      fromEvent(this.network, 'blurEdge').subscribe(params => {
+        if (this.isAddingEdge()) this.enableAddEdgeMode();
+      })
+    );
+    this.subscriptions.add(
+      fromEvent(this.network, 'zoom').subscribe(params => {
+        if (this.nodeRelabelPopUpInfo.active) this.closeNodeRelabelPopUp();
+        if (this.edgeRelabelPopUpInfo.active) this.closeEdgeRelabelPopUp();
+        if (this.isAddingEdge()) this.enableAddEdgeMode();
+        if (this.isAddingNode()) this.enableAddNodeMode();
+        if(this.network.getScale() <= 0.5) this.network.moveTo({position: {x:0,y:0},scale:0.5});
+        if(this.network.getScale() > 3) this.network.moveTo({scale:3});
+      })
+    );
+  }
+
+  private onHoverNode(params): void {
+    if (this.isAddingNode()) this.stopAddMode();
+    if (!this.isHoverOptionAddNodeVisible()) this.showAddChildNodeOptions(params.node);
+  }
+
+  public isChangingGroup() : boolean {return this.changesNode === ChangingNode.NodeGroup;}
+  public isHoverOptionAddNodeVisible() : boolean {return this.hoverOptionAddChildInfo.active;}
+  public isNodeRelabelPopUpVisible() : boolean {return this.nodeRelabelPopUpInfo.active;}
+  public isEdgeRelabelPopUpVisible() : boolean {return this.edgeRelabelPopUpInfo.active; }
+  public isAddingNode() : boolean {return this.currentTool === Tools.AddingNode;}
+  public isAddingEdge() : boolean {return this.currentTool === Tools.AddingEdge;}
+  public isChangingNodeLabel() : boolean {return this.changesNode === ChangingNode.NodeLabel;}
+  public isChangingEdgeLabel() : boolean {return this.changesEdge === ChangingEdge.EdgeLabel;}
+  public isChangingColor() : boolean {return this.changesNode === ChangingNode.NodeColor;}
+  public isChangingFlag() : boolean {return this.changesNode === ChangingNode.NodeFlag;}
+  public isDeletingFlag() : boolean {return this.changesNode === ChangingNode.DeleteNodeFlag;}
+  public isInNodeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
+  public isInEdgeEditMode() : boolean {return this.changesNode !== ChangingNode.None;}
+  private stopAddMode() : void {this.network.disableEditMode(); }
+  private enableAddNodeMode() : void {this.network.addNodeMode(); }
+  private enableAddEdgeMode() : void {this.network.addEdgeMode(); }
+  private stopEditMode() : void {this.changesNode = ChangingNode.None; this.changesEdge = ChangingEdge.None;}
+  private makeToolIdle() : void {this.currentTool = Tools.Idle;}
+  private closeNodeRelabelPopUp() : void {
+    console.assert(this.nodeRelabelPopUpInfo.active, 'There is no pop up menu to close');
+    console.assert(this.nodeRelabelPopUpInfo.nodeId !== '', 'There is no node to apply the change to'); 
+    this.nodes.update({id: this.nodeRelabelPopUpInfo.nodeId, label: this.flagService.addOrChangeFlag(this.nodeRelabelPopUpInfo.label, this.flagService.currentFlag)});
+    this.nodeRelabelPopUpInfo.active = false;
+    this.nodeRelabelPopUpInfo.nodeId = '';
+    this.makeSnapshot();
+  }
+  private closeEdgeRelabelPopUp() : void {
+    console.assert(this.edgeRelabelPopUpInfo.active, 'There is no pop up menu to close');
+    console.assert(this.edgeRelabelPopUpInfo.edgeId !== '', 'There is no edge to apply the change to');
+    console.log(this.edgeRelabelPopUpInfo.label);
+    //Will not update edge on empty string
+    this.edges.update({id:this.edgeRelabelPopUpInfo.edgeId, label: this.edgeRelabelPopUpInfo.label + ' '});
+    this.edgeRelabelPopUpInfo.active = false;
+    this.edgeRelabelPopUpInfo.edgeId = undefined;
+    this.makeSnapshot();
+  }
+
+  public addChildNodeToHoveredNode() {
+    const newNodeId = this.makeNewId();
+    const newEdgeId = this.makeNewId();
+    let node: Node = this.nodes.get(this.hoverOptionAddChildInfo.nodeId)
+    node.x += 400;
+    this.nodes.add({id:newNodeId, label:'double click\nto change', x: node.x, y:node.y})
+    const edgeLabel = (this.edges.length <= 0) ? 'double click\nto change' : '';
+    this.edges.add({id:newEdgeId, to:this.hoverOptionAddChildInfo.nodeId, from:newNodeId, label:edgeLabel});
+    this.makeSnapshot();
+  }
+
+  private makeNewId() {
+    return this.genHexString(8) + '-' +
+      this.genHexString(4) + '-' +
+      this.genHexString(4) + '-' +
+      this.genHexString(4) + '-' +
+      this.genHexString(12);
+  }
+
+  private genHexString(len) {
+    const hex = '0123456789abcdef';
+    let output = '';
+    for (let i = 0; i < len; ++i) {
+        output += hex.charAt(Math.floor(Math.random() * hex.length));
+    }
+    return output;
+  }
+
+  /**
+   * A handy debug buttom for any
+   */ 
+  public isDebugging = true;
+  public __debug__()
+  {
+    this.nodes.add({ id: 3, font: { face: 'Flags' }, label: '🇦🇱 \n Wood', x: 40, y: 40 })  
+  }
+
   /**
    * Initializes Node and Edge Properties
    *
@@ -118,6 +315,7 @@ export class FairChainComponent implements OnInit {
       addNode: (data: Node, callback) => {
         if (this.isAddingNode()) {
           console.assert(this.isAddingNode(), 'The current tool should be adding a node');
+          data.label = 'double click\nto change';
           callback(data);
           this.network.addNodeMode();
           this.makeSnapshot();
@@ -126,6 +324,7 @@ export class FairChainComponent implements OnInit {
       // Defines logic for Add Edge functionality
       addEdge: (data: Edge, callback) => {
         console.assert(this.isAddingEdge(), 'The current tool should be adding an edge');
+        if (this.edges.length <= 0) data.label = 'double click\nto change';
         callback(data);
         this.network.addEdgeMode();
         this.makeSnapshot();
@@ -288,6 +487,7 @@ export class FairChainComponent implements OnInit {
   /**
    * Implements the logik to change the group color, this impacts all nodes having the same group
    */
+
   public changeNodeGroup(): void {
     this.makeToolIdle();
     if (this.isChangingGroup()) {
@@ -295,6 +495,12 @@ export class FairChainComponent implements OnInit {
       this.network.disableEditMode();
     } else {
       this.changesNode = ChangingNode.NodeGroup;
+
+  private onDragEnd(params) {
+    if (params.nodes.length > 0 && this.nodes.length >= 2) {
+      this.updateNodePositions();
+      this.makeSnapshot();
+
     }
   }
 
@@ -316,6 +522,7 @@ export class FairChainComponent implements OnInit {
     }
     this.network.disableEditMode();
   }
+
 
   // Boolean switch value if someone wants to change the node label
   public changeNodeName(): void {
@@ -355,6 +562,11 @@ export class FairChainComponent implements OnInit {
         link.href = dataUrl;
         link.click();
       });
+
+  // Initialize network properties
+  private get graph(): HTMLElement {
+    return this.graphRef.nativeElement;
+
   }
 
   /**
