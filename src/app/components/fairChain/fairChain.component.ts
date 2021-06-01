@@ -491,7 +491,8 @@ export class FairChainComponent implements OnInit {
    * @param params needed to distinguish the different dragged node
    */
   private onDragEnd(params) {
-    if (params.nodes && params.nodes.length >= 1) {
+    if (params.nodes.length > 0 && this.nodes.length >= 2) {
+      this.updateNodePositions();
       this.makeSnapshot();
     }
   }
