@@ -418,7 +418,7 @@ export class FairChainComponent implements OnInit {
 
   public isChangingFlag(): boolean { return this.changesNode === ChangingNode.NodeFlag; }
 
-  public isChangingGroup(): boolean { return this.changesNode === ChangingNode.NodeColor; }
+  public isChangingGroup(): boolean { return this.changesNode === ChangingNode.NodeGroup; }
 
   public isChangingNodeLabel(): boolean { return this.changesNode === ChangingNode.NodeLabel; }
 
@@ -766,7 +766,8 @@ export class FairChainComponent implements OnInit {
    * @param params needed to distinguish the different dragged node
    */
   private onDragEnd(params): void {
-    if (params.nodes && params.nodes.length >= 1) {
+    if (params.nodes.length > 0 && this.nodes.length >= 2) {
+      this.updateNodePositions();
       this.makeSnapshot();
     }
   }
