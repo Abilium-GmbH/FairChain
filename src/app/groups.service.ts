@@ -67,6 +67,10 @@ export class GroupsService {
     this.groups = groups;
   }
 
+  public setGroupColor(name: string, color: string) {
+    this.groups.find((g:Group) => {return g.name === name;}).color = color;
+  }
+
   public getRawGroups() : Group[] {
     return this.groups;
   }

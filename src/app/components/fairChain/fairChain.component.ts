@@ -431,6 +431,7 @@ export class FairChainComponent implements OnInit {
     var selectedGroup = this.groupsServices.findVisJsName(this.groupInfo.selected);
     if (selectedGroup === 'none') return;
     var loopActivated = false;
+    this.groupsServices.setGroupColor(this.groupInfo.selected, this.groupInfo.colour);
     eval('this.options.groups.' + selectedGroup + '.color = ' + '\'' + this.groupInfo.colour + '\'');
     this.network.setOptions(this.options);
     this.nodes.forEach(node => {
@@ -579,7 +580,6 @@ export class FairChainComponent implements OnInit {
 
     this.data = {nodes: this.nodes, edges: this.edges};
     this.network = new Network(this.graph, this.data, this.options);
-    this.makeSubscriptions();
   }
 
   /**
