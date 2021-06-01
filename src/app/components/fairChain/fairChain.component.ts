@@ -17,6 +17,7 @@ import { HoverOptionInfo } from 'src/app/interfaces/HoverOptionInfo';
 import { toPng } from 'html-to-image';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HoverOptionOnDOM } from './../../interfaces/HoverOptionOnDOM'
+import { GroupInfo } from 'src/app/interfaces/GroupInfo';
 
 @Component({
   selector: 'app-fairChain',
@@ -39,16 +40,8 @@ export class FairChainComponent implements OnInit {
   public metadata = ""
   public isMetadataVisible = false;
 
-  // A handy debug buttom for any
-  nameOfNewGroup: string = '';
-  listOfGroups = ['none', 'ethical', 'unethical', 'sustainable', 'unsustainable'];
-
-  public nodeGroupColor = '#002AFF';
-  public selectedGroup = 'none';
-
-
   change(value: string) {
-    this.selectedGroup = value;
+    this.groupInfo.selected = value;
   }
 
   private nodeGroups = {
@@ -85,6 +78,13 @@ export class FairChainComponent implements OnInit {
     nodeId: '',
     addChildNodeInfo: undefined,
     boundingBox: undefined
+  }
+
+  public groupInfo: GroupInfo = {
+    name: '',
+    groups: ['none', 'ethical', 'unethical', 'sustainable', 'unsustainable'],
+    colour: '#002AFF',
+    selected: 'none'
   }
 
   public edgeToRelableId: IdType;
@@ -610,9 +610,9 @@ export class FairChainComponent implements OnInit {
   }
 
   public updateNodeGroup(node: Node) {
-    node.group = this.groupsServices.findVisJsName(this.selectedGroup);
-    if (this.groupsServices.findVisJsName(this.selectedGroup) != 'none') {
-      eval('node.color = this.options.groups.' + this.groupsServices.findVisJsName(this.selectedGroup) + '.color');
+    node.group = this.groupsServices.findVisJsName(this.groupInfo.selected);
+    if (this.groupsServices.findVisJsName(this.groupInfo.selected) != 'none') {
+      eval('node.color = this.options.groups.' + this.groupsServices.findVisJsName(this.groupInfo.selected) + '.color');
     }
   }
 
@@ -627,14 +627,14 @@ export class FairChainComponent implements OnInit {
   // ToDo: comment
   public addGroup() {
 
-    if (this.groupsServices.checkGroupName(this.nameOfNewGroup)) {
+    if (this.groupsServices.checkGroupName(this.groupInfo.name)) {
       this.snackBar.open('Group name already exists');
     } else {
-      this.groupsServices.addGroup(this.nameOfNewGroup, this.nodeGroupColor);
+      this.groupsServices.addGroup(this.groupInfo.name, this.groupInfo.colour);
       var temp = this.groupsServices.getGroups();
       this.options.groups = temp;
       this.network.setOptions(this.options);
-      this.listOfGroups = this.groupsServices.getGroupsName();
+      this.groupInfo.groups = this.groupsServices.getGroupsName();
     }
   };
 
@@ -661,14 +661,14 @@ export class FairChainComponent implements OnInit {
   }
   // ToDo: comment
   public changeNodeGroupColor() {
-    var selectedGroup = this.groupsServices.findVisJsName(this.selectedGroup);
+    var selectedGroup = this.groupsServices.findVisJsName(this.groupInfo.selected);
     var loopActivated = false;
-    eval('this.options.groups.' + selectedGroup + '.color = ' + '\'' + this.nodeGroupColor + '\'');
+    eval('this.options.groups.' + selectedGroup + '.color = ' + '\'' + this.groupInfo.colour + '\'');
     this.network.setOptions(this.options);
     this.nodes.forEach(node => {
       if (node.group == selectedGroup) {
         loopActivated = true;
-        node.color = this.nodeGroupColor;
+        node.color = this.groupInfo.colour;
         this.network.updateClusteredNode(node.id, {group: selectedGroup});
       }
     });

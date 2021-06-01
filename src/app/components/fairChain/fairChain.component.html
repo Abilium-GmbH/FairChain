@@ -71,7 +71,7 @@
           <!-- ToDo: comment -->
           <p class="option-label">Groups</p>
           <select class="option-groupList" (change)="change($event.target.value)">
-            <option *ngFor="let nameOfGroup of listOfGroups"
+            <option *ngFor="let nameOfGroup of groupInfo.groups"
                     [value]="nameOfGroup">{{nameOfGroup}}</option>
           </select>
         <button mat-button
@@ -80,14 +80,14 @@
                 (click)="changeNodeGroup()">Change Group
         </button>
         <!-- Implements the color toolbar and button to change node/edge colors -->
-        <input matInput class="option-colorInput" type="color" [(ngModel)]="nodeGroupColor">
+        <input matInput class="option-colorInput" type="color" [(ngModel)]="groupInfo.colour">
         <br>
         <button mat-button
                 class="option-button"
                 (click)="changeNodeGroupColor()">Change Color
         </button>
       <!-- ToDo: comment -->
-      <input matInput class="option-groupInput" type="text" [(ngModel)]="nameOfNewGroup">
+      <input matInput class="option-groupInput" type="text" [(ngModel)]="groupInfo.name">
       <button mat-button
               class="option-button"
               (click)="addGroup()">Add Group
