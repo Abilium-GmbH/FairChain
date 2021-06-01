@@ -146,6 +146,7 @@ export class FairChainComponent implements OnInit {
       fromEvent(this.network, 'dragging').subscribe(params => {
         if (this.isNodeRelabelPopUpVisible()) this.closeNodeRelabelPopUp();
         if (this.isEdgeRelabelPopUpVisible()) this.closeEdgeRelabelPopUp();
+        if (this.isHoverOptionAddNodeVisible()) this.stopShowingNodeHoverOption();
       })
     );
     this.subscriptions.add(
@@ -579,7 +580,6 @@ export class FairChainComponent implements OnInit {
     this.data = {nodes: this.nodes, edges: this.edges};
     this.network = new Network(this.graph, this.data, this.options);
     this.makeSubscriptions();
-    this.openSnackBar();
   }
 
   /**
