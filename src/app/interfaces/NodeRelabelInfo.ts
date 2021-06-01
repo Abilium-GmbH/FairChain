@@ -1,4 +1,4 @@
-import {IdType} from "vis-network/peer/esm/vis-network";
+import { IdType } from "vis-network/peer/esm/vis-network";
 import { RectOnDOM } from "./RectOnDOM";
 
 export interface NodeRelabelInfo {

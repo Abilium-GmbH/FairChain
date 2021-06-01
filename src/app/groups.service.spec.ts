@@ -14,20 +14,20 @@ describe('GroupsService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should initialize with group1, group2, group3', () => {
+  it('should initialize with none, ethical, unethical, sustainable, unsustainable', () => {
     var groupsName = service.getGroupsName()
     var jsonGroup = JSON.stringify(service.getGroups())
-    expect(groupsName).toEqual(["none", "group1", "group2", "group3"])
-    expect(jsonGroup).toBe('{"group1":{"color":"red"},"group2":{"color":"green"},"group3":{"color":"yellow"}}')
+    expect(groupsName).toEqual(["none", "ethical", "unethical", "sustainable","unsustainable"])
+    expect(jsonGroup).toBe('{"group1":{"color":"blue"},"group2":{"color":"orange"},"group3":{"color":"green"},"group4":{"color":"red"}}')
   });
 
   it('should add a group', () => {
-    service.addGroup("group4", "red")
+    service.addGroup("new group", "red")
     var groupsName = service.getGroupsName()
     var jsonGroup = JSON.stringify(service.getGroups())
-    expect(groupsName).toEqual(["none", "group1", "group2", "group3", "group4"])
-    expect(jsonGroup).toBe('{"group1":{"color":"red"},"group2":{"color":"green"},"group3":{"color":"yellow"},"group4":{"color":"red"}}')
+    expect(groupsName).toEqual(["none", "ethical", "unethical", "sustainable","unsustainable", "new group"])
+    expect(jsonGroup).toBe('{"group1":{"color":"blue"},"group2":{"color":"orange"},"group3":{"color":"green"},"group4":{"color":"red"},"group5":{"color":"red"}}')
   });
 
-  
+
 });

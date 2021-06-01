@@ -14,9 +14,9 @@ describe('RelabelPopUpComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RelabelPopUpComponent ]
+      declarations: [RelabelPopUpComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
