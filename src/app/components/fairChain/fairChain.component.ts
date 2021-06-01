@@ -132,7 +132,7 @@ export class FairChainComponent implements OnInit {
               private snackBar: CustomSnackbarService,
               private popUpGeometryService: PopUpGeometryService,
               private matSnackBar: MatSnackBar) {
-    this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
+    this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata, this.groupsServices.getRawGroups());
     this.emojis = flags;
     this.radioEmojis = radioFlags;
   }
@@ -224,7 +224,6 @@ export class FairChainComponent implements OnInit {
   private closeEdgeRelabelPopUp() : void {
     console.assert(this.edgeRelabelPopUpInfo.active, 'There is no pop up menu to close');
     console.assert(this.edgeRelabelPopUpInfo.edgeId !== '', 'There is no edge to apply the change to');
-    console.log(this.edgeRelabelPopUpInfo.label);
     //Will not update edge on empty string
     this.edges.update({id:this.edgeRelabelPopUpInfo.edgeId, label: this.edgeRelabelPopUpInfo.label + ' '});
     this.edgeRelabelPopUpInfo.active = false;
@@ -532,7 +531,7 @@ export class FairChainComponent implements OnInit {
    * Downloads the file as Graph.json with the method in importExport.service.
    */
   public exportGraph(){
-    var text = this.importExportService.convertNetworkToJSON(this.nodes, this.edges, this.metadata);
+    var text = this.importExportService.convertNetworkToJSON(this.nodes, this.edges, this.metadata, this.groupsServices.getRawGroups());
     var filename = "Graph.json";
     this.importExportService.download(filename, text);
   }
@@ -582,13 +581,18 @@ export class FairChainComponent implements OnInit {
 
     this.metadata = data.metadata;
 
+    this.groupsServices.setGroups(data.groups);
+    this.groupInfo.groups = this.groupsServices.getGroupsName();
+    this.groupInfo.selected = 'none';
+    this.options.groups = this.groupsServices.getGroups();
+
     this.data = {nodes: this.nodes, edges: this.edges};
     this.network = new Network(this.graph, this.data, this.options);
     this.makeSubscriptions();
   }
 
   public makeSnapshot() {
-    this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata);
+    this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata, this.groupsServices.getRawGroups());
   }
 
   public undo() {
@@ -627,7 +631,7 @@ export class FairChainComponent implements OnInit {
   // ToDo: comment
   public addGroup() {
 
-    if (this.groupsServices.checkGroupName(this.groupInfo.name)) {
+    if (this.groupsServices.doesGroupExist(this.groupInfo.name)) {
       this.snackBar.open('Group name already exists');
     } else {
       this.groupsServices.addGroup(this.groupInfo.name, this.groupInfo.colour);
@@ -635,6 +639,7 @@ export class FairChainComponent implements OnInit {
       this.options.groups = temp;
       this.network.setOptions(this.options);
       this.groupInfo.groups = this.groupsServices.getGroupsName();
+      this.makeSnapshot();
     }
   };
 
@@ -662,6 +667,7 @@ export class FairChainComponent implements OnInit {
   // ToDo: comment
   public changeNodeGroupColor() {
     var selectedGroup = this.groupsServices.findVisJsName(this.groupInfo.selected);
+    if (selectedGroup === 'none') return;
     var loopActivated = false;
     eval('this.options.groups.' + selectedGroup + '.color = ' + '\'' + this.groupInfo.colour + '\'');
     this.network.setOptions(this.options);
@@ -676,6 +682,7 @@ export class FairChainComponent implements OnInit {
       this.makeSnapshot();
     }
     this.network.disableEditMode();
+    this.makeSnapshot();
   }
 
   private showRelabelPopUp(nodeId: IdType) {

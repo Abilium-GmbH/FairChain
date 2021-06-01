@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ImportData } from './interfaces/importData'
 import { DataSetNodes, DataSetEdges, IdType} from "vis-network/peer/esm/vis-network";
+import { Group } from './interfaces/Group';
 
 @Injectable({
     providedIn: 'root'
@@ -60,7 +61,7 @@ export class ImportExportService{
   private checkDataHasCorrectFormat(data: any): void {
     if (!data.nodes) throw new Error();
     if (!data.edges) throw new Error();
-    for (let key in data) if (!['nodes','edges','metadata'].includes(key)) throw Error();
+    for (let key in data) if (!['nodes','edges','metadata', 'groups'].includes(key)) throw Error();
     if (!Array.isArray(data.nodes)) throw new Error();
     if (!Array.isArray(data.edges)) throw new Error();
     for (let entry of data.nodes) {this.checkNodesHasCorrectFormat(entry);}
@@ -141,11 +142,12 @@ export class ImportExportService{
    * @param metadata is the metadata from the fairchain component that we have to make into a part of the JSON
    * @returns a String containing the JSON of the network
    */
-  public convertNetworkToJSON(nodes: DataSetNodes, edges: DataSetEdges, metadata:string): string {
-    return "{\"nodes\":[NODES],\"edges\":[EDGES],\"metadata\":METADATA}" 
+  public convertNetworkToJSON(nodes: DataSetNodes, edges: DataSetEdges, metadata:string, groups: Group[]): string {
+    return "{\"nodes\":[NODES],\"edges\":[EDGES],\"metadata\":METADATA,\"groups\":[GROUPS]}" 
       .replace('NODES', this.datasetToJSON(nodes))
       .replace('EDGES', this.datasetToJSON(edges))
-      .replace('METADATA', JSON.stringify(metadata));
+      .replace('METADATA', JSON.stringify(metadata))
+      .replace('GROUPS', this.groupsToJSON(groups));
   }
 
   /**
@@ -158,6 +160,19 @@ export class ImportExportService{
     if (data.length === 0) return '';
     return data.getIds().map((id: IdType) => {
       return JSON.stringify(data.get(id))
+    }).join(',');
+  }
+
+  /**
+   * Extracts the elements from the Dataset with their Ids and stringifys them
+   * Is a helper method of convertNetworkToJSON
+   * @param data is the DataSet 
+   * @returns the data as JSON
+   */
+   private groupsToJSON(data: Group[]): string {
+    if (data.length === 0) return '[]';
+    return data.map((g: Group) => {
+      return JSON.stringify(g)
     }).join(',');
   }
 }

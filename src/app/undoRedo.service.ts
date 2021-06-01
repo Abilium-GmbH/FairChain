@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DataSetNodes, DataSetEdges} from "vis-network/peer/esm/vis-network";
 import { ImportExportService } from './importExport.service';
+import { Group } from './interfaces/Group';
 
 @Injectable({
     providedIn: 'root'
@@ -54,9 +55,9 @@ export class UndoRedoService{
      * @param edges are the edges that have to be used as parameters in this snapshot
      * @param metadata is the metadata that has to be used as parameters in this snapshot
      */
-    public addSnapshot(nodes: DataSetNodes, edges: DataSetEdges, metadata:string){
+    public addSnapshot(nodes: DataSetNodes, edges: DataSetEdges, metadata:string, groups: Group[]){
         if (this.counter + 1 < this.snapshots.length) this.snapshots.splice(this.counter + 1, this.snapshots.length);
         this.counter++;
-        this.snapshots[this.counter] = this.importExportService.convertNetworkToJSON(nodes, edges, metadata);
+        this.snapshots[this.counter] = this.importExportService.convertNetworkToJSON(nodes, edges, metadata, groups);
     }
 }

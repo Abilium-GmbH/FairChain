@@ -1,48 +1,5 @@
 import {Injectable} from '@angular/core';
-
-/**
- * description service group getters and various exports
- */
-export class group {
-
-  constructor(name: string, color: string, visJsName: string) {
-    this.name = name;
-    this.color = color;
-    this.visJsName = visJsName;
-  }
-
-  private name: string;
-  private color: string;
-  private visJsName: string;
-
-  public getName() {
-    return this.name;
-  }
-
-  public getColor() {
-    return this.color;
-  }
-
-  public getVisJsName() {
-    return this.visJsName;
-  }
-
-  public setName(name: string) {
-    this.name = name;
-  }
-
-  public setColor(color: string) {
-    this.color = color;
-  }
-
-  public setVisJsName(visJsName: string) {
-    this.visJsName = visJsName;
-  }
-
-  public toString() {
-    return '"' + this.visJsName + '" : { "color" : "' + this.color + '" }';
-  }
-}
+import {Group} from './interfaces/Group';
 
 /**
  * Service description hash table
@@ -56,49 +13,48 @@ export class GroupsService {
   constructor() {
   }
 
-  private nameOfGroups: string[] = ['none', 'ethical', 'unethical', 'sustainable', 'unsustainable'];
-  private groups: group[] = [new group('ethical', 'blue', 'group1'), new group('unethical', 'orange', 'group2'),
-    new group('sustainable', 'green', 'group3'), new group('unsustainable', 'red', 'group4')];
+  private groups: Group[] = [
+    {name: 'ethical',       color: 'blue',   visJsName: 'group0'},
+    {name: 'unethical',     color: 'orange', visJsName: 'group1'},
+    {name: 'sustainable',   color: 'green',  visJsName: 'group2'},
+    {name: 'unsustainable', color: 'red',    visJsName: 'group3'}
+  ]
 
   public addGroup(nameOfGroup: string, colorOfGroup: string) {
-    this.groups.push(new group(nameOfGroup, colorOfGroup, 'group' + this.numberOfGroups()));
-    this.nameOfGroups.push(nameOfGroup);
+    this.groups.push({name: nameOfGroup, color: colorOfGroup, visJsName: 'group' + this.numberOfGroups()});
   }
 
-  public checkGroupName(groupName: string) {
-    for (var group of this.groups) {
-      if (group.getName() == groupName) {
-        return true;
-      }
-    }
-    return false;
+  public doesGroupExist(groupName: string) : boolean {
+    return this.groups.map((g: Group) => {return g.name}).includes(groupName);
   }
 
   public getGroups() {
-
-    var temp: string = '{';
-
-    temp += this.groups.toString();
-    temp += '}';
-    console.log(temp);
-    return JSON.parse(temp);
+    let temp: string[] = this.groups.map((g:Group) => {return '\"' + g.visJsName + '\" : { \"color\" : \"' + g.color + '\"}'})
+    return JSON.parse('{' + temp.toString() + '}');
   }
 
   private numberOfGroups() {
-    return this.nameOfGroups.length;
+    return this.groups.length;
   }
 
-  public getGroupsName() {
-    return this.nameOfGroups;
+  public getGroupsName() : string[] {
+    let out: string[] = this.groups.map((g:Group) => {return g.name;});
+    out.splice(0,0,'none');
+    return out;
   }
 
   public findVisJsName(groupName: string) {
     if (groupName === "none") return "none";
-    for (var group of this.groups) {
-      if (group.getName() == groupName) {
-        return group.getVisJsName()
-      }
-    }
+    return this.groups.find((g:Group) => {return g.name === groupName;}).visJsName;
+  }
+
+  public setGroups(groups: Group[]) {
+    for (let i = 0; i < groups.length; i++) groups[i].visJsName = 'group' + i;
+    this.groups = groups;
+  }
+
+  public getRawGroups() : Group[] {
+    return this.groups;
   }
 
 }
