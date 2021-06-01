@@ -195,7 +195,7 @@ export class FairChainComponent implements OnInit {
     if (!this.isHoverOptionAddNodeVisible()) this.showAddChildNodeOptions(params.node);
   }
 
-  public isChangingGroup() : boolean {return this.changesNode === ChangingNode.NodeColor;}
+  public isChangingGroup() : boolean {return this.changesNode === ChangingNode.NodeGroup;}
   public isHoverOptionAddNodeVisible() : boolean {return this.hoverOptionAddChildInfo.active;}
   public isNodeRelabelPopUpVisible() : boolean {return this.nodeRelabelPopUpInfo.active;}
   public isEdgeRelabelPopUpVisible() : boolean {return this.edgeRelabelPopUpInfo.active; }
@@ -223,8 +223,10 @@ export class FairChainComponent implements OnInit {
   }
   private closeEdgeRelabelPopUp() : void {
     console.assert(this.edgeRelabelPopUpInfo.active, 'There is no pop up menu to close');
-    console.assert(this.edgeRelabelPopUpInfo.edgeId !== '', 'There is no edge to apply the change to'); 
-    this.edges.update({id:this.edgeRelabelPopUpInfo.edgeId, label: this.edgeRelabelPopUpInfo.label});
+    console.assert(this.edgeRelabelPopUpInfo.edgeId !== '', 'There is no edge to apply the change to');
+    console.log(this.edgeRelabelPopUpInfo.label);
+    //Will not update edge on empty string
+    this.edges.update({id:this.edgeRelabelPopUpInfo.edgeId, label: this.edgeRelabelPopUpInfo.label + ' '});
     this.edgeRelabelPopUpInfo.active = false;
     this.edgeRelabelPopUpInfo.edgeId = undefined;
   }
@@ -233,9 +235,10 @@ export class FairChainComponent implements OnInit {
     const newNodeId = this.makeNewId();
     const newEdgeId = this.makeNewId();
     let node: Node = this.nodes.get(this.hoverOptionAddChildInfo.nodeId)
-    node.x += 100;
-    this.nodes.add({id:newNodeId, label:'New', x: node.x, y:node.y})
-    this.edges.add({id:newEdgeId, to:this.hoverOptionAddChildInfo.nodeId, from:newNodeId});
+    node.x += 400;
+    this.nodes.add({id:newNodeId, label:'double click\nto change', x: node.x, y:node.y})
+    const edgeLabel = (this.edges.length <= 0) ? 'double click\nto change' : '';
+    this.edges.add({id:newEdgeId, to:this.hoverOptionAddChildInfo.nodeId, from:newNodeId, label:edgeLabel});
     this.makeSnapshot();
   }
 
@@ -318,6 +321,7 @@ export class FairChainComponent implements OnInit {
       addNode: (data: Node, callback) => {
         if (this.isAddingNode()) {
           console.assert(this.isAddingNode(), 'The current tool should be adding a node');
+          data.label = 'double click\nto change';
           callback(data);
           this.network.addNodeMode();
           this.makeSnapshot();
@@ -326,6 +330,7 @@ export class FairChainComponent implements OnInit {
       // Defines logic for Add Edge functionality
       addEdge: (data: Edge, callback) => {
         console.assert(this.isAddingEdge(), 'The current tool should be adding an edge');
+        if (this.edges.length <= 0) data.label = 'double click\nto change';
         callback(data);
         this.network.addEdgeMode();
         this.makeSnapshot();
@@ -515,20 +520,6 @@ export class FairChainComponent implements OnInit {
   private isDoubleClickingEdge(edges: IdType[], nodes: IdType[]) : boolean {
     return edges.length === 1 && nodes.length !==1
   }
-
-  // Boolean switch value if someone wants to change the node label
-  public changeNodeName() {
-    this.makeToolIdle();
-    if (this.isChangingNodeLabel()) this.changesNode = ChangingNode.None;
-    else this.changesNode = ChangingNode.NodeLabel;
-  };
-
-  // Boolean switch value if someone wants to change the edge label
-  public changeEdgeName() {
-    this.makeToolIdle();
-    if (this.isChangingEdgeLabel()) this.changesEdge = ChangingEdge.None;
-    else this.changesEdge = ChangingEdge.EdgeLabel;
-  };
 
   // Initialize network properties
   private get graph(): HTMLElement {
