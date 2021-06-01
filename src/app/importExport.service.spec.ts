@@ -1,6 +1,7 @@
 import {ImportExportService} from './importExport.service'
 import { DataSetNodes, DataSetEdges } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data"
+import { Group } from './interfaces/Group';
 
 describe('ImportExportService', () => {
     let service: ImportExportService;
@@ -10,6 +11,7 @@ describe('ImportExportService', () => {
         let nodes: DataSetNodes = new DataSet();
         let edges: DataSetEdges = new DataSet();
         let metadata: string = "This is a metadata";
+        let groups: Group[] = [];
 
         nodes.add([
             {id: '1', label: 'Node 1', x: 0, y:0, color:'#fbff00'},
@@ -19,7 +21,7 @@ describe('ImportExportService', () => {
             {from:'1', to:'2', id:'1'},
             {from:'2', to:'3', id:'2'}
         ])
-        expect(service.convertNetworkToJSON(nodes, edges, metadata)).toEqual("{\"nodes\":[{\"id\":\"1\",\"label\":\"Node 1\",\"x\":0,\"y\":0,\"color\":\"#fbff00\"},{\"id\":\"2\",\"label\":\"Node 2\",\"x\":100,\"y\":0,\"color\":\"#00ff4c\"},{\"id\":\"3\",\"label\":\"Node 3\",\"x\":0,\"y\":-200,\"color\":\"#f00add\"}],\"edges\":[{\"from\":\"1\",\"to\":\"2\",\"id\":\"1\"},{\"from\":\"2\",\"to\":\"3\",\"id\":\"2\"}],\"metadata\":\"This is a metadata\"}");
+        expect(service.convertNetworkToJSON(nodes, edges, metadata, groups)).toEqual("{\"nodes\":[{\"id\":\"1\",\"label\":\"Node 1\",\"x\":0,\"y\":0,\"color\":\"#fbff00\"},{\"id\":\"2\",\"label\":\"Node 2\",\"x\":100,\"y\":0,\"color\":\"#00ff4c\"},{\"id\":\"3\",\"label\":\"Node 3\",\"x\":0,\"y\":-200,\"color\":\"#f00add\"}],\"edges\":[{\"from\":\"1\",\"to\":\"2\",\"id\":\"1\"},{\"from\":\"2\",\"to\":\"3\",\"id\":\"2\"}],\"metadata\":\"This is a metadata\",\"groups\":[]}");
     });
 
     it('#checkThatDataIsValid succeeds for empty network', () => {
