@@ -344,8 +344,8 @@ export class FairChainComponent implements OnInit {
   }
 
   /**
-   * Converts the HTML class networkContainer to a jpeg and
-   * downloads it as Fairchain.jpeg
+   * Converts the HTML class networkContainer to a png and
+   * downloads it as Fairchain.png
    */
   public downloadGraphAsPng(): void {
     toPng(document.getElementById("networkContainer"))
