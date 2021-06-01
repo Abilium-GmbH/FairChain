@@ -31,27 +31,6 @@ import { HoverOptionOnDOM } from './../../interfaces/HoverOptionOnDOM'
 })
 export class FairChainComponent implements OnInit {
 
-  private nodeRelabelPopUpInfo: NodeRelabelInfo = {
-    nodeId: '',
-    active: false,
-    label: '',
-    rect: undefined
-  };
-
-  private edgeRelabelPopUpInfo: EdgeRelabelInfo = {
-    active: false,
-    label: '',
-    edgeId: '',
-    rect: undefined
-  }
-
-  private hoverOptionAddChildInfo: HoverOptionInfo = {
-    active: false,
-    nodeId: '',
-    addChildNodeInfo: undefined,
-    boundingBox: undefined
-  }
-
   @ViewChild('graph', {static: true}) graphRef: ElementRef;
 
   public isDebugging = false;
@@ -67,6 +46,8 @@ export class FairChainComponent implements OnInit {
 
   public radioEmojis: string[];
   public emojis: string[];
+
+  private subscriptions: Subscription;
 
   private changesEdge: ChangingEdge = ChangingEdge.None;
   private changesNode: ChangingNode = ChangingNode.None;
@@ -98,7 +79,26 @@ export class FairChainComponent implements OnInit {
     }
   };
 
-  private subscriptions: Subscription;
+  private nodeRelabelPopUpInfo: NodeRelabelInfo = {
+    nodeId: '',
+    active: false,
+    label: '',
+    rect: undefined
+  };
+
+  private edgeRelabelPopUpInfo: EdgeRelabelInfo = {
+    active: false,
+    label: '',
+    edgeId: '',
+    rect: undefined
+  }
+
+  private hoverOptionAddChildInfo: HoverOptionInfo = {
+    active: false,
+    nodeId: '',
+    addChildNodeInfo: undefined,
+    boundingBox: undefined
+  }
 
   /**
    * Initializes Node and Edge Properties
@@ -350,14 +350,6 @@ export class FairChainComponent implements OnInit {
         link.click();
       });
     }
-
-      /*
-  // Initialize network properties
-  private get graph(): HTMLElement {
-    return this.graphRef.nativeElement;
-
-  }
-  */
 
   /**
    * Puts current nodes and edges variables into json syntax and stores it in a string.
