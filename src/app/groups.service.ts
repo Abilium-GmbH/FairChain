@@ -33,8 +33,9 @@ export class GroupsService {
     return this.groups.map((g: Group) => {return g.name}).includes(groupName);
   }
 
-  public getGroups() {
+  public getGroups(defaultColor: string) {
     let temp: string[] = this.groups.map((g:Group) => {return '\"' + g.visJsName + '\" : { \"color\" : \"' + g.color + '\"}'})
+    temp.splice(0,0, '\"none\" : { \"color\" : \"' + defaultColor + '\"}')
     return JSON.parse('{' + temp.toString() + '}');
   }
 

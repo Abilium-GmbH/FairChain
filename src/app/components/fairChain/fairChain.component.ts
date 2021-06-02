@@ -106,7 +106,7 @@ export class FairChainComponent implements OnInit {
   };
 
   public ngOnInit(): void {
-    this.options.groups = this.groupsServices.getGroups();
+    this.options.groups = this.groupsServices.getGroups(this.defaultGroupColor);
     this.network = new Network(this.graph, this.data, this.options);
     this.makeSubscriptions();
     this.openSnackBar();
@@ -375,7 +375,7 @@ export class FairChainComponent implements OnInit {
       this.snackBar.open('Group name already exists');
     } else {
       this.groupsServices.addGroup(this.groupInfo.name, this.groupInfo.colour);
-      var temp = this.groupsServices.getGroups();
+      var temp = this.groupsServices.getGroups(this.defaultGroupColor);
       this.options.groups = temp;
       this.network.setOptions(this.options);
       this.groupInfo.groups = this.groupsServices.getGroupsName();
@@ -431,7 +431,6 @@ export class FairChainComponent implements OnInit {
   }
 
   public getGroupColorToApply() : string {
-    console.log(this.groupsServices.getGroupColor(this.groupInfo.selected, this.defaultGroupColor))
     if (this.isChangingGroup()) return this.groupsServices.getGroupColor(this.groupInfo.selected, this.defaultGroupColor);
     return '#ffffff';
   }
@@ -586,7 +585,7 @@ export class FairChainComponent implements OnInit {
     this.groupsServices.setGroups(data.groups);
     this.groupInfo.groups = this.groupsServices.getGroupsName();
     this.groupInfo.selected = 'none';
-    this.options.groups = this.groupsServices.getGroups();
+    this.options.groups = this.groupsServices.getGroups(this.defaultGroupColor);
 
     this.data = {nodes: this.nodes, edges: this.edges};
     this.network = new Network(this.graph, this.data, this.options);
@@ -602,9 +601,9 @@ export class FairChainComponent implements OnInit {
 
   public updateNodeGroup(node: Node) {
     node.group = this.groupsServices.findVisJsName(this.groupInfo.selected);
-    if (this.groupsServices.findVisJsName(this.groupInfo.selected) != 'none') {
-      eval('node.color = this.options.groups.' + this.groupsServices.findVisJsName(this.groupInfo.selected) + '.color');
-    }
+    //if (this.groupsServices.findVisJsName(this.groupInfo.selected) != 'none') {
+    eval('node.color = this.options.groups.' + this.groupsServices.findVisJsName(this.groupInfo.selected) + '.color');
+    //}
   }
 
   private addLogoFromSnackbar(): void {
