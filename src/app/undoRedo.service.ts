@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DataSetNodes, DataSetEdges } from "vis-network/peer/esm/vis-network";
 import { ImportExportService } from './importExport.service';
+import { Group } from './interfaces/Group';
 
 @Injectable({
     providedIn: 'root'
@@ -25,22 +26,6 @@ export class UndoRedoService {
     }
 
     /**
-     * Is called every time the user has changed something in the graph
-     * Checks that the snapshot array isn't longer than the counter + 1
-     * Removes excess snapshots if this is the case
-     * Increases the counter
-     * Adds a new snapshot in the snapshot array with the JSON that the importExportService provides
-     * @param nodes are the nodes that have to be used as parameters in this snapshot
-     * @param edges are the edges that have to be used as parameters in this snapshot
-     * @param metadata is the metadata that has to be used as parameters in this snapshot
-     */
-    public addSnapshot(nodes: DataSetNodes, edges: DataSetEdges, metadata: string): void {
-        if (this.counter + 1 < this.snapshots.length) this.snapshots.splice(this.counter + 1, this.snapshots.length);
-        this.counter++;
-        this.snapshots[this.counter] = this.importExportService.convertNetworkToJSON(nodes, edges, metadata);
-    }
-
-    /**
      * Gets the parsed predecessor snapshot
      * Lowers the counter by 1
      * If the counter is at zero, this method returns the empty graph
@@ -59,5 +44,21 @@ export class UndoRedoService {
     public getSuccessorSnapshot(): JSON {
         if (this.counter < this.snapshots.length - 1) this.counter++;
         return JSON.parse(this.snapshots[this.counter]);
+    }
+
+    /**
+     * Is called every time the user has changed something in the graph
+     * Checks that the snapshot array isn't longer than the counter + 1
+     * Removes excess snapshots if this is the case
+     * Increases the counter
+     * Adds a new snapshot in the snapshot array with the JSON that the importExportService provides
+     * @param nodes are the nodes that have to be used as parameters in this snapshot
+     * @param edges are the edges that have to be used as parameters in this snapshot
+     * @param metadata is the metadata that has to be used as parameters in this snapshot
+     */
+    public addSnapshot(nodes: DataSetNodes, edges: DataSetEdges, metadata:string, groups: Group[]){
+        if (this.counter + 1 < this.snapshots.length) this.snapshots.splice(this.counter + 1, this.snapshots.length);
+        this.counter++;
+        this.snapshots[this.counter] = this.importExportService.convertNetworkToJSON(nodes, edges, metadata, groups);
     }
 }

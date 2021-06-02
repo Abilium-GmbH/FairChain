@@ -45,15 +45,6 @@
   <mat-card #toolbar_options class="toolbar-options">
     <mat-drawer-container class="drawer-container" [hasBackdrop]="false">
       <mat-drawer-content class="drawer-content">
-
-        <!-- Text Area for Node Label -->
-        <p class="option-label">Label</p>
-        <textarea class="option-textArea" [(ngModel)]="nodeEdgeLabel"></textarea>
-        <br>
-        <!-- Alternate change Node name mode -->
-        <button mat-button class="option-button" [class.active]="isChangingNodeLabel()"
-          (click)="changeNodeName(); changeEdgeName()">Change Name</button>
-        <hr>
         <p class="option-label">Flag</p>
 
         <mat-drawer #drawer class="drawer" mode="over" position="end">
@@ -68,35 +59,40 @@
           Choose Flag
         </button>
 
-        <br>
-        <button mat-button class="option-button" [class.active]="isChangingFlag()" (click)="changeFlag()">Apply
-          Flag</button>
-        <button mat-button class="option-button" [class.active]="isDeletingFlag()" (click)="deleteFlag()">Delete
-          Flag</button>
-        <hr>
-        <!-- Drop down list that holds all groups -->
-        <p class="option-label">Groups</p>
-        <select class="option-groupList" (change)="change($event.target.value)">
-          <option *ngFor="let nameOfGroup of listOfGroups" [value]="nameOfGroup">{{nameOfGroup}}</option>
-        </select>
-        <button mat-button class="option-button" [class.active]="isChangingGroup()" (click)="changeNodeGroup()">Change
-          Group
+      <br>
+      <button mat-button class="option-button" [class.active] = "isChangingFlag()" (click)= "changeFlag()">Apply Flag</button>
+      <button mat-button class="option-button" [class.active] = "isDeletingFlag()" (click)= "deleteFlag()">Delete Flag</button>
+      <hr>
+          <!-- Drop down list that holds all groups -->
+          <p class="option-label">Groups</p>
+          <select class="option-groupList" (change)="change($event.target.value)">
+            <option *ngFor="let nameOfGroup of groupInfo.groups"
+                    [value]="nameOfGroup"
+                    [selected]="nameOfGroup == groupInfo.selected">{{nameOfGroup}}</option>
+          </select>
+        <!-- [class.active]="isChangingGroup()" -->
+        <button mat-button
+                class="option-button"
+                [class.active]="isChangingGroup()"
+                (click)="changeNodeGroup()">Change Group
         </button>
         <!-- Implements the color toolbar and button to change node/edge colors -->
-        <input matInput class="option-colorInput" type="color" [(ngModel)]="nodeGroupColor">
+        <input matInput class="option-colorInput" type="color" [(ngModel)]="groupInfo.colour">
         <br>
         <button mat-button class="option-button" (click)="changeNodeGroupColor()">Change Color
         </button>
-        <!-- ToDo: comment -->
-        <input matInput class="option-groupInput" type="text" [(ngModel)]="nameOfNewGroup">
-        <button mat-button class="option-button" (click)="addGroup()">Add Group
-        </button>
-        <hr>
-        <p class="option-label">Show Metadata</p>
-        <div class="option-toggle">
-          <mat-slide-toggle [(ngModel)]="isMetadataVisible" color="primary"></mat-slide-toggle>
-        </div>
-        <hr>
+      <!-- ToDo: comment -->
+      <input matInput class="option-groupInput" type="text" [(ngModel)]="groupInfo.name">
+      <button mat-button
+              class="option-button"
+              (click)="addGroup()">Add Group
+      </button>
+      <hr>
+      <p class="option-label">Show Metadata</p>
+      <div class="option-toggle" >
+        <mat-slide-toggle [(ngModel)]="isMetadataVisible" color="primary"></mat-slide-toggle>
+      </div>
+      <hr>
       </mat-drawer-content>
     </mat-drawer-container>
   </mat-card>
