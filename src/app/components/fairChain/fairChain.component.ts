@@ -89,6 +89,8 @@ export class FairChainComponent implements OnInit {
   private changesEdge: ChangingEdge = ChangingEdge.None;
   private currentTool: Tools = Tools.Idle;
 
+  private defaultGroupColor: string = '#73c2fb';
+
 
   // Create an array with nodes
   //private nodes: Node[] = [];
@@ -222,6 +224,7 @@ export class FairChainComponent implements OnInit {
     const newEdgeId = this.makeNewId();
     let node: Node = this.nodes.get(this.hoverOptionAddChildInfo.nodeId)
     node.x += 400;
+    node.color = this.defaultGroupColor;
     this.nodes.add({id:newNodeId, label:'double click\nto change', x: node.x, y:node.y})
     const edgeLabel = (this.edges.length <= 0) ? 'double click\nto change' : '';
     this.edges.add({id:newEdgeId, to:this.hoverOptionAddChildInfo.nodeId, from:newNodeId, label:edgeLabel});
@@ -307,6 +310,7 @@ export class FairChainComponent implements OnInit {
         if (this.isAddingNode()) {
           console.assert(this.isAddingNode(), 'The current tool should be adding a node');
           data.label = 'double click\nto change';
+          data.color = this.defaultGroupColor;
           callback(data);
           this.network.addNodeMode();
           this.makeSnapshot();
@@ -424,6 +428,12 @@ export class FairChainComponent implements OnInit {
     } else {
       this.changesNode = ChangingNode.NodeGroup;
     }
+  }
+
+  public getGroupColorToApply() : string {
+    console.log(this.groupsServices.getGroupColor(this.groupInfo.selected, this.defaultGroupColor))
+    if (this.isChangingGroup()) return this.groupsServices.getGroupColor(this.groupInfo.selected, this.defaultGroupColor);
+    return '#ffffff';
   }
 
   // ToDo: comment

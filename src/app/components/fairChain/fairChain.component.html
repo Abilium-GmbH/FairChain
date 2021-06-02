@@ -70,9 +70,10 @@
                     [value]="nameOfGroup"
                     [selected]="nameOfGroup == groupInfo.selected">{{nameOfGroup}}</option>
           </select>
+        <!-- [class.active]="isChangingGroup()" -->
         <button mat-button
                 class="option-button"
-                [class.active]="isChangingGroup()"
+                [style.background]='getGroupColorToApply()'
                 (click)="changeNodeGroup()">Change Group
         </button>
         <!-- Implements the color toolbar and button to change node/edge colors -->
