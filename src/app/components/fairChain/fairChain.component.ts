@@ -41,6 +41,7 @@ export class FairChainComponent implements OnInit {
 
   change(value: string) {
     this.groupInfo.selected = value;
+    this.groupInfo.colour = this.getGroupColorToApply();
   }
 
   private nodeRelabelPopUpInfo: NodeRelabelInfo = {
@@ -433,7 +434,7 @@ export class FairChainComponent implements OnInit {
 
   public getGroupColorToApply() : string {
     if (this.isChangingGroup()) return this.groupsServices.getGroupColor(this.groupInfo.selected, this.defaultGroupColor);
-    return '#ffffff';
+    return this.defaultGroupColor;
   }
 
   // ToDo: comment
