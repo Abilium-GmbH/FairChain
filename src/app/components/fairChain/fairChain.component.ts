@@ -427,6 +427,7 @@ export class FairChainComponent implements OnInit {
       this.network.disableEditMode();
     } else {
       this.changesNode = ChangingNode.NodeGroup;
+      this.groupInfo.colour = this.getGroupColorToApply();
     }
   }
 

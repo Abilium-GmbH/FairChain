@@ -14,10 +14,10 @@ export class GroupsService {
   }
 
   private groups: Group[] = [
-    {name: 'ethical',       color: 'blue',   visJsName: 'group0'},
-    {name: 'unethical',     color: 'orange', visJsName: 'group1'},
-    {name: 'sustainable',   color: 'green',  visJsName: 'group2'},
-    {name: 'unsustainable', color: 'red',    visJsName: 'group3'}
+    {name: 'ethical',       color: '#6370ff',   visJsName: 'group0'},
+    {name: 'unethical',     color: '#fcba03', visJsName: 'group1'},
+    {name: 'sustainable',   color: '#51cf55',  visJsName: 'group2'},
+    {name: 'unsustainable', color: '#e8513a',    visJsName: 'group3'}
   ]
 
   public addGroup(nameOfGroup: string, colorOfGroup: string) {

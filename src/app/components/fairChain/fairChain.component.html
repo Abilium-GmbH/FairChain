@@ -73,7 +73,7 @@
         <!-- [class.active]="isChangingGroup()" -->
         <button mat-button
                 class="option-button"
-                [style.background]='getGroupColorToApply()'
+                [class.active]="isChangingGroup()"
                 (click)="changeNodeGroup()">Change Group
         </button>
         <!-- Implements the color toolbar and button to change node/edge colors -->
