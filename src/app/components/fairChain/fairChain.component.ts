@@ -634,7 +634,6 @@ export class FairChainComponent implements OnInit {
    */
   public async importGraph(files: FileList): Promise<void> {
     this.updateData(await this.importExportService.upload(files.item(0)));
-    this.makeSubscriptions();
     this.makeSnapshot();
   }
 
@@ -695,6 +694,7 @@ export class FairChainComponent implements OnInit {
 
     this.data = {nodes: this.nodes, edges: this.edges};
     this.network = new Network(this.graph, this.data, this.options);
+    this.makeSubscriptions();
   }
 
   /**
