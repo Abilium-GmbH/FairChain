@@ -115,12 +115,6 @@ export class FairChainComponent implements OnInit {
     nodes: this.nodes,
     edges: this.edges,
   };
-
-  /**
-   * A handy debug button for any
-   */
-  public isDebugging = true;
-
   /**
    * Initializes Node and Edge Properties
    *
@@ -207,7 +201,7 @@ export class FairChainComponent implements OnInit {
     }
   };
 
-  applyGroupColor(value: string) {
+  public applyGroupColor(value: string) {
     this.groupInfo.selected = value;
     this.groupInfo.colour = this.getGroupColorToApply();
   }
@@ -426,10 +420,6 @@ export class FairChainComponent implements OnInit {
       output += hex.charAt(Math.floor(Math.random() * hex.length));
     }
     return output;
-  }
-
-  public __debug__() {
-    this.nodes.add({id: 3, font: {face: 'Flags'}, label: '🇦🇱 \n Wood', x: 40, y: 40});
   }
 
   /**
