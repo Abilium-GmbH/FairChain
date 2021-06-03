@@ -67,7 +67,7 @@
         <hr>
         <!-- Drop down list that holds all groups -->
         <p class="option-label">Groups</p>
-        <select class="option-groupList" (change)="change($event.target.value)">
+        <select class="option-groupList" (change)="applyGroupColor($event.target.value)">
           <option *ngFor="let nameOfGroup of groupInfo.groups"
                   [value]="nameOfGroup"
                   [selected]="nameOfGroup == groupInfo.selected">{{nameOfGroup}}</option>

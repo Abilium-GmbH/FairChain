@@ -32,17 +32,29 @@ import {GroupInfo} from 'src/app/interfaces/GroupInfo';
 })
 export class FairChainComponent implements OnInit {
 
+  constructor(private importExportService: ImportExportService,
+              private undoRedoService: UndoRedoService,
+              private flagService: FlagService,
+              private groupsServices: GroupsService,
+              private snackBar: CustomSnackbarService,
+              private popUpGeometryService: PopUpGeometryService,
+              private matSnackBar: MatSnackBar) {
+    this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata, this.groupsServices.getRawGroups());
+    this.emojis = flags;
+    this.radioEmojis = radioFlags;
+  }
+
+  // Initialize network properties
+  private get graph(): HTMLElement {
+    return this.graphRef.nativeElement;
+  }
+
   public nodeEdgeLabel = '';
   public nodeEdgeColor = '#002AFF';
-  public nodeToRelableId: IdType;
+  public nodeToRelabelId: IdType;
   public isShowingRelabelPopUp = false;
   public metadata = '';
   public isMetadataVisible = false;
-
-  change(value: string) {
-    this.groupInfo.selected = value;
-    this.groupInfo.colour = this.getGroupColorToApply();
-  }
 
   private nodeRelabelPopUpInfo: NodeRelabelInfo = {
     nodeId: '',
@@ -72,9 +84,8 @@ export class FairChainComponent implements OnInit {
     selected: 'none'
   };
 
-  public edgeToRelableId: IdType;
+  public edgeToRelabelId: IdType;
   public isShowingEdgeRelabelPopUp = false;
-  //public edgeRelabelPopUpInfo: RectOnDOM;
 
   public nodeFlag = 'CH 🇨🇭';
 
@@ -90,11 +101,10 @@ export class FairChainComponent implements OnInit {
   private changesEdge: ChangingEdge = ChangingEdge.None;
   private currentTool: Tools = Tools.Idle;
 
-  private defaultGroupColor: string = '#73c2fb';
+  private defaultGroupColor = '#73c2fb';
 
 
   // Create an array with nodes
-  //private nodes: Node[] = [];
   private nodes: DataSetNodes = new DataSet();
 
   // Create an array with edges
@@ -106,23 +116,107 @@ export class FairChainComponent implements OnInit {
     edges: this.edges,
   };
 
+  /**
+   * A handy debug button for any
+   */
+  public isDebugging = true;
+
+  /**
+   * Initializes Node and Edge Properties
+   *
+   * @private initializes the different options available for nodes and edges.
+   * The network physics sensibility is also set up in a way that looks more realistic
+   * less sensible when nodes are moved.
+   */
+  private options: Options = {
+    nodes: {
+      shape: 'box',
+      physics: true,
+      font: {face: 'Flags', size: 30},
+      labelHighlightBold: false,
+      margin: {
+        top: 10,
+        bottom: 10,
+        left: 10,
+        right: 10
+      }
+    },
+    edges: {
+      color: {
+        inherit: false
+      },
+      font: {face: 'Flags', size: 20},
+      smooth: false,
+      physics: false,
+      arrows: {
+        to: {
+          enabled: true,
+        }
+      }
+    },
+    physics: {
+      barnesHut: {
+        theta: 0.5,
+        gravitationalConstant: -200,
+        centralGravity: 0,
+        damping: 1,
+        avoidOverlap: 1
+      },
+      maxVelocity: 10,
+      minVelocity: 10,
+    },
+    interaction: {
+      hover: true
+    },
+    manipulation: {
+      // Defines logic for Add Node functionality
+      addNode: (data: Node, callback) => {
+        if (this.isAddingNode()) {
+          console.assert(this.isAddingNode(), 'The current tool should be adding a node');
+          data.label = 'double click\nto change';
+          data.color = this.defaultGroupColor;
+          callback(data);
+          this.network.addNodeMode();
+          this.makeSnapshot();
+        }
+      },
+      // Defines logic for Add Edge functionality
+      addEdge: (data: Edge, callback) => {
+        console.assert(this.isAddingEdge(), 'The current tool should be adding an edge');
+        if (this.edges.length <= 0) {
+          data.label = 'double click\nto change';
+        }
+        callback(data);
+        this.network.addEdgeMode();
+        this.makeSnapshot();
+      },
+      // Responsible for the Edit Node with currently selected option
+      editNode: (nodeData: Node, callback) => {
+        console.assert(this.isInNodeEditMode(), 'The node should not be edited when no option is selected');
+        this.editNodeBasedOnCurrentNodeOption(nodeData);
+        callback(nodeData);
+        this.makeSnapshot();
+      },
+      // Responsible for the Edit Edge with currently selected option
+      editEdge: (edgeData: Edge, callback) => {
+        console.assert(this.isInEdgeEditMode(), 'The edge should not be edited when no option is selected');
+        this.editEdgeBasedOnCurrentEdgeOption(edgeData);
+        callback(edgeData);
+        this.makeSnapshot();
+      },
+    }
+  };
+
+  applyGroupColor(value: string) {
+    this.groupInfo.selected = value;
+    this.groupInfo.colour = this.getGroupColorToApply();
+  }
+
   public ngOnInit(): void {
     this.options.groups = this.groupsServices.getGroups(this.defaultGroupColor);
     this.network = new Network(this.graph, this.data, this.options);
     this.makeSubscriptions();
     this.openSnackBar();
-  }
-
-  constructor(private importExportService: ImportExportService,
-              private undoRedoService: UndoRedoService,
-              private flagService: FlagService,
-              private groupsServices: GroupsService,
-              private snackBar: CustomSnackbarService,
-              private popUpGeometryService: PopUpGeometryService,
-              private matSnackBar: MatSnackBar) {
-    this.undoRedoService.addSnapshot(this.nodes, this.edges, this.metadata, this.groupsServices.getRawGroups());
-    this.emojis = flags;
-    this.radioEmojis = radioFlags;
   }
 
   /**
@@ -298,7 +392,7 @@ export class FairChainComponent implements OnInit {
   private closeEdgeRelabelPopUp(): void {
     console.assert(this.edgeRelabelPopUpInfo.active, 'There is no pop up menu to close');
     console.assert(this.edgeRelabelPopUpInfo.edgeId !== '', 'There is no edge to apply the change to');
-    //Will not update edge on empty string
+    // Will not update edge on empty string
     this.edges.update({id: this.edgeRelabelPopUpInfo.edgeId, label: this.edgeRelabelPopUpInfo.label + ' '});
     this.edgeRelabelPopUpInfo.active = false;
     this.edgeRelabelPopUpInfo.edgeId = undefined;
@@ -308,7 +402,7 @@ export class FairChainComponent implements OnInit {
   public addChildNodeToHoveredNode() {
     const newNodeId = this.makeNewId();
     const newEdgeId = this.makeNewId();
-    let node: Node = this.nodes.get(this.hoverOptionAddChildInfo.nodeId);
+    const node: Node = this.nodes.get(this.hoverOptionAddChildInfo.nodeId);
     node.x += 400;
     node.color = this.defaultGroupColor;
     this.nodes.add({id: newNodeId, label: 'double click\nto change', x: node.x, y: node.y});
@@ -334,100 +428,9 @@ export class FairChainComponent implements OnInit {
     return output;
   }
 
-  /**
-   * A handy debug buttom for any
-   */
-  public isDebugging = true;
-
   public __debug__() {
     this.nodes.add({id: 3, font: {face: 'Flags'}, label: '🇦🇱 \n Wood', x: 40, y: 40});
   }
-
-  /**
-   * Initializes Node and Edge Properties
-   *
-   * @private initializes the different options available for nodes and edges.
-   * The network physics sensibility is also set up in a way that looks more realistic
-   * less sensible when nodes are moved.
-   */
-  private options: Options = {
-    nodes: {
-      shape: 'box',
-      physics: true,
-      font: {face: 'Flags', size: 30},
-      labelHighlightBold: false,
-      margin: {
-        top: 10,
-        bottom: 10,
-        left: 10,
-        right: 10
-      }
-    },
-    edges: {
-      color: {
-        inherit: false
-      },
-      font: {face: 'Flags', size: 20},
-      smooth: false,
-      physics: false,
-      arrows: {
-        to: {
-          enabled: true,
-        }
-      }
-    },
-    physics: {
-      barnesHut: {
-        theta: 0.5,
-        gravitationalConstant: -200,
-        centralGravity: 0,
-        damping: 1,
-        avoidOverlap: 1
-      },
-      maxVelocity: 10,
-      minVelocity: 10,
-    },
-    interaction: {
-      hover: true
-    },
-    manipulation: {
-      // Defines logic for Add Node functionality
-      addNode: (data: Node, callback) => {
-        if (this.isAddingNode()) {
-          console.assert(this.isAddingNode(), 'The current tool should be adding a node');
-          data.label = 'double click\nto change';
-          data.color = this.defaultGroupColor;
-          callback(data);
-          this.network.addNodeMode();
-          this.makeSnapshot();
-        }
-      },
-      // Defines logic for Add Edge functionality
-      addEdge: (data: Edge, callback) => {
-        console.assert(this.isAddingEdge(), 'The current tool should be adding an edge');
-        if (this.edges.length <= 0) {
-          data.label = 'double click\nto change';
-        }
-        callback(data);
-        this.network.addEdgeMode();
-        this.makeSnapshot();
-      },
-      // Responsible for the Edit Node with currently selected option
-      editNode: (nodeData: Node, callback) => {
-        console.assert(this.isInNodeEditMode(), 'The node should not be edited when no option is selected');
-        this.editNodeBasedOnCurrentNodeOption(nodeData);
-        callback(nodeData);
-        this.makeSnapshot();
-      },
-      // Responsible for the Edit Edge with currently selected option
-      editEdge: (edgeData: Edge, callback) => {
-        console.assert(this.isInEdgeEditMode(), 'The edge should not be edited when no option is selected');
-        this.editEdgeBasedOnCurrentEdgeOption(edgeData);
-        callback(edgeData);
-        this.makeSnapshot();
-      },
-    }
-  };
 
   /**
    * Checks which boolean is true to call the right method and edit the edge correctly.
@@ -463,7 +466,7 @@ export class FairChainComponent implements OnInit {
       this.snackBar.open('Group name already exists');
     } else {
       this.groupsServices.addGroup(this.groupInfo.name, this.groupInfo.colour);
-      var temp = this.groupsServices.getGroups(this.defaultGroupColor);
+      const temp = this.groupsServices.getGroups(this.defaultGroupColor);
       this.options.groups = temp;
       this.network.setOptions(this.options);
       this.groupInfo.groups = this.groupsServices.getGroupsName();
@@ -510,10 +513,6 @@ export class FairChainComponent implements OnInit {
     }
   }
 
-  /**
-   * Implements the logik to change the group color, this impacts all nodes having the same group
-   */
-
   public changeNodeGroup(): void {
     this.makeToolIdle();
     if (this.isChangingGroup()) {
@@ -532,18 +531,21 @@ export class FairChainComponent implements OnInit {
     return this.defaultGroupColor;
   }
 
-  //
+  /**
+   * Implements the logik to change the group color, this impacts all nodes having the same group
+   */
+
   public changeNodeGroupColor() {
-    var selectedGroup = this.groupsServices.findVisJsName(this.groupInfo.selected);
+    const selectedGroup = this.groupsServices.findVisJsName(this.groupInfo.selected);
     if (selectedGroup === 'none') {
       return;
     }
-    var loopActivated = false;
+    let loopActivated = false;
     this.groupsServices.setGroupColor(this.groupInfo.selected, this.groupInfo.colour);
     eval('this.options.groups.' + selectedGroup + '.color = ' + '\'' + this.groupInfo.colour + '\'');
     this.network.setOptions(this.options);
     this.nodes.forEach(node => {
-      if (node.group == selectedGroup) {
+      if (node.group === selectedGroup) {
         loopActivated = true;
         node.color = this.groupInfo.colour;
         this.network.updateClusteredNode(node.id, {group: selectedGroup});
@@ -593,8 +595,8 @@ export class FairChainComponent implements OnInit {
    */
   public downloadGraphAsPng(): void {
     toPng(document.getElementById('networkContainer'))
-      .then(function(dataUrl) {
-        var link = document.createElement('a');
+      .then(dataUrl => {
+        const link = document.createElement('a');
         link.download = 'FairChain.png';
         link.href = dataUrl;
         link.click();
@@ -606,8 +608,8 @@ export class FairChainComponent implements OnInit {
    * Downloads the file as Graph.json with the method in importExport.service.
    */
   public exportGraph() {
-    var text = this.importExportService.convertNetworkToJSON(this.nodes, this.edges, this.metadata, this.groupsServices.getRawGroups());
-    var filename = 'Graph.json';
+    const text = this.importExportService.convertNetworkToJSON(this.nodes, this.edges, this.metadata, this.groupsServices.getRawGroups());
+    const filename = 'Graph.json';
     this.importExportService.download(filename, text);
   }
 
@@ -654,7 +656,7 @@ export class FairChainComponent implements OnInit {
         size: 50
       });
     }
-    var firstNode = this.nodes.get('Logo');
+    const firstNode = this.nodes.get('Logo');
     firstNode.shape = 'image';
     firstNode.image = await this.importExportService.uploadLogo(files[0]);
     this.nodes.update(firstNode);
@@ -699,15 +701,13 @@ export class FairChainComponent implements OnInit {
    * Implements snackbar at the beginning to ask user for a logo node
    */
   private openSnackBar(): void {
-    var snackBarRef = this.matSnackBar.open('Do you want to add a Logo?', 'Yes, please', {duration: 7000});
+    const snackBarRef = this.matSnackBar.open('Do you want to add a Logo?', 'Yes, please', {duration: 7000});
     snackBarRef.onAction().subscribe(() => this.addLogoFromSnackbar());
   }
 
   public updateNodeGroup(node: Node) {
     node.group = this.groupsServices.findVisJsName(this.groupInfo.selected);
-    //if (this.groupsServices.findVisJsName(this.groupInfo.selected) != 'none') {
     eval('node.color = this.options.groups.' + this.groupsServices.findVisJsName(this.groupInfo.selected) + '.color');
-    //}
   }
 
   private addLogoFromSnackbar(): void {
@@ -721,7 +721,7 @@ export class FairChainComponent implements OnInit {
    */
   private editEdgeInDataset(edges: IdType[]): void {
     edges.forEach((id) => {
-      let edgeData: Edge = this.edges.get(id);
+      const edgeData: Edge = this.edges.get(id);
       this.editEdgeBasedOnCurrentEdgeOption(edgeData);
       this.edges.update(edgeData);
     });
@@ -744,13 +744,12 @@ export class FairChainComponent implements OnInit {
       this.nodeEdgeLabel = this.flagService.removeFlagFromLabel(this.nodeEdgeLabel);
       nodeData.label = this.flagService.addOrChangeFlag(this.nodeEdgeLabel, this.flagService.currentFlag);
     }
-    ;
   }
 
   private getEdgeRelabelPopUpRect(edgeId: IdType): RectOnDOM {
-    let edge: Edge = this.edges.get(edgeId);
+    const edge: Edge = this.edges.get(edgeId);
 
-    //Compute center of edge
+    // Computes center of edge
     const node1: Node = this.nodes.get(edge.from);
     const pos1: Position = this.network.canvasToDOM({x: node1.x, y: node1.y});
 
@@ -766,9 +765,9 @@ export class FairChainComponent implements OnInit {
   }
 
   private getHoverOptionBoundingBox(nodeId: IdType): RectOnDOM {
-    let bb = this.network.getBoundingBox(nodeId);
-    let corner1 = this.network.canvasToDOM({x: bb.left, y: bb.top});
-    let corner2 = this.network.canvasToDOM({x: bb.right, y: bb.bottom});
+    const bb = this.network.getBoundingBox(nodeId);
+    const corner1 = this.network.canvasToDOM({x: bb.left, y: bb.top});
+    const corner2 = this.network.canvasToDOM({x: bb.right, y: bb.bottom});
 
     const min_x = this.graph.getBoundingClientRect().left;
     const min_y = this.graph.getBoundingClientRect().top;
@@ -782,7 +781,7 @@ export class FairChainComponent implements OnInit {
     const boundingBox = this.network.getBoundingBox(nodeId);
     const upperLeftCorner = this.network.canvasToDOM({x: boundingBox.left, y: boundingBox.top});
     const bottomRightCorner = this.network.canvasToDOM({x: boundingBox.right, y: boundingBox.bottom});
-    let rect: RectOnDOM = {
+    const rect: RectOnDOM = {
       x: upperLeftCorner.x,
       y: upperLeftCorner.y,
       width: bottomRightCorner.x - upperLeftCorner.x,
@@ -867,11 +866,10 @@ export class FairChainComponent implements OnInit {
       this.network.editNode();
     }
     // Defines edge onClick actions
-    //TODO: With new edge dataset, define custom events for changing labels/color
     if (this.isClickingOnNodeInAddEdgeMode(params)) {
       this.interruptAddingEdge();
     }
-    if (this.isClickingOnEdgeInEdgeEditMode(params) && params.nodes.length == 0) {
+    if (this.isClickingOnEdgeInEdgeEditMode(params) && params.nodes.length === 0) {
       this.editEdgeInDataset(params.edges);
     }
     if (this.isClickingOnNodeInAddNodeMode(params)) {
@@ -886,9 +884,9 @@ export class FairChainComponent implements OnInit {
   }
 
   /**
-   * Defines dynamic actions when doubleclicking on certain objects in the network
+   * Defines dynamic actions when double clicking on certain objects in the network
    *
-   * @param params needed to distinguish the different doubleclicked elements from each other (node or edge)
+   * @param params needed to distinguish the different double clicked elements from each other (node or edge)
    */
   private onDoubleClick(pointer): void {
     this.network.disableEditMode();
@@ -901,7 +899,7 @@ export class FairChainComponent implements OnInit {
   }
 
   /**
-   * Defines dynamic actions when stop draging certain objects in the network
+   * Defines dynamic actions when stop dragging certain objects in the network
    *
    * @param params needed to distinguish the different dragged node
    */
@@ -919,7 +917,7 @@ export class FairChainComponent implements OnInit {
     this.hoverOptionAddChildInfo.active = true;
   }
 
-  //Very ugly code will be fixed in refactor
+  // Very ugly code will be fixed in refactor
   private showEdgeRelabelPopUp(edgeId: IdType): void {
     this.updateNodePositions();
     this.edgeRelabelPopUpInfo.edgeId = edgeId;
@@ -948,13 +946,8 @@ export class FairChainComponent implements OnInit {
   private updateNodePositions(): void {
     this.nodes.getIds().forEach((id: IdType) => {
       const pos: Position = this.network.getPosition(id);
-      this.nodes.update({id: id, x: pos.x, y: pos.y});
-    })
-  }
-
-  // Initialize network properties
-  private get graph(): HTMLElement {
-    return this.graphRef.nativeElement;
+      this.nodes.update({id, x: pos.x, y: pos.y});
+    });
   }
 
 }

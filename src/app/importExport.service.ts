@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { ImportData } from './interfaces/importData'
-import { DataSetNodes, DataSetEdges, IdType} from "vis-network/peer/esm/vis-network";
-import { Group } from './interfaces/Group';
+import {Injectable} from '@angular/core';
+import {ImportData} from './interfaces/importData';
+import {DataSetNodes, DataSetEdges, IdType} from 'vis-network/peer/esm/vis-network';
+import {Group} from './interfaces/Group';
 
 @Injectable({
   providedIn: 'root'
@@ -53,28 +53,32 @@ export class ImportExportService {
    */
   public async upload(file: File): Promise<any> {
     return new Promise((resolve, reject) => {
-      if (file.type != 'application/json') reject('The file type is not JSON');
-      if (file['Size'] > 1e5) reject('The file size is too large');
+      if (file.type != 'application/json') {
+        reject('The file type is not JSON');
+      }
+      if (file['Size'] > 1e5) {
+        reject('The file size is too large');
+      }
       const reader = new FileReader();
       var importedJson;
       var service = new ImportExportService;
       reader.readAsBinaryString(file);
 
-      reader.onload = function (e) {
+      reader.onload = function(e) {
         importedJson = e.target.result;
         let result = importedJson.split('%uD').join('\\uD');
         const parsedImportedJson = JSON.parse(result);
         service.checkThatImportDataIsValid(parsedImportedJson);
         resolve(parsedImportedJson);
-      }
-    })
+      };
+    });
   }
 
   /**
    * An asynchronous method that returns a promise
    * Uses FileReader to read the file that the method gets
    * The promise resolves with the image as base64
-   * 
+   *
    * @param file is the image that should be turned into a base64 string
    * @returns a base64 string that represents the image
    */
@@ -83,10 +87,10 @@ export class ImportExportService {
       const reader = new FileReader();
       reader.readAsDataURL(file);
 
-      reader.onload = function (e) {
+      reader.onload = function(e) {
         resolve(e.target.result);
-      }
-    })
+      };
+    });
   }
 
   /**
@@ -96,26 +100,48 @@ export class ImportExportService {
    * @param data is the json that we got from the user
    */
   private checkDataHasCorrectFormat(data: any): void {
-    if (!data.nodes) throw new Error();
-    if (!data.edges) throw new Error();
-    for (let key in data) if (!['nodes','edges','metadata', 'groups'].includes(key)) throw Error();
-    if (!Array.isArray(data.nodes)) throw new Error();
-    if (!Array.isArray(data.edges)) throw new Error();
-    for (let entry of data.nodes) { this.checkNodesHasCorrectFormat(entry); }
-    for (let entry of data.edges) { this.checkEdgesHasCorrectFormat(entry); }
+    if (!data.nodes) {
+      throw new Error();
+    }
+    if (!data.edges) {
+      throw new Error();
+    }
+    for (let key in data) {
+      if (!['nodes', 'edges', 'metadata', 'groups'].includes(key)) {
+        throw Error();
+      }
+    }
+    if (!Array.isArray(data.nodes)) {
+      throw new Error();
+    }
+    if (!Array.isArray(data.edges)) {
+      throw new Error();
+    }
+    for (let entry of data.nodes) {
+      this.checkNodesHasCorrectFormat(entry);
+    }
+    for (let entry of data.edges) {
+      this.checkEdgesHasCorrectFormat(entry);
+    }
   }
 
   /**
    * Is a helper method that is called in checkThatImportDataIsValid
-   * Checks that the edges in the data have a from and a to 
-   * @param data is the data of the edges and nodes that we want to check 
+   * Checks that the edges in the data have a from and a to
+   * @param data is the data of the edges and nodes that we want to check
    */
   private checkDataNodesAndEdgesAddUp(data: ImportData): void {
-    let nodeList = data.nodes.map((node) => { return node.id });
+    let nodeList = data.nodes.map((node) => {
+      return node.id;
+    });
     data.edges.forEach((edge) => {
-      if (!nodeList.includes(edge.from)) throw new Error();
-      if (!nodeList.includes(edge.to)) throw new Error();
-    })
+      if (!nodeList.includes(edge.from)) {
+        throw new Error();
+      }
+      if (!nodeList.includes(edge.to)) {
+        throw new Error();
+      }
+    });
   }
 
   /**
@@ -124,9 +150,15 @@ export class ImportExportService {
    * @param entry is the individual edge that the method is checking
    */
   private checkEdgesHasCorrectFormat(entry): void {
-    if (!entry.id && typeof entry.id !== 'string') throw new Error();
-    if (!entry.from && typeof entry.from !== 'string') throw new Error();
-    if (!entry.to && typeof entry.to !== 'string') throw new Error();
+    if (!entry.id && typeof entry.id !== 'string') {
+      throw new Error();
+    }
+    if (!entry.from && typeof entry.from !== 'string') {
+      throw new Error();
+    }
+    if (!entry.to && typeof entry.to !== 'string') {
+      throw new Error();
+    }
   }
 
   /**
@@ -137,8 +169,8 @@ export class ImportExportService {
    * @param metadata is the metadata from the fairchain component that we have to make into a part of the JSON
    * @returns a String containing the JSON of the network
    */
-  public convertNetworkToJSON(nodes: DataSetNodes, edges: DataSetEdges, metadata:string, groups: Group[]): string {
-    return "{\"nodes\":[NODES],\"edges\":[EDGES],\"metadata\":METADATA,\"groups\":[GROUPS]}" 
+  public convertNetworkToJSON(nodes: DataSetNodes, edges: DataSetEdges, metadata: string, groups: Group[]): string {
+    return '{"nodes":[NODES],"edges":[EDGES],"metadata":METADATA,"groups":[GROUPS]}'
       .replace('NODES', this.datasetToJSON(nodes))
       .replace('EDGES', this.datasetToJSON(edges))
       .replace('METADATA', JSON.stringify(metadata))
@@ -151,33 +183,45 @@ export class ImportExportService {
    * @param entry is the individual node that the method is checking
    */
   private checkNodesHasCorrectFormat(entry): void {
-    if (!entry.id && typeof entry.id !== 'string') throw new Error();
-    if (!entry.label && typeof entry.id !== 'string') throw new Error();
-    if (!entry.x && typeof entry.x !== 'number') throw new Error();
-    if (!entry.y && typeof entry.y !== 'number') throw new Error();
+    if (!entry.id && typeof entry.id !== 'string') {
+      throw new Error();
+    }
+    if (!entry.label && typeof entry.id !== 'string') {
+      throw new Error();
+    }
+    if (!entry.x && typeof entry.x !== 'number') {
+      throw new Error();
+    }
+    if (!entry.y && typeof entry.y !== 'number') {
+      throw new Error();
+    }
   }
 
   /**
    * Extracts the elements from the Dataset with their Ids and stringifys them
    * Is a helper method of convertNetworkToJSON
-   * @param data is the DataSet 
+   * @param data is the DataSet
    * @returns the data as JSON
    */
   private datasetToJSON(data: DataSetNodes | DataSetEdges): string {
-    if (data.length === 0) return '';
+    if (data.length === 0) {
+      return '';
+    }
     return data.getIds().map((id: IdType) => {
-      return JSON.stringify(data.get(id))
+      return JSON.stringify(data.get(id));
     }).join(',');
   }
 
   /**
    * Extracts the elements from the Dataset with their Ids and stringifys them
    * Is a helper method of convertNetworkToJSON
-   * @param data is the DataSet 
+   * @param data is the DataSet
    * @returns the data as JSON
    */
-   private groupsToJSON(data: Group[]): string {
-    if (data.length === 0) return '[]';
+  private groupsToJSON(data: Group[]): string {
+    if (data.length === 0) {
+      return '[]';
+    }
     return data.map((g: Group) => {
       return JSON.stringify(g)
     }).join(',');
