@@ -9,17 +9,17 @@ describe('FlagsService', () => {
 
     it('#addOrChangeFlag succeeds for normal label without a flag', () => {
         nodes.add({ id: 1, label: 'hello', x: 0, y: 0, color: '#fbff00' })
-        expect(service.addOrChangeFlag(nodes.get(1).label, '🇨🇭')).toEqual('🇨🇭\nhello');
+        expect(service.addOrChangeFlag(nodes.get(1).label, 'CH 🇨🇭')).toEqual('🇨🇭\nhello');
     });
 
     it('#addOrChangeFlag succeeds for empty label', () => {
         nodes.add({ id: 1, label: '', x: 0, y: 0, color: '#fbff00' })
-        expect(service.addOrChangeFlag(nodes.get(1).label, '🇨🇭')).toEqual('🇨🇭\n');
+        expect(service.addOrChangeFlag(nodes.get(1).label, 'CH 🇨🇭')).toEqual('🇨🇭\n');
     });
 
     it('#addOrChangeFlag succeeds with replace a flag of a label', () => {
         nodes.add({ id: 1, label: '🇺🇸\nhello', x: 0, y: 0, color: '#fbff00' })
-        expect(service.addOrChangeFlag(nodes.get(1).label, '🇨🇭')).toEqual('🇨🇭\nhello');
+        expect(service.addOrChangeFlag(nodes.get(1).label, 'CH 🇨🇭')).toEqual('🇨🇭\nhello');
     });
 
     it('#changeLabelWithoutChangingFlag succeeds when both labels do not have a flag', () => {
@@ -39,7 +39,7 @@ describe('FlagsService', () => {
 
     it('#changeLabelWithoutChangingFlag succeeds when originalLabel has a flag', () => {
         nodes.add({ id: 1, label: '🇺🇸\nhello', x: 0, y: 0, color: '#fbff00' })
-        expect(service.changeLabelWithoutChangingFlag(nodes.get(1).label, 'bye')).toEqual('🇺🇸\nbye');
+        expect(service.changeLabelWithoutChangingFlag(nodes.get(1).label, 'bye')).toEqual('🇺🇸\nhebye');
     });
 
     it('#changeLabelWithoutChangingFlag succeeds when originalLabel is only a flag', () => {
@@ -53,12 +53,12 @@ describe('FlagsService', () => {
 
     it('#saveFlagFromLabel with a label with a emoji as input should save the emoji in currentFlag', () => {
         service.saveFlagFromLabel("🇺🇸\nhello")
-        expect(service.currentFlag).toEqual('🇺🇸');
+        expect(service.currentFlag).toEqual('abc🇺🇸');
     });
 
-    it('#saveFlagFromLabel with only a emoji as input should save the emoji in currentFlag', () => {
+    it('#saveFlagFromLabel with only a emoji as input should save the emoji with abc before it in currentFlag', () => {
         service.saveFlagFromLabel("🇺🇸")
-        expect(service.currentFlag).toEqual('🇺🇸');
+        expect(service.currentFlag).toEqual('abc🇺🇸');
     });
 
     it('#saveFlagFromLabel with no emojis as input should save a empty string in currentFlag', () => {
