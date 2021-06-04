@@ -282,7 +282,7 @@ export class FairChainComponent implements OnInit {
       color: {
         inherit: false
       },
-      font: { face: 'Flags', size: 20 },
+      font: { face: 'Flags', size: 30 },
       smooth: false,
       physics: false,
       arrows: {
@@ -549,7 +549,7 @@ export class FairChainComponent implements OnInit {
         label: "",
         x: 59,
         y: 59,
-        size: 50
+        size: 100
       });
     }
     var firstNode = this.nodes.get("Logo");
