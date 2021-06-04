@@ -5,20 +5,23 @@ import { UndoRedoService } from './../../undoRedo.service';
 import { ImportExportService } from './../../importExport.service';
 import { Tools, ChangingNode, ChangingEdge } from '../../Enums';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { FlagService } from './../../flag.service';
 
 describe('FairChainComponent', () => {
   let component: FairChainComponent;
   let fixture: ComponentFixture<FairChainComponent>;
   let importExportServiceStub: Partial<ImportExportService>;
   let undoRedoServiceStub: Partial<UndoRedoService>;
+  let flagServiceStub: Partial<FlagService>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [FairChainComponent],
       providers: [
         { provide: ImportExportService, useValue: importExportServiceStub },
-        { provide: UndoRedoService, useValue: undoRedoServiceStub }],
-        imports: [ MatSnackBarModule ],
+        { provide: UndoRedoService, useValue: undoRedoServiceStub },
+        { provide: FlagService, useValue: flagServiceStub }],
+      imports: [ MatSnackBarModule ],
     })
       .compileComponents();
   });
