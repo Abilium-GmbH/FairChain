@@ -2,7 +2,7 @@
 
 ## About FairChain
 
-Fairchain is a web application built using the web framework [Angular](https://angular.io/) and the graphing library [vis.js](https://visjs.org/). The app allows users to create their own custom production chains, which visually communicate how ehtical or sustainable the individual links are. The app is intended to be developed into a pluging for shopping websites, so that customers can estimate how ethical their purchase of a product is.
+FairChain is a web application built using the web framework [Angular](https://angular.io/) and the graphing library [vis.js](https://visjs.org/). The app allows users to create their own custom production chains, which visually communicate how ethical or sustainable the individual links are. The app is intended to be developed into a plug-in for shopping websites, so that customers can estimate how ethical their purchase of a product is.
 
 The following image is an example of such a production chain
 
