@@ -19,8 +19,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     EditorPage
   ],
   imports: [
-    FormsModule, 
-    ReactiveFormsModule, 
+    FormsModule,
+    ReactiveFormsModule,
     MatSelectModule,
     BrowserModule,
     AppRoutingModule,

@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
-import {ImportData} from './interfaces/importData';
-import {DataSetNodes, DataSetEdges, IdType} from 'vis-network/peer/esm/vis-network';
-import {Group} from './interfaces/Group';
+import { Injectable } from '@angular/core';
+import { ImportData } from './interfaces/importData';
+import { DataSetNodes, DataSetEdges, IdType } from 'vis-network/peer/esm/vis-network';
+import { Group } from './interfaces/Group';
 
 @Injectable({
   providedIn: 'root'
@@ -64,7 +64,7 @@ export class ImportExportService {
       var service = new ImportExportService;
       reader.readAsBinaryString(file);
 
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         importedJson = e.target.result;
         let result = importedJson.split('%uD').join('\\uD');
         const parsedImportedJson = JSON.parse(result);
@@ -87,7 +87,7 @@ export class ImportExportService {
       const reader = new FileReader();
       reader.readAsDataURL(file);
 
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         resolve(e.target.result);
       };
     });

@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {Group} from './interfaces/Group';
+import { Injectable } from '@angular/core';
+import { Group } from './interfaces/Group';
 
 /**
  * The group service uses an hash table to bind each key to a different hash function, this makes it possible
@@ -18,14 +18,14 @@ export class GroupsService {
   }
 
   private groups: Group[] = [
-    {name: 'ethical', color: '#6370ff', visJsName: 'group0'},
-    {name: 'unethical', color: '#fcba03', visJsName: 'group1'},
-    {name: 'sustainable', color: '#51cf55', visJsName: 'group2'},
-    {name: 'unsustainable', color: '#e8513a', visJsName: 'group3'}
+    { name: 'ethical', color: '#6370ff', visJsName: 'group0' },
+    { name: 'unethical', color: '#fcba03', visJsName: 'group1' },
+    { name: 'sustainable', color: '#51cf55', visJsName: 'group2' },
+    { name: 'unsustainable', color: '#e8513a', visJsName: 'group3' }
   ];
 
   public addGroup(nameOfGroup: string, colorOfGroup: string) {
-    this.groups.push({name: nameOfGroup, color: colorOfGroup, visJsName: 'group' + this.numberOfGroups()});
+    this.groups.push({ name: nameOfGroup, color: colorOfGroup, visJsName: 'group' + this.numberOfGroups() });
   }
 
   /**

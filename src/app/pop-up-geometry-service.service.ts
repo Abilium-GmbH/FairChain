@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
-import {Position} from 'vis-network/declarations/entry-esnext';
-import {HoverOptionOnDOM} from './interfaces/HoverOptionOnDOM';
-import {RectOnDOM} from './interfaces/RectOnDOM';
+import { Injectable } from '@angular/core';
+import { Position } from 'vis-network/declarations/entry-esnext';
+import { HoverOptionOnDOM } from './interfaces/HoverOptionOnDOM';
+import { RectOnDOM } from './interfaces/RectOnDOM';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,7 @@ export class PopUpGeometryService {
 
 
   public getEdgeRelabelPopUpRect(node1_x: number, node1_y: number, node2_x: number, node2_y: number,
-                                 min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
+    min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
     let rect = this.createRectBetweenNodes(node1_x, node1_y, node2_x, node2_y);
     rect = this.blowUpRect(rect);
     rect = this.offsetRect(rect, min_x, min_y);

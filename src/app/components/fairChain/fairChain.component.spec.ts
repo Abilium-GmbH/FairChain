@@ -37,32 +37,6 @@ describe('FairChainComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should change changesNode to NodeColor', () => {
-    component.changeNodeName();
-    var changesNode = component.getChangesNode();
-    expect(changesNode).toBe(ChangingNode.NodeLabel)
-  })
-
-  it('should switch changesNode again to None after calling changeNodeName 2 times', () => {
-    component.changeNodeName();
-    component.changeNodeName();
-    var changesNode = component.getChangesNode();
-    expect(changesNode).toBe(ChangingNode.None)
-  })
-
-  it('should change changesEdge to EdgeColor', () => {
-    component.changeEdgeName();
-    var changesEdge = component.getChangesEdge();
-    expect(changesEdge).toBe(ChangingEdge.EdgeLabel)
-  })
-
-  it('should switch changesEdge again to None after calling changeEdgeName 2 times', () => {
-    component.changeEdgeName();
-    component.changeEdgeName();
-    var changesEdge = component.getChangesEdge();
-    expect(changesEdge).toBe(ChangingEdge.None)
-  })
-
   it('should change currentTool to AddingEdge', () => {
     component.addEdgeInNetwork();
     var currentTool = component.getCurrentTool();
@@ -103,14 +77,5 @@ describe('FairChainComponent', () => {
     expect(currentTool).toBe(Tools.AddingNode)
   })
 
-
-  it('should change currentTool to AddingEdge and changesNode to None if you first call changeNodeName and then addNodeInNetwork', () => {
-    component.changeNodeName();
-    component.addNodeInNetwork();
-    var currentTool = component.getCurrentTool();
-    var changesNode = component.getChangesNode()
-    expect(currentTool).toBe(Tools.AddingNode, 'currentTool is wrong')
-    expect(changesNode).toBe(ChangingNode.None, 'changesNode is wrong')
-  })
 
 });

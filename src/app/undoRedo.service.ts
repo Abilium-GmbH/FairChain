@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
-import {DataSetNodes, DataSetEdges} from 'vis-network/peer/esm/vis-network';
-import {ImportExportService} from './importExport.service';
-import {Group} from './interfaces/Group';
+import { Injectable } from '@angular/core';
+import { DataSetNodes, DataSetEdges } from 'vis-network/peer/esm/vis-network';
+import { ImportExportService } from './importExport.service';
+import { Group } from './interfaces/Group';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +31,7 @@ export class UndoRedoService {
    * If the counter is at zero, this method returns the empty graph
    * @returns the parsed version of the snapshot that is stored before the current network
    */
-  public getPredecessorSnapshot(){
+  public getPredecessorSnapshot() {
     if (this.counter > 0) {
       this.counter--;
     }
@@ -43,7 +43,7 @@ export class UndoRedoService {
    * Increases the counter
    * @returns the parsed version of the snapshot that is stored after the current network
    */
-  public getSuccessorSnapshot(){
+  public getSuccessorSnapshot() {
     if (this.counter < this.snapshots.length - 1) {
       this.counter++;
     }
