@@ -9,7 +9,11 @@ Why is this project useful?
 
 ## Installation
 
+Clone the repository into a folder link.
 
+Open the command prompt in the cloned repository and run
+
+`npm install --save-dev @angular-devkit/build-angular`
 
 ## Usage
 
