@@ -7,6 +7,9 @@ import { RectOnDOM } from './interfaces/RectOnDOM';
   providedIn: 'root'
 })
 
+/**
+ * Handles the geometry for the pop up components in the application
+ */
 export class PopUpGeometryService {
 
   private minHeight: number = 90;
@@ -17,6 +20,41 @@ export class PopUpGeometryService {
   }
 
 
+  /**
+   * Get the rectangle coordinates for the node relabel pop up component
+   * @param node1_x x coordinate of the from node
+   * @param node1_y y coordinate of the from node
+   * @param node2_x x coordinate of the to node
+   * @param node2_y y coordinate of the to node
+   * @param min_x x coordinate of the top left corner of the canvas
+   * @param min_y x coordinate of the top left corner of the canvas
+   * @param max_x x coordinate of the bottom right corner of the canvas
+   * @param max_y y coordinate of the bottom right corner of the canvas
+   */
+  public getNodeRelabelPopUpRect(rect: RectOnDOM, min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
+    rect = this.blowUpRect(rect);
+    rect = this.offsetRect(rect, min_x, min_y);
+    rect = this.rescaleRect(rect, min_x, min_y, max_x, max_y);
+    rect = this.cropRectToFitCanvas(rect, min_x, min_y, max_x, max_y);
+    rect = this.moveRectLeftToFitCanvas(rect, min_x);
+    rect = this.moveRectRightToFitCanvas(rect, max_x);
+    rect = this.moveRectDownToFitCanvas(rect, min_y);
+    rect = this.moveRectUpToFitCanvas(rect, max_y);
+
+    return rect;
+  }
+
+  /**
+   * Get the rectangle coordinates for the edge relabel pop up component
+   * @param node1_x x coordinate of the from node
+   * @param node1_y y coordinate of the from node
+   * @param node2_x x coordinate of the to node
+   * @param node2_y y coordinate of the to node
+   * @param min_x x coordinate of the top left corner of the canvas
+   * @param min_y x coordinate of the top left corner of the canvas
+   * @param max_x x coordinate of the bottom right corner of the canvas
+   * @param max_y y coordinate of the bottom right corner of the canvas
+   */
   public getEdgeRelabelPopUpRect(node1_x: number, node1_y: number, node2_x: number, node2_y: number,
     min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
     let rect = this.createRectBetweenNodes(node1_x, node1_y, node2_x, node2_y);
@@ -32,6 +70,16 @@ export class PopUpGeometryService {
     return rect;
   }
 
+  /**
+   * Get the bounding box for the hover option component. If the mouse cursor
+   * leaves this bounding box, the hover option disappears
+   * @param corner1 the top left corner of the bounding box of the node
+   * @param corner2 the bottom right corner of the bounding box of the node
+   * @param min_x x coordinate of the top left corner of the canvas
+   * @param min_y x coordinate of the top left corner of the canvas
+   * @param max_x x coordinate of the bottom right corner of the canvas
+   * @param max_y y coordinate of the bottom right corner of the canvas
+   */
   public getHoverOptionBoundingBox(corner1: Position, corner2: Position, min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
     let bb: RectOnDOM = {
       x: corner1.x,
@@ -45,7 +93,16 @@ export class PopUpGeometryService {
     bb = this.cutRectToFitCanvas(bb, min_x, min_y, max_x, max_y);
     return bb;
   }
-
+  
+  /**
+   * Get the position on the DOM of the node hover option. 
+   * @param corner1 the top left corner of the bounding box of the node
+   * @param corner2 the bottom right corner of the bounding box of the node
+   * @param min_x x coordinate of the top left corner of the canvas
+   * @param min_y x coordinate of the top left corner of the canvas
+   * @param max_x x coordinate of the bottom right corner of the canvas
+   * @param max_y y coordinate of the bottom right corner of the canvas
+   */
   public getHoverOptionInfo(center: Position, min_x: number, min_y: number, max_x: number, max_y: number): HoverOptionOnDOM {
     let dx: number = -15;
     let dy: number = -70;
@@ -55,19 +112,6 @@ export class PopUpGeometryService {
       y: center.y + min_y + dy,
       scale: 2
     };
-  }
-
-  public getNodeRelabelPopUpRect(rect: RectOnDOM, min_x: number, min_y: number, max_x: number, max_y: number): RectOnDOM {
-    rect = this.blowUpRect(rect);
-    rect = this.offsetRect(rect, min_x, min_y);
-    rect = this.rescaleRect(rect, min_x, min_y, max_x, max_y);
-    rect = this.cropRectToFitCanvas(rect, min_x, min_y, max_x, max_y);
-    rect = this.moveRectLeftToFitCanvas(rect, min_x);
-    rect = this.moveRectRightToFitCanvas(rect, max_x);
-    rect = this.moveRectDownToFitCanvas(rect, min_y);
-    rect = this.moveRectUpToFitCanvas(rect, max_y);
-
-    return rect;
   }
 
   private blowUpRect(rect: RectOnDOM): RectOnDOM {

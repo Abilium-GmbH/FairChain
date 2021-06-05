@@ -3,6 +3,12 @@ import { fromEvent, Subscription } from 'rxjs';
 import { map, bufferCount, filter } from 'rxjs/operators';
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
 
+/**
+ * Component appears over double clicked node or edge. The
+ * pop up is a text area, in which the label of the element can
+ * be changed. The pop up emits an event when double clicking it,
+ * to indicate when to disable the component. 
+ */
 @Component({
   selector: 'relabel-pop-up',
   templateUrl: './relabel-pop-up.component.html',
@@ -50,6 +56,7 @@ export class RelabelPopUpComponent implements OnInit {
     this.labelChange.emit(this.convertToMultiline(this.label));
   }
 
+  //A minor tweak, so that the node displays multiple lines
   private convertToMultiline(text: string): string {
     return text.replace('\n', '\n');
   }

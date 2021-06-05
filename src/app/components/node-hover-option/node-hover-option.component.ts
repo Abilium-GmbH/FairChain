@@ -4,6 +4,12 @@ import { fromEvent, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
 
+/**
+ * Component appears over a hovered node. It emits an event when clicked,
+ * which allows for dynamic and node specific actions. If the mouse
+ * cursor moves to far from the node, another event is emitted,
+ * so that the component can be disabled.
+ */
 @Component({
   selector: 'nodeHoverOption',
   templateUrl: './node-hover-option.component.html',
@@ -16,6 +22,7 @@ export class NodeHoverOptionComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    // When the mouse cursor exits the bounding box, then emit an event
     this.nodeHoverSubscription = fromEvent(document, 'mousemove').pipe(
       filter((pointer: MouseEvent) => {
         if (!(this.boundingBox.x <= pointer.clientX
