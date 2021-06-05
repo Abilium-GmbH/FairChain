@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
-import { strict as assert } from 'assert';
 import { fromEvent, Subscription } from 'rxjs';
 import { map, bufferCount, filter } from 'rxjs/operators';
 import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
@@ -11,22 +10,21 @@ import { RectOnDOM } from 'src/app/interfaces/RectOnDOM';
 })
 export class RelabelPopUpComponent implements OnInit {
 
-  constructor() { }
-
   private subscriptions: Subscription;
 
-  @Input() info: RectOnDOM;
-  
-  @Input()  label: string;
-  @Output() labelChange = new EventEmitter<string>();
-  @Output() closeRelabelPopUp = new EventEmitter();
-  @ViewChild('relabelTextArea') relabelTextAreaRef: ElementRef;
+  @Output() public closeRelabelPopUp = new EventEmitter();
+  @Input() public info: RectOnDOM;
+  @Input() public label: string;
+  @Output() public labelChange = new EventEmitter<string>();
+  @ViewChild('relabelTextArea') public relabelTextAreaRef: ElementRef;
 
-  ngOnInit(): void {
-    this.subscriptions = new Subscription();
+  constructor() { }
+
+  public isClosingPopUp(): void {
+    this.closeRelabelPopUp.emit();
   }
 
-  ngAfterViewInit(): void {
+  public ngAfterViewInit(): void {
     this.subscriptions.add(
       fromEvent(this.relabelTextAreaRef.nativeElement, 'click').pipe(
         map(() => new Date().getTime()),
@@ -37,19 +35,22 @@ export class RelabelPopUpComponent implements OnInit {
       ).subscribe(() => {
         this.isClosingPopUp();
       })
-    )
+    );
+    if (this.label === 'double click\nto change') {
+      this.label = '';
+      this.updateLabel();
+    }
   }
 
-  public updateLabel() {
+  public ngOnInit(): void {
+    this.subscriptions = new Subscription();
+  }
+
+  public updateLabel(): void {
     this.labelChange.emit(this.convertToMultiline(this.label));
   }
 
-  public isClosingPopUp() {
-    this.closeRelabelPopUp.emit();
-  }
-
-  private convertToMultiline(text: string) {
+  private convertToMultiline(text: string): string {
     return text.replace('\n', '\n');
   }
-  
 }

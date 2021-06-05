@@ -1,10 +1,10 @@
 
-export  enum Tools {
+export enum Tools {
   AddingNode, AddingEdge, Idle
 }
 export enum ChangingNode {
-  NodeLabel,  NodeColor, NodeFlag, DeleteNodeFlag, None
+  NodeLabel, NodeGroup, NodeFlag, DeleteNodeFlag, NodeColor, None
 }
 export enum ChangingEdge {
-  EdgeLabel, EdgeColor, None
+  EdgeLabel, None
 }
