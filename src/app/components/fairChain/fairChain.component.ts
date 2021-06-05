@@ -44,11 +44,6 @@ export class FairChainComponent implements OnInit {
     this.radioEmojis = radioFlags;
   }
 
-  // Initialize network properties
-  private get graph(): HTMLElement {
-    return this.graphRef.nativeElement;
-  }
-
   public nodeEdgeLabel = '';
   public nodeEdgeColor = '#002AFF';
   public nodeToRelabelId: IdType;
@@ -685,6 +680,11 @@ export class FairChainComponent implements OnInit {
   private openSnackBar(): void {
     const snackBarRef = this.matSnackBar.open('Do you want to add a Logo?', 'Yes, please', { duration: 7000 });
     snackBarRef.onAction().subscribe(() => this.addLogoFromSnackbar());
+  }
+  
+  // Initialize network properties
+  private get graph(): HTMLElement {
+    return this.graphRef.nativeElement;
   }
 
   public updateNodeGroup(node: Node) {
