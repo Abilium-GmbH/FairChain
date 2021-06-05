@@ -2,37 +2,29 @@
 
 ## About FairChain
 
-What does this project do?
-
-Why is this project useful?
-
+Fairchain is a web application built using the web framework [Angular](https://angular.io/) and the graphing library [vis.js](https://visjs.org/). The app allows users to create their own custom production chains, which visually communicate how ehtical or sustainable the individual links are. The app is intended to be developed into a pluging for shopping websites, so that customers can estimate how ethical their purchase of a product is.
 
 ## Installation
 
-Clone the repository into a folder link.
+Clone the repository into a folder on your computer.
 
-Open the command prompt in the cloned repository and run first
+Open the command prompt in the cloned repository and run the following command
 
 `npm install --save-dev @angular-devkit/build-angular`
 
-Second
-
-`npm install @angular/animations`
-
-And finally
+Finally run
 
 `npm install html-to-png`
 
-
-
 ## Usage
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+In a command prompt in the repository, run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
+To execute the test cases of the application, run `ng test` in a command propt in the repository.
 
 ## Contributing
 
-[Contirbuting](CONTRIBUTING)
+[Contributing](CONTRIBUTING)
 
 
 ## License
