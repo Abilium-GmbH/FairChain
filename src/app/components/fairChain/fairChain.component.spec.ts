@@ -6,6 +6,7 @@ import { ImportExportService } from './../../importExport.service';
 import { Tools, ChangingNode, ChangingEdge } from '../../Enums';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FlagService } from './../../flag.service';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('FairChainComponent', () => {
   let component: FairChainComponent;
@@ -21,7 +22,7 @@ describe('FairChainComponent', () => {
         { provide: ImportExportService, useValue: importExportServiceStub },
         { provide: UndoRedoService, useValue: undoRedoServiceStub },
         { provide: FlagService, useValue: flagServiceStub }],
-      imports: [ MatSnackBarModule ],
+      imports: [ MatSnackBarModule, NoopAnimationsModule,  ],
     })
       .compileComponents();
   });
