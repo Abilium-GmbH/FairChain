@@ -682,7 +682,6 @@ export class FairChainComponent implements OnInit {
     snackBarRef.onAction().subscribe(() => this.addLogoFromSnackbar());
   }
   
-  // Initialize network properties
   private get graph(): HTMLElement {
     return this.graphRef.nativeElement;
   }
