@@ -16,17 +16,17 @@ describe('GroupsService', () => {
 
   it('should initialize with none, ethical, unethical, sustainable, unsustainable', () => {
     var groupsName = service.getGroupsName()
-    var jsonGroup = JSON.stringify(service.getGroups())
+    var jsonGroup = JSON.stringify(service.getGroups('#73c2fb'))
     expect(groupsName).toEqual(["none", "ethical", "unethical", "sustainable","unsustainable"])
-    expect(jsonGroup).toBe('{"group1":{"color":"blue"},"group2":{"color":"orange"},"group3":{"color":"green"},"group4":{"color":"red"}}')
+    expect(jsonGroup).toBe('{"none":{"color":"#73c2fb"},"group0":{"color":"#6370ff"},"group1":{"color":"#fcba03"},"group2":{"color":"#51cf55"},"group3":{"color":"#e8513a"}}')
   });
 
   it('should add a group', () => {
     service.addGroup("new group", "red")
     var groupsName = service.getGroupsName()
-    var jsonGroup = JSON.stringify(service.getGroups())
+    var jsonGroup = JSON.stringify(service.getGroups('#73c2fb'))
     expect(groupsName).toEqual(["none", "ethical", "unethical", "sustainable","unsustainable", "new group"])
-    expect(jsonGroup).toBe('{"group1":{"color":"blue"},"group2":{"color":"orange"},"group3":{"color":"green"},"group4":{"color":"red"},"group5":{"color":"red"}}')
+    expect(jsonGroup).toBe('{"none":{"color":"#73c2fb"},"group0":{"color":"#6370ff"},"group1":{"color":"#fcba03"},"group2":{"color":"#51cf55"},"group3":{"color":"#e8513a"},"group4":{"color":"red"}}')
   });
 
 

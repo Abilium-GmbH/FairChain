@@ -19,10 +19,10 @@ export class UndoRedoService {
 
   /**
    * Pushes an empty network into the snapshots array when the object is constructed
-   * @param importExportService
+   * @param importExportService is the import service
    */
   constructor(private importExportService: ImportExportService) {
-    this.snapshots.push('{"nodes":[],"edges":[],"metadata":""}');
+    this.snapshots.push('{"nodes":[],"edges":[],"metadata":"", "groups":[]}');
   }
 
   /**
@@ -31,7 +31,7 @@ export class UndoRedoService {
    * If the counter is at zero, this method returns the empty graph
    * @returns the parsed version of the snapshot that is stored before the current network
    */
-  public getPredecessorSnapshot(): JSON {
+  public getPredecessorSnapshot(){
     if (this.counter > 0) {
       this.counter--;
     }
@@ -43,7 +43,7 @@ export class UndoRedoService {
    * Increases the counter
    * @returns the parsed version of the snapshot that is stored after the current network
    */
-  public getSuccessorSnapshot(): JSON {
+  public getSuccessorSnapshot(){
     if (this.counter < this.snapshots.length - 1) {
       this.counter++;
     }
@@ -59,6 +59,7 @@ export class UndoRedoService {
    * @param nodes are the nodes that have to be used as parameters in this snapshot
    * @param edges are the edges that have to be used as parameters in this snapshot
    * @param metadata is the metadata that has to be used as parameters in this snapshot
+   * @param groups is the groups array that should be used in this snapshot
    */
   public addSnapshot(nodes: DataSetNodes, edges: DataSetEdges, metadata: string, groups: Group[]) {
     if (this.counter + 1 < this.snapshots.length) {

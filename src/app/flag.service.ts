@@ -35,7 +35,7 @@ export class FlagService {
      * @returns the label without the flag
      */
     public removeFlagFromLabel(label: string): string {
-        if (label === undefined) { return label; }
+        if (label === undefined) { return ""; }
         if (flags.some(v => label.includes(v))) {
             label = label.slice(5);
         }
