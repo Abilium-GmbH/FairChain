@@ -22,7 +22,7 @@ Finally run
 
 ## Usage
 
-In a command prompt in the repository, run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+In a command prompt in the repository, run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files. For more information about the usage, check the handbook in the repository.
 
 To execute the test cases of the application, run `ng test` in a command propt in the repository.
 
